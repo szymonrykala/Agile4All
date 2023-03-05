@@ -1,0 +1,226 @@
+{
+    "tasks": [
+        {
+            "id":1,
+            "name": "Lorem ipsum dolor sit amet,",
+            "description": "consectetur adipiscing elit. Integer turpis tortor, luctus id velit sit amet, maximus rutrum mi. Etiam quis finibus elit, eget interdum nisi. Proin gravida faucibus justo, rhoncus sagittis neque tincidunt vitae. ",
+            "status": "TODO",
+            "projectId": 1,
+            "userId":1
+        },
+        {
+            "id":2,
+            "name": "Lorem ipsum dolor sit amet,",
+            "description": "consectetur adipiscing elit. Integer turpis tortor, luctus id velit sit amet, maximus rutrum mi. Etiam quis finibus elit, eget interdum nisi. Proin gravida faucibus justo, rhoncus sagittis neque tincidunt vitae. ",
+            "status": "ARCHIVED",
+            "projectId": 1,
+            "userId":1
+        },
+        {
+            "id":3,
+            "name": "Lorem ipsum niebieski sit amet,",
+            "description": "consectetur adipiscing elit. Integer turpis tortor, luctus id velit sit amet, maximus rutrum mi. Etiam quis finibus elit, eget interdum nisi. Proin gravida faucibus justo, rhoncus sagittis neque tincidunt vitae. ",
+            "status": "DONE",
+            "projectId": 1,
+            "userId":1
+        },
+        {
+            "id":4,
+            "name": "Lorem ipsum dolor sit amet,",
+            "description": "Zielony adipiscing elit. Integer turpis tortor, luctus id velit sit amet, maximus rutrum mi. Etiam quis finibus elit, eget interdum nisi. Proin gravida faucibus justo, rhoncus sagittis neque tincidunt vitae. ",
+            "status": "IN_PROGRESS",
+            "projectId": 1,
+            "userId":1
+        },
+        {
+            "id":5,
+            "name": "Lorem ipsum dolor sit amet,",
+            "description": "consectetur adipiscing elit. Integer turpis tortor, luctus id velit sit amet, maximus rutrum mi. Etiam quis finibus elit, eget interdum nisi. Proin gravida faucibus justo, rhoncus sagittis neque tincidunt vitae. ",
+            "status": "IN_PROGRESS",
+            "projectId": 1,
+            "userId":2
+        },
+        {
+            "id":6,
+            "name": "Lorem ipsum dolor sit amet,",
+            "description": "consectetur adipiscing elit. Integer turpis tortor, luctus id velit sit amet, maximus rutrum mi. Etiam quis finibus elit, eget interdum nisi. Proin gravida faucibus justo, rhoncus sagittis neque tincidunt vitae. ",
+            "status": "ARCHIVED",
+            "projectId": 1,
+            "userId":2
+        },
+        {
+            "id":7,
+            "name": "Lorem ipsum kolorowy sit amet,",
+            "description": "consectetur adipiscing elit. Integer turpis tortor, luctus id velit sit amet, maximus rutrum mi. Etiam quis finibus elit, eget interdum nisi. Proin gravida faucibus justo, rhoncus sagittis neque tincidunt vitae. ",
+            "status": "DONE",
+            "projectId": 1,
+            "userId":2
+        },
+        {
+            "id":8,
+            "name": "Lorem ipsum dolor sit amet,",
+            "description": "consectetur adipiscing elit. Integer turpis tortor, luctus id velit sit amet, maximus rutrum mi. Etiam quis finibus elit, eget interdum nisi. Proin gravida faucibus justo, rhoncus sagittis neque tincidunt vitae. ",
+            "status": "IN_PROGRESS",
+            "projectId": 1,
+            "userId":2
+        },
+        {
+            "id":9,
+            "name": "Lorem ipsum dolor sit amet,",
+            "description": "consectetur masło adipiscing elit. Integer turpis tortor, luctus id velit sit amet, maximus rutrum mi. Etiam quis finibus elit, eget interdum nisi. Proin gravida faucibus justo, rhoncus sagittis neque tincidunt vitae. ",
+            "status": "IN_PROGRESS",
+            "projectId": 1,
+            "userId":2
+        },
+
+        {
+            "id":10,
+            "name": "Lorem ipsum poszukiwany sit amet,",
+            "description": "consectetur adipiscing elit. Integer turpis tortor, luctus id velit sit amet, maximus rutrum mi. Etiam quis finibus elit, eget interdum nisi. Proin gravida faucibus justo, rhoncus sagittis neque tincidunt vitae. ",
+            "status": "TODO",
+            "projectId": 6,
+            "userId":1
+        },
+        {
+            "id":11,
+            "name": "Lorem ipsum dolor sit amet,",
+            "description": "consectetur adipiscing elit. Integer turpis tortor, luctus id velit sit amet, maximus rutrum mi. Etiam quis finibus elit, eget interdum nisi. Proin gravida faucibus justo, rhoncus sagittis neque tincidunt vitae. ",
+            "status": "TODO",
+            "projectId": 6,
+            "userId":2
+        },
+        {
+            "id":12,
+            "name": "Lorem ipsum dolor sit amet,",
+            "description": "consectetur adipiscing elit. Integer turpis tortor, luctus id velit sit amet, maximus rutrum mi. Etiam quis finibus elit, eget interdum nisi. Proin gravida faucibus justo, rhoncus sagittis neque tincidunt vitae. ",
+            "status": "IN_PROGRESS",
+            "projectId": 6,
+            "userId":1
+        },
+        {
+            "id":13,
+            "name": "Lorem ipsum dolor sit amet,",
+            "description": "consectetur adipiscing elit. Integer turpis tortor, luctus id velit sit amet, maximus rutrum mi. Etiam quis finibus elit, eget interdum nisi. Proin gravida faucibus justo, rhoncus sagittis neque tincidunt vitae. ",
+            "status": "IN_PROGRESS",
+            "projectId": 6,
+            "userId":2
+        }
+
+    ],
+    "projects": [
+        {
+            "id": 1,
+            "name": "Way better UX",
+            "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer turpis tortor, luctus id velit sit amet, maximus rutrum mi. Etiam quis finibus elit, eget interdum nisi. Proin gravida faucibus justo, rhoncus sagittis neque tincidunt vitae. Quisque fermentum quam tellus, nec interdum libero aliquet a",
+            "users": [
+                {
+                    "id": 1,
+                    "email": "szymon@gmail.com",
+                    "firstName": "Szymon",
+                    "lastName": "Rykała",
+                    "role": "ADMIN"
+                },
+                {
+                    "id": 2,
+                    "email": "filip@gmail.com",
+                    "firstName": "Filip",
+                    "lastName": "Nowicki",
+                    "role": "ADMIN"
+                }
+            ]
+        },
+        {
+            "id": 6,
+            "name": "Fusce vitae lectus placerat",
+            "description": "quis dictum molestie. Nulla lectus nibh, sodales vel nisl tristique, posuere bibendum libero. Aliquam congue, sem vitae dapibus pharetra, lorem leo sollicitudin nisl, in convallis odio orci et magna. Aenean ultricies nulla et libero dignissim aliquam.",
+            "users": [
+                {
+                    "id": 2,
+                    "email": "filip@gmail.com",
+                    "firstName": "Filip",
+                    "lastName": "Nowicki",
+                    "role": "ADMIN"
+                },
+                {
+                    "id": 1,
+                    "email": "szymon@gmail.com",
+                    "firstName": "Szymon",
+                    "lastName": "Rykała",
+                    "role": "ADMIN"
+                }
+            ]
+        }
+    ],
+    "users": [
+        {
+            "id": 1,
+            "email": "szymon@gmail.com",
+            "firstName": "Szymon",
+            "lastName": "Rykała",
+            "role": "ADMIN"
+        },
+        {
+            "id": 2,
+            "email": "filip@gmail.com",
+            "firstName": "Filip",
+            "lastName": "Nowicki",
+            "role": "ADMIN"
+        },
+        {
+            "id": 3,
+            "email": "tester@gmail.com",
+            "firstName": "Andrzej",
+            "lastName": "Testowski",
+            "role": "STUDENT"
+        }
+    ],
+    "session": {
+        "user": {
+            "id": 1,
+            "email": "szymon@gmail.com",
+            "firstName": "Szymon",
+            "lastName": "Rykała",
+            "role": "ADMIN"
+        },
+        "projects": [
+            {
+                "id": 1,
+                "name": "Way better UX",
+                "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer turpis tortor, luctus id velit sit amet, maximus rutrum mi. Etiam quis finibus elit, eget interdum nisi. Proin gravida faucibus justo, rhoncus sagittis neque tincidunt vitae. Quisque fermentum quam tellus, nec interdum libero aliquet a",
+                "users": []
+            },
+            {
+                "id": 6,
+                "name": "yyyy yyyyy",
+                "description": "Share a detailed description",
+                "users": []
+            }
+        ]
+    },
+    "chat": [
+        {
+            "text": "Witam wszystkich uczestników!",
+            "userId": 2,
+            "date": "12:55:40 AM",
+            "sender": "filip@gmail.com"
+        },
+        {
+            "text": "co u was słychać?",
+            "userId": 3,
+            "date": "12:55:40 AM",
+            "sender": "tester@gmail.com"
+        },
+        {
+            "text": "Ale fajny czat :D - wyszedł ekstralski",
+            "userId": 1,
+            "date": "12:55:40 AM",
+            "sender": "szymon@gmail.com"
+        },
+        {
+            "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer turpis tortor, luctus id velit sit amet, maximus rutrum mi. Etiam quis finibus elit, eget interdum nisi. Proin gravida :o",
+            "userId": 2,
+            "date": "12:55:40 AM",
+            "sender": "filip@example.com"
+        }
+    ]
+}
