@@ -1,0 +1,5 @@
+#!/bin/bash
+
+UP_ARGUMENTS="$@"
+
+ENVIRONMENT=DEVELOPMENT ./run $UP_ARGUMENTS

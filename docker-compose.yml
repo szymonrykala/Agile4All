@@ -1,0 +1,18 @@
+version: '3.9'
+
+services:
+  nginx:
+    image: ghcr.io/blayeer/agile-project/nginx:latest
+    restart: 'unless-stopped'
+    ports:
+      - 80:80
+  backend:
+    image: ghcr.io/blayeer/agile-project/backend:latest
+    restart: 'unless-stopped'
+    volumes:
+      - type: bind
+        source: ./backend/AgileApp/ESD/
+        target: /app/ESD/
+        bind:
+          propagation: "rslave"
+  

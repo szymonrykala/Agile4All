@@ -114,6 +114,7 @@ if (!app.Environment.IsDevelopment())
 app.UseCors();
 app.UseStaticFiles();
 
+app.UsePathBase(new PathString("/api"));
 app.UseRouting();
 
 app.UseAuthentication();

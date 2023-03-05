@@ -1,0 +1,17 @@
+#!/bin/bash
+
+ENV_FILE=./env/.env
+set -a
+source $ENV_FILE
+set +a
+
+BUILD_ARGUMENTS="$@"
+ARGUMENTS="-p $PROJECT_NAME -f ./docker-compose.yml -f ./docker-compose.dev.yml"
+
+echo "Running production build"
+
+docker                      \
+    compose                 \
+    $ARGUMENTS              \
+    build                   \
+    $BUILD_ARGUMENTS
