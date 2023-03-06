@@ -12,7 +12,7 @@ set -a
 source $ENV_FILE
 set +a
 
-UP_ARGUMENTS="$@"
+EXEC_ARGUMENTS="$@"
 ARGUMENTS="-p $PROJECT_NAME -f ./docker-compose.yml"
 
 if [ "$ENV" = DEVELOPMENT ]; then
@@ -27,5 +27,5 @@ ENV_FILE=$ENV_FILE          \
 docker                      \
     compose                 \
     $ARGUMENTS              \
-    up                      \
-    $UP_ARGUMENTS           \
+    exec                      \
+    $EXEC_ARGUMENTS           \

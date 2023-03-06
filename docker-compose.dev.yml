@@ -11,6 +11,8 @@ services:
       - ./frontend/agile4all:/usr/app
       - ./frontend/agile4all/node_modules:/usr/app/node_modules
     entrypoint: npm run start
+    env_file:
+      - ${ENV_FILE}
   nginx:
     build:
       context: ./
@@ -22,9 +24,9 @@ services:
   backend:
     build:
       context: ./
-      dockerfile: ./docker/backend/Dockerfile 
+      dockerfile: ./docker/backend/Dockerfile
     volumes:
       - ./backend:/backend
       - ./docker/backend/setup.dev.sh:/setup.sh
       - ~/.nuget/packages:/root/.nuget/packages:rw
-    entrypoint: /bin/bash -c "/setup.sh && dotnet watch run --urls http://0.0.0.0:8000 --project /backend/AgileApp --network=host"
+    entrypoint: /bin/bash -c "/setup.sh && dotnet watch run --urls http://0.0.0.0:8000 --project /backend/AgileApp"

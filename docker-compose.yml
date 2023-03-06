@@ -15,4 +15,11 @@ services:
         target: /app/ESD/
         bind:
           propagation: "rslave"
+    env_file:
+      - ${ENV_FILE}
+  db:
+    image: postgres:15-alpine
+    restart: 'unless-stopped'
+    env_file:
+      - ${ENV_FILE}
   

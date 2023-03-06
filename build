@@ -10,6 +10,7 @@ ARGUMENTS="-p $PROJECT_NAME -f ./docker-compose.yml -f ./docker-compose.dev.yml"
 
 echo "Running production build"
 
+ENV_FILE=$ENV_FILE          \
 docker                      \
     compose                 \
     $ARGUMENTS              \

@@ -17,6 +17,7 @@ using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
 using AgileApp.Repository.Chat;
 using AgileApp.Services.Chat;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -65,7 +66,9 @@ builder.Services.Configure<KestrelServerOptions>(options =>
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddDbContext<AgileDbContext>();
+builder.Services.AddDbContext<AgileDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
+);
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 
