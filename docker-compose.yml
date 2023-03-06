@@ -9,6 +9,8 @@ services:
   backend:
     image: ghcr.io/blayeer/agile-project/backend:latest
     restart: 'unless-stopped'
+    depends_on:
+      - db
     volumes:
       - type: bind
         source: ./backend/AgileApp/ESD/

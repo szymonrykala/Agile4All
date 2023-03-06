@@ -16,4 +16,4 @@ RUN dotnet publish "AgileApp.csproj" -c Release -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "AgileApp.dll"]
+ENTRYPOINT dotnet AgileApp.dll --urls=http://+:8000
