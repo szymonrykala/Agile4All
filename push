@@ -1,17 +1,5 @@
 #!/bin/bash
 
-ENV_FILE=./env/.env
-set -a
-source $ENV_FILE
-set +a
-
-PUSH_ARGUMENTS="$@"
-ARGUMENTS="-p $PROJECT_NAME -f ./docker-compose.yml -f ./docker-compose.dev.yml"
-
 echo "Pushing images to the registry"
 
-docker                      \
-    compose                 \
-    $ARGUMENTS              \
-    push                   \
-    $PUSH_ARGUMENTS
+./compose-dev push $@

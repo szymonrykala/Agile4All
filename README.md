@@ -1,0 +1,6 @@
+- `./build` builds docker images
+- `./push` pushes images to the registry
+- `./start` runs application in production environment
+- `./start-dev` runs application in development environment
+- `./compose` wrapper to `docker compose` which sets up production environment variables & does other cool stuff
+- `./compose-dev` same as `./compose` but instead of production it loads development environment variables
