@@ -16,4 +16,8 @@ RUN dotnet publish "AgileApp.csproj" -c Release -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT dotnet AgileApp.dll --urls=http://+:8000
+COPY ./docker/backend/entrypoint.sh /entrypoint.sh
+
+RUN apt-get update && apt-get install -y gosu
+
+ENTRYPOINT /entrypoint.sh dotnet AgileApp.dll --urls=http://+:8000

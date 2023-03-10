@@ -1,6 +1,9 @@
 #!/bin/bash
 
-if [ "$ENVIRONMENT" = DEVELOPMENT ]; then 
+export LOCAL_USER_ID=${LOCAL_USER_ID:-`id -u`}
+export LOCAL_GROUP_ID=${LOCAL_GROUP_ID:-`id -g`}
+
+if [ "$ENVIRONMENT" = DEVELOPMENT ]; then
     ENV=DEVELOPMENT
     ENV_FILE=./env/.env.dev
 else
@@ -24,9 +27,11 @@ fi
 
 echo "Running $ENV environment"
 
-ENV_FILE=$ENV_FILE          \
-docker                      \
-    compose                 \
-    $DOCKER_ARGUMENTS       \
-    $COMMAND                \
-    $COMMAND_ARGUMENTS      \
+LOCAL_USER_ID=$LOCAL_USER_ID    \
+LOCAL_GROUP_ID=$LOCAL_GROUP_ID  \
+ENV_FILE=$ENV_FILE              \
+docker                          \
+    compose                     \
+    $DOCKER_ARGUMENTS           \
+    $COMMAND                    \
+    $COMMAND_ARGUMENTS
