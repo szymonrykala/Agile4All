@@ -30,6 +30,7 @@ services:
       - ./docker/backend/entrypoint.sh:/entrypoint.sh
       - ./docker/backend/entrypoint.dev.sh:/entrypoint.dev.sh
       - ~/.nuget/packages:/root/.nuget/packages:rw
+      - ./docker/db/migrations:/migrations
     environment:
       - LOCAL_USER_ID=${LOCAL_USER_ID:-9001}
       - LOCAL_GROUP_ID=${LOCAL_GROUP_ID:-9001}

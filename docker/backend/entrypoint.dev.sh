@@ -21,5 +21,5 @@ if ! installed dotnet-sdk-6.0; then
     apt-get update && apt-get install -y dotnet-sdk-6.0
 fi
 
-/entrypoint.sh dotnet tool install --global dotnet-ef --version 6.*
+/entrypoint.sh dotnet tool install --global dotnet-ef --version 6.* &> /dev/null
 /entrypoint.sh "$@"

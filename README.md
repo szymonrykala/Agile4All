@@ -4,3 +4,5 @@
 - `./start-dev` runs application in development environment
 - `./compose` wrapper to `docker compose` which sets up production environment variables & does other cool stuff
 - `./compose-dev` same as `./compose` but instead of production it loads development environment variables
+- `./dotnet-ef` dotnet-ef tool used for migrations. You can create migrations outside of docker too. But its nice to have ability to do that in docker. Eg. `./dotnet-ef migrations add InitialMigration --project /backend/AgileApp`
+- `./generate-migration-scripts` used to generate `.sql` files from existing .NET migrations

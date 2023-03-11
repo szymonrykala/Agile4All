@@ -17,14 +17,5 @@ namespace AgileApp
         public DbSet<Proj_UserDb>? Proj_Users { get; set; }
         public DbSet<MessageDb>? Messages { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<UserDb>().ToTable("users");
-            modelBuilder.Entity<TaskDb>().ToTable("tasks");
-            modelBuilder.Entity<ProjectDb>().ToTable("projects");
-            modelBuilder.Entity<FileDb>().ToTable("files");
-            modelBuilder.Entity<Proj_UserDb>().ToTable("proj_users");
-            modelBuilder.Entity<MessageDb>().ToTable("messages");
-        }
     }
 }
