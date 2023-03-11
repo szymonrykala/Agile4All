@@ -28,4 +28,4 @@ services:
     environment:
       - LOCAL_USER_ID=${LOCAL_USER_ID:-9001}
       - LOCAL_GROUP_ID=${LOCAL_GROUP_ID:-9001}
-    entrypoint: /entrypoint.dev.sh dotnet watch run --urls http://0.0.0.0:8000 --project /backend/AgileApp
+    entrypoint: /entrypoint.dev.sh "dotnet watch run --urls 'http://0.0.0.0:8000;http://0.0.0.0:9000' --project /backend/AgileApp"
