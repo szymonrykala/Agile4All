@@ -4,13 +4,13 @@
 - git
 
 # Getting started:
-1. Login to container repository:
+1. (Optional- needed only for pushing built images) Login to container repository:
 `docker login ghcr.io`.
 Username is your github login.
 Password is personal access token you need to generate in github settings.
 2. Run `start-dev` (windows) or `./start-dev` (unix)
 3. Docker will download & build the images
-4. You are ready to start developing
+4. You are ready to start developing. By default application is hosted on `localhost:4200`
 5. Frontend & backend have hot-reload on by default. If you edit & save any file, the watcher will pick it up and rebuild it straight away
 
 # Tips
