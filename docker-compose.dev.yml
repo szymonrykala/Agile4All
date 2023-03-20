@@ -2,25 +2,19 @@ version: '3.9'
 
 services:
   frontend:
-    image: ghcr.io/blayeer/agile-project/frontend:latest
-    restart: 'unless-stopped'
     build:
       context: ./
       dockerfile: ./docker/frontend/Dockerfile
     volumes:
       - ./frontend/agile4all:/usr/app
       - ./frontend/agile4all/node_modules:/usr/app/node_modules
-    entrypoint: /bin/sh -c "npm install && npm run start"
-    env_file:
-      - ${ENV_FILE}
+    entrypoint: /bin/bash -c "npm install && npm run start"
   nginx:
     build:
       context: ./
       dockerfile: ./docker/nginx/Dockerfile
-    volumes:
-      - ./docker/nginx/nginx.dev.conf:/etc/nginx/nginx.conf
     ports:
-      - 4200:4200
+      - 4200:80
   backend:
     build:
       context: ./
