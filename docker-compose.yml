@@ -29,3 +29,9 @@ services:
     restart: 'unless-stopped'
     env_file:
       - ${ENV_FILE}
+    volumes:
+      - type: bind
+        source: ./docker/db/migrations/
+        target: /docker-entrypoint-initdb.d/
+        bind:
+          propagation: "rslave"
