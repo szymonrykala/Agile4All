@@ -2,17 +2,17 @@ version: '3.9'
 
 services:
   frontend:
-    image: ghcr.io/szymonrykala/agile-project/frontend:latest
+    image: blayer.mooo.com:5000/agile-project/frontend:latest
     restart: 'unless-stopped'
     env_file:
       - ${ENV_FILE}
   nginx:
-    image: ghcr.io/szymonrykala/agile-project/nginx:latest
+    image: blayer.mooo.com:5000/agile-project/nginx:latest
     restart: 'unless-stopped'
     ports:
-      - 80:80
+      - 5700:80
   backend:
-    image: ghcr.io/szymonrykala/agile-project/backend:latest
+    image: blayer.mooo.com:5000/agile-project/backend:latest
     restart: 'unless-stopped'
     depends_on:
       - db
