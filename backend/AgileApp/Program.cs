@@ -17,6 +17,8 @@ using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
 using AgileApp.Repository.Chat;
 using AgileApp.Services.Chat;
+using AgileApp.Handlers;
+using AgileApp.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -93,6 +95,9 @@ builder.Services.AddCors(policyBuilder =>
         policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod())
 );
 
+builder.Services.AddWebSocketManager();
+builder.Services.AddSingleton<ChatMessageHandler>();
+
 builder.Services.AddControllers().AddNewtonsoftJson();
 
 var app = builder.Build();
@@ -104,6 +109,7 @@ var webSocketOptions = new WebSocketOptions
 };
 
 app.UseWebSockets(webSocketOptions);
+app.MapWebSocketManager("/chat", app.Services.GetService<ChatMessageHandler>());
 // </snippet_UseWebSockets>
 
 // Configure the HTTP request pipeline.

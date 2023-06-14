@@ -11,7 +11,10 @@ interface IChatContext {
     chatOpen: boolean
 }
 
-const _socket = new WebSocket(process.env.REACT_APP_WS_API_URL as string);
+const ws_url = new URL(process.env.REACT_APP_WS_API_URL as string, window.location.href);
+ws_url.protocol = window.location.protocol === "https:" ? 'wss' : 'ws';
+
+const _socket = new WebSocket(ws_url);
 
 
 export const ChatContext = createContext<IChatContext>({
@@ -49,7 +52,7 @@ export function ChatContextProvider({ children }: IChatContextProvider) {
     const reconnectWS = useCallback(() => {
         if ([socket.CLOSED, socket.CLOSING].includes(socket.readyState)) {
             console.debug('creating new connection to ws')
-            const conn = new WebSocket(process.env.REACT_APP_WS_API_URL as string)
+            const conn = new WebSocket(ws_url)
             setSocket(conn)
         }
     }, [socket, setSocket])
