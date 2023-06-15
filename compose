@@ -21,7 +21,7 @@ DOCKER_ARGUMENTS="-p $PROJECT_NAME -f ./docker-compose.yml"
 
 if [ "$ENV" = DEVELOPMENT ]; then
     DOCKER_ARGUMENTS+="${ARGUMENTS} -f ./docker-compose.dev.yml"
-else
+elif [ "$COMMAND" = up ]; then
     COMMAND_ARGUMENTS+=" --no-build"
 fi
 
