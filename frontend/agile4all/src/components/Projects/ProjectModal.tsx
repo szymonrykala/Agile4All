@@ -30,7 +30,7 @@ export default function ProjectModal() {
     const dispatch = useAppDispatch();
     const [editMode, setEditMode] = useState<boolean>(false);
     const navigate = useNavigate();
-    const isAdmin = useCheckAdmin()
+    const isAdmin = useCheckAdmin();
 
 
     const reduxProject: Project = useAppSelector(({ projects }) =>

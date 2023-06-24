@@ -6,6 +6,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FilesApi, UsersApi } from "../../client";
 import { UUID } from "../../models/common";
 import { useParams } from "react-router";
+import { mockedFiles } from "../../client/mocks/files";
 
 
 interface IFilesPanel {
@@ -20,7 +21,14 @@ export default function FilesPanel(props: IFilesPanel) {
 
 
     const fetchFiles = useCallback(async () => {
-        const resp = await FilesApi.getAll(queryParams) as unknown as FileModel[]
+        let resp: FileModel[];
+
+        if(process.env.NODE_ENV === "development"){
+            resp = mockedFiles
+        }else{
+            resp = await FilesApi.getAll(queryParams) as unknown as FileModel[]
+        }
+
         setFiles(resp)
 
     }, [queryParams])

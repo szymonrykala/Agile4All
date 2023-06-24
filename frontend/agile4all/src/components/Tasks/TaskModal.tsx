@@ -55,6 +55,7 @@ export default function TaskModal() {
         dispatch(remove(task))
     }, [task, dispatch])
 
+
     const updateTask = useCallback(async () => {
         if (task !== initTask) {
             dispatch(update(task))
@@ -70,6 +71,7 @@ export default function TaskModal() {
 
     }, [task, dispatch, initTask])
 
+
     const updateAssignedUser = useCallback((event: any, user: UUID | null) => {
         if (!user) return;
 
@@ -77,7 +79,6 @@ export default function TaskModal() {
     }, [task])
 
     const statusUpdate = useCallback((event: any, newStatus: TaskStatus | null) => {
-        // api call ??
         if (newStatus) setTask({ ...task, status: newStatus })
     }, [task]);
 

@@ -6,6 +6,8 @@ import User from "../../models/user";
 import { load as loadUsersSlice } from "../../store/usersSlice";
 import { load as loadProjectsSlice } from "../../store/projectSlice";
 import { useReloadTrigger } from "./ReloadTrigger";
+import { mockedProjects } from "../../client/mocks/project";
+import { mockedUsers } from "../../client/mocks/user";
 
 
 
@@ -15,7 +17,13 @@ export default function ResourceLoader() {
     const trigger = useReloadTrigger();
 
     const loadUsers = useCallback(async () => {
-        const users = await UsersApi.getAll() as unknown as User[];
+        let users:User[] 
+
+        if(process.env.NODE_ENV === "development"){
+            users = mockedUsers
+        }else{
+            users = await UsersApi.getAll() as unknown as User[];
+        }
         dispatch(loadUsersSlice(users));
     }, [dispatch])
 
@@ -25,7 +33,14 @@ export default function ResourceLoader() {
 
 
     const loadProjects = useCallback(async () => {
-        const projects = await ProjectsApi.getAll() as Project[]
+        let projects:Project[];
+
+        if(process.env.NODE_ENV === "development"){
+            projects = mockedProjects
+        }else{
+            projects = await ProjectsApi.getAll() as Project[]
+        }
+
         dispatch(loadProjectsSlice(projects))
     }, [dispatch])
 
