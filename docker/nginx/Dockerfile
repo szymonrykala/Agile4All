@@ -1,4 +1,4 @@
-FROM ghcr.io/blayeer/agile-project/frontend:latest as frontend
+FROM blayer.mooo.com:5000/agile-project/frontend:latest as frontend
 
 FROM nginx:alpine
 EXPOSE 80
