@@ -1,6 +1,6 @@
 ﻿using AgileApp.Enums;
 
-namespace AgileApp.Controllers
+namespace AgileApp.Middleware
 {
     public class JwtMiddleware
     {
