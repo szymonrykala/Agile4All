@@ -1,4 +1,4 @@
-import { Sheet, Typography } from "@mui/joy";
+import { Box, Sheet, Stack, Typography } from "@mui/joy";
 import { useAppSelector } from "../../hooks";
 import Project from "../../models/project";
 import Task from "../../models/task";
@@ -22,44 +22,48 @@ export default function TaskCard({ task }: ITaskCard) {
 
     return (
         <Sheet sx={{
-            p:2,
-            borderRadius:10,
+            p: 1,
+            borderRadius: 10,
             bgcolor: 'background.componentBg',
             width: '100%',
         }}>
-            <Typography level='body2' marginBottom={1}>
-                <StatusChip status={task.status} />
-                &nbsp;
-                <Link to={`/app/users/${task.userId}`}>
-                    {`${user?.firstName} ${user?.lastName}`}
-                </Link>
-            </Typography>
+            <Stack spacing={0.8}>
 
-            <Typography
-                level='body2'
-                sx={{
-                    overflow: 'hidden',
-                    wordBreak: 'break-word',
-                    textOverflow: 'ellipsis',
-                }}
-                marginBottom={1}
-            >
-                <Link to={`${task.id}`}>
-                    A4A-{task.id}-
-                </Link>
-                {task.name}
-            </Typography>
+                <Box display="flex" justifyContent="space-between">
+                    <Link to={`${task.id}`}>A4A-{task.id}</Link>
+                    <StatusChip status={task.status} />
+                </Box>
 
-            <Typography
-                level='body2'
-                textOverflow='ellipsis'
-                overflow='hidden'
-                maxHeight='60px'
-            >
-                {task.description}
-            </Typography>
-            <br/>
-            <Link to={`${task.id}`}>see more...</Link>
+                <Typography
+                    level='body2'
+                    sx={{
+                        overflow: 'hidden',
+                        wordBreak: 'break-word',
+                        textOverflow: 'ellipsis',
+                    }}
+                >
+                    {task.name}
+                </Typography>
+
+                <span>
+                    <Typography
+                        level='body2'
+                        textOverflow='ellipsis'
+                        overflow='hidden'
+                        maxHeight='60px'
+                    >
+                        {task.description}
+                    </Typography>
+                    <Link sx={{ fontSize: 13 }} to={`${task.id}`}>see more...</Link>
+                </span>
+
+                <span>
+                    <small>asignee:&nbsp;</small>
+                    <Link sx={{ fontSize: 14 }} to={`/app/users/${task.userId}`}>
+                        {`${user?.firstName} ${user?.lastName}`}
+                    </Link>
+                </span>
+            </Stack>
         </Sheet>
     )
 }
