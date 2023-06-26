@@ -35,14 +35,14 @@ export default function Header(props: IHeader) {
                     gap: 1.5,
                 }}
             >
-                {props.setDrawerOpen && <IconButton
+                <IconButton
                     variant="outlined"
                     size="sm"
                     onClick={() => props.setDrawerOpen && props.setDrawerOpen(true)}
-                    sx={{ display: { sm: 'none' } }}
+                    // sx={{ display: { sm: 'none' } }}
                 >
                     <MenuIcon />
-                </IconButton>}
+                </IconButton>
                 <IconButton
                     size="sm"
                     variant="solid"

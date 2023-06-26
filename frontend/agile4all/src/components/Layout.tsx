@@ -1,25 +1,22 @@
 import * as React from 'react';
 import Box, { BoxProps } from '@mui/joy/Box';
-import Sheet from '@mui/joy/Sheet';
 
 function Root(props: BoxProps) {
   return (
     <Box
       {...props}
-      sx={[
-        {
-          bgcolor: 'background.appBody',
-          display: 'grid',
-          gridTemplateColumns: {
-            xs: '1fr',
-            sm: 'minmax(64px, 200px) minmax(450px, 1fr)',
-            md: 'minmax(160px, 300px) minmax(500px, 1fr)',
-          },
-          gridTemplateRows: '64px 1fr',
-          minHeight: '100vh',
+      sx={{
+        bgcolor: 'background.appBody',
+        display: 'grid',
+        gridTemplateColumns: {
+          xs: '1fr',
+          sm: 'minmax(0px, auto) minmax(400px, 1fr)',
+          md: 'minmax(0px, auto) minmax(480px, 1fr) minmax(0px, auto)',
         },
-        ...(Array.isArray(props.sx) ? props.sx : [props.sx]),
-      ]}
+        gridTemplateRows: '64px 1fr',
+        minHeight: '100vh',
+        ...props.sx,
+      }}
     />
   );
 }
@@ -28,7 +25,6 @@ function Header(props: BoxProps) {
   return (
     <Box
       component="header"
-      className="Header"
       {...props}
       sx={[
         {
@@ -52,47 +48,65 @@ function Header(props: BoxProps) {
   );
 }
 
-function SideNav(props: BoxProps) {
+interface ISideNav extends BoxProps {
+  isOpen: boolean
+}
+
+function SideNav(props: ISideNav) {
+  const commonStyle = React.useMemo(() => {
+    return {
+      width: props.isOpen ? {
+        sm: "220px",
+        md: "250px"
+      } : "0px",
+      transform: `translateX(${!props.isOpen ? "-150px" : "0px"})`,
+      transition: "0.3s ease-out",
+    }
+  }, [props.isOpen])
+
   return (
-    <Box
-      component="nav"
-      className="Navigation"
-      {...props}
-      sx={[
-        {
-          p: 2,
+    <>
+      <Box
+        component="nav"
+        {...props}
+        sx={{
+          position: 'fixed',
+          top: 50,
+          height: "100vh",
+
+          p: props.isOpen ? 1 : 1,
           bgcolor: 'background.componentBg',
           borderRight: '1px solid',
           borderColor: 'divider',
-          display: {
-            xs: 'none',
-            sm: 'initial',
-          },
-        },
-        ...(Array.isArray(props.sx) ? props.sx : [props.sx]),
-      ]}
-    />
+          overflow: 'hidden',
+          zIndex: 1000,
+
+          ...commonStyle,
+          ...props.sx,
+        }}
+      />
+      <Box sx={commonStyle}></Box>{/* space placeholder */}
+    </>
   );
 }
 
 function SidePane(props: BoxProps) {
   return (
-    <Box
-      className="Inbox"
-      {...props}
-      sx={[
-        {
-          bgcolor: 'background.componentBg',
-          borderRight: '1px solid',
-          borderColor: 'divider',
-          display: {
-            xs: 'none',
-            md: 'initial',
+    <>
+      <Box
+        {...props}
+        sx={[
+          {
+            bgcolor: 'background.componentBg',
+            borderRight: '1px solid',
+            borderColor: 'divider',
+            display: "initial"
           },
-        },
-        ...(Array.isArray(props.sx) ? props.sx : [props.sx]),
-      ]}
-    />
+          ...(Array.isArray(props.sx) ? props.sx : [props.sx]),
+        ]}
+      />
+      <Box></Box>{/* space placeholder */}
+    </>
   );
 }
 
@@ -107,59 +121,11 @@ function Main(props: BoxProps) {
   );
 }
 
-
-interface IDrawerOpen {
-  onClose: React.MouseEventHandler<HTMLDivElement>,
-  children: React.ReactElement
-}
-
-function SideDrawer({
-  onClose,
-  ...props
-}: IDrawerOpen) {
-  return (
-    <Box
-      sx={{
-          position: 'fixed',
-          zIndex: 1200,
-          width: '100%',
-          height: '100%',
-        }}
-    >
-      <Box
-        role="button"
-        onClick={onClose}
-        sx={{
-          position: 'absolute',
-          inset: 0,         
-          bgcolor: (theme) =>
-            `rgba(${theme.vars.palette.neutral.darkChannel} / 0.6)`,
-        }}
-      />
-      <Sheet
-        sx={{
-          minWidth: 256,
-          width: 'max-content',
-          height: '100%',
-          p: 2,
-          opacity: 1,
-          boxShadow: 'lg',
-          bgcolor: 'background.componentBg',
-          transition: "opacity 1s ease-out",
-        }}
-      >
-        {props.children}
-      </Sheet>
-    </Box>
-  );
-}
-
 const layout = {
   Root,
   Header,
   SideNav,
   SidePane,
-  SideDrawer,
   Main,
 };
 

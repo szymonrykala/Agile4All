@@ -1,5 +1,3 @@
-import Box from '@mui/joy/Box';
-import Typography from '@mui/joy/Typography';
 import List from '@mui/joy/List';
 import ListItem from '@mui/joy/ListItem';
 import ListItemButton from '@mui/joy/ListItemButton';
@@ -7,10 +5,12 @@ import ListItemDecorator from '@mui/joy/ListItemDecorator';
 import ListItemContent from '@mui/joy/ListItemContent';
 import PeopleRoundedIcon from '@mui/icons-material/PeopleRounded';
 import AssignmentIndRoundedIcon from '@mui/icons-material/AssignmentIndRounded';
-import HomeIcon from '@mui/icons-material/HomeRounded';
 import { Link, useLocation, useResolvedPath } from 'react-router-dom';
-import { useMemo } from 'react';
+import { useState } from 'react';
 import { useAppSelector } from '../../hooks';
+import TaskIcon from '@mui/icons-material/Task';
+import { KeyboardArrowDown, KeyboardArrowRight, KeyboardArrowUp } from '@mui/icons-material';
+import ListSubheader from '@mui/joy/ListSubheader';
 
 
 const clicked = {
@@ -19,80 +19,102 @@ const clicked = {
 }
 
 
+function TasksItem() {
+  const [folded, setFolded] = useState(true);
+
+  const loc = useLocation();
+  const path = useResolvedPath(loc);
+  const sessionUserProjects = useAppSelector(({ session }) => session?.projects || [])
+
+  return (
+    <ListItem nested>
+      <ListItemButton onClick={() => setFolded(!folded)}>
+        <ListItemDecorator>
+          <TaskIcon />
+
+        </ListItemDecorator>
+        <ListItemContent>
+          Tasks
+        </ListItemContent>
+        {folded ? <KeyboardArrowDown /> : <KeyboardArrowUp />}
+      </ListItemButton>
+      <List sx={{
+        height: folded ? "unset" : "0px",
+        overflow: "hidden"
+      }}>
+        {sessionUserProjects ?
+          sessionUserProjects.map(project =>
+            <ListItem>
+              <ListItemButton
+                {...path.pathname === `/app/projects/${project.id}/tasks` ? clicked : Object()}
+                component={Link} to={`/app/projects/${project.id}/tasks`}
+              >
+                <ListItemDecorator sx={{ color: 'inherit' }}>
+                  <KeyboardArrowRight fontSize="small" />
+                </ListItemDecorator>
+                <ListItemContent>{project.name}</ListItemContent>
+              </ListItemButton>
+            </ListItem>
+          )
+          :
+          <ListItem>
+            <small><i>No projects assigned yet ...</i></small>
+          </ListItem>
+        }
+      </List>
+    </ListItem>
+  )
+}
+
+
+const navLinks = [
+  {
+    name: 'Projects',
+    link: '/app/projects',
+    Icon: AssignmentIndRoundedIcon
+  }, {
+    name: 'Users',
+    link: '/app/users',
+    Icon: PeopleRoundedIcon
+  }
+];
 
 export default function SideNav() {
   const loc = useLocation();
   const path = useResolvedPath(loc);
-  const currentSessionUserId = useAppSelector(({ session }) => session?.user?.id)
 
-
-  const links = useMemo(() => [
-    {
-      name: 'Tasks',
-      link: `/app/users/${currentSessionUserId}/tasks`,
-      Icon: HomeIcon
-    }, {
-      name: 'Projects',
-      link: '/app/projects',
-      Icon: AssignmentIndRoundedIcon
-    }, {
-      name: 'Users',
-      link: '/app/users',
-      Icon: PeopleRoundedIcon
-    }
-  ], [currentSessionUserId]);
 
   return (
-    <List size="sm" sx={{ '--List-item-radius': '8px' }}>
+    <List
+      sx={{
+        '--List-nestedInsetStart': '13px',
+      }}
+      size='md'
+    >
+      <ListSubheader sx={{
+        textColor: "neutral.500",
+        fontSize: '10px'
+      }}>
+        Menu
+      </ListSubheader>
 
-      <ListItem nested sx={{ p: 0 }}>
-        <Box
-          sx={{
-            mb: 1,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
-        >
-          <Typography
-            id="nav-list-browse"
-            textColor="neutral.500"
-            fontWeight={700}
-            sx={{
-              fontSize: '10px',
-              textTransform: 'uppercase',
-              letterSpacing: '.1rem',
-            }}
-          >
-            Menu
-          </Typography>
-        </Box>
+      <TasksItem />
 
-        <List
-          aria-labelledby="nav-list-browse"
-          sx={{
-            '& .JoyListItemButton-root': { p: '8px' },
-          }}
-          size='md'
-        >
-          {
-            links.map(({ link, name, Icon }) => (
-
-              <ListItem key={name}>
-                <ListItemButton
-                  {...path.pathname === link ? clicked : Object()}
-                  component={Link} to={link}
-                >
-                  <ListItemDecorator sx={{ color: 'inherit' }}>
-                    <Icon fontSize="small" />
-                  </ListItemDecorator>
-                  <ListItemContent>{name}</ListItemContent>
-                </ListItemButton>
-              </ListItem>
-            ))
-          }
-        </List>
-      </ListItem >
-    </List >
+      {
+        navLinks.map(({ link, name, Icon }) => (
+          <ListItem key={name}>
+            <ListItemButton
+              {...path.pathname === link ? clicked : Object()}
+              component={Link} to={link}
+            >
+              <ListItemDecorator sx={{ color: 'inherit' }}>
+                <Icon fontSize="small" />
+              </ListItemDecorator>
+              <ListItemContent>{name}</ListItemContent>
+            </ListItemButton>
+          </ListItem>
+        ))
+      }
+    </List>
   );
 }
