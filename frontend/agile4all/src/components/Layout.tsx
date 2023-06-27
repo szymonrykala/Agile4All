@@ -11,7 +11,7 @@ function Root(props: BoxProps) {
         gridTemplateColumns: {
           xs: '1fr',
           sm: 'minmax(0px, auto) minmax(400px, 1fr)',
-          md: 'minmax(0px, auto) minmax(480px, 1fr) minmax(0px, auto)',
+          md: 'minmax(0px, auto) minmax(480px, 1fr)',
         },
         gridTemplateRows: '64px 1fr',
         minHeight: '100vh',
@@ -26,24 +26,22 @@ function Header(props: BoxProps) {
     <Box
       component="header"
       {...props}
-      sx={[
-        {
-          p: 2,
-          gap: 2,
-          bgcolor: 'background.componentBg',
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          gridColumn: '1 / -1',
-          borderBottom: '1px solid',
-          borderColor: 'divider',
-          position: 'sticky',
-          top: 0,
-          zIndex: 1100,
-        },
-        ...(Array.isArray(props.sx) ? props.sx : [props.sx]),
-      ]}
+      sx={{
+        p: 2,
+        gap: 2,
+        bgcolor: 'background.componentBg',
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        gridColumn: '1 / -1',
+        borderBottom: '1px solid',
+        borderColor: 'divider',
+        position: 'sticky',
+        top: 0,
+        zIndex: 1100,
+        ...props.sx,
+      }}
     />
   );
 }
@@ -84,31 +82,14 @@ function SideNav(props: ISideNav) {
           ...commonStyle,
           ...props.sx,
         }}
-      />
+      >
+        {props.children}
+      </Box>
       <Box sx={commonStyle}></Box>{/* space placeholder */}
     </>
   );
 }
 
-function SidePane(props: BoxProps) {
-  return (
-    <>
-      <Box
-        {...props}
-        sx={[
-          {
-            bgcolor: 'background.componentBg',
-            borderRight: '1px solid',
-            borderColor: 'divider',
-            display: "initial"
-          },
-          ...(Array.isArray(props.sx) ? props.sx : [props.sx]),
-        ]}
-      />
-      <Box></Box>{/* space placeholder */}
-    </>
-  );
-}
 
 function Main(props: BoxProps) {
   return (
@@ -116,7 +97,10 @@ function Main(props: BoxProps) {
       component="main"
       className="Main"
       {...props}
-      sx={[{ p: 2 }, ...(Array.isArray(props.sx) ? props.sx : [props.sx])]}
+      sx={{
+        p: 2,
+        ...props.sx
+      }}
     />
   );
 }
@@ -125,7 +109,6 @@ const layout = {
   Root,
   Header,
   SideNav,
-  SidePane,
   Main,
 };
 

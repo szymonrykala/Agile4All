@@ -1,5 +1,4 @@
-import Modal from "../common/Modal";
-import { Divider, IconButton, Option, Select, Sheet, Typography } from "@mui/joy";
+import { Box, Divider, IconButton, Option, Select, Typography } from "@mui/joy";
 import Task, { TaskStatus } from "../../models/task";
 import { getStatusColor } from "./StatusChip";
 import NamedAvatar from "./NamedAvatar";
@@ -15,6 +14,7 @@ import { useAppDispatch, useAppSelector } from "../../hooks";
 import { TasksApi } from "../../client";
 import { remove, update } from "../../store/taskSlice";
 import { useParams } from "react-router";
+import SidePanel from "../common/SidePanel";
 
 
 
@@ -28,7 +28,7 @@ const demoTaskData = {
 }
 
 
-export default function TaskModal() {
+export default function TaskPanel() {
     const [editMode, setEditMode] = useState<boolean>(false);
     const dispatch = useAppDispatch();
     const { taskId } = useParams()
@@ -84,21 +84,14 @@ export default function TaskModal() {
 
 
     return (
-        <Modal
-            title='task window'
-            description='detailed task window'
-            sx={{
-                width: '500px',
-                bgcolor: 'background.componentBg',
-            }}
-        >
+        <SidePanel>
+
             {user && <NamedAvatar user={user} />}
 
-            <Sheet
+            <Box
                 sx={{
                     display: 'flex',
                     flexDirection: 'row',
-                    bgcolor: 'inherit',
                     justifyContent: 'space-between'
                 }}>
 
@@ -115,7 +108,8 @@ export default function TaskModal() {
                     <Option value={TaskStatus.TODO}>To Do</Option>
                     <Option value={TaskStatus.ARCHIVED}>archived</Option>
                 </Select>
-                <Sheet sx={{ display: 'flex', gap: 1, bgcolor: 'inherit' }}>
+
+                <Box sx={{ display: 'flex', gap: 1, bgcolor: 'inherit' }}>
                     <IconButton onClick={() => setEditMode(!editMode)}>
                         <EditIcon />
                     </IconButton>
@@ -127,8 +121,9 @@ export default function TaskModal() {
                     <IconButton onClick={deleteTask} color='danger'>
                         <DeleteIcon />
                     </IconButton>
-                </Sheet>
-            </Sheet>
+                </Box>
+
+            </Box>
 
             <Typography component='label' level='body3'>
                 Assigned user
@@ -165,6 +160,6 @@ export default function TaskModal() {
 
             <Divider />
             <FilesPanel files={[]} />
-        </Modal>
+        </SidePanel>
     )
 }

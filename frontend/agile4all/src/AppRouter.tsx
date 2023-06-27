@@ -5,14 +5,14 @@ import App from "./App";
 import Projects from "./components/Pages/Projects";
 import Users from "./components/Pages/Users";
 import Tasks from "./components/Pages/Tasks";
-import TaskModal from "./components/Tasks/TaskModal";
+import TaskPanel from "./components/Tasks/TaskPanel";
 import Login from "./components/Pages/Login";
 import Registration from "./components/Pages/Registration";
 import SessionController from "./components/Pages/SessionControler";
 import Logout from "./components/Pages/Logout";
-import UserModal from "./components/Users/UserModal";
+import UserPanel from "./components/Users/UserPanel";
 import { ErrorBaner } from "./components/Errors";
-import ProjectModal from "./components/Projects/ProjectModal";
+import ProjectPanel from "./components/Projects/ProjectPanel";
 
 
 
@@ -49,7 +49,7 @@ const AppRouter = createHashRouter([
             children: [
               {
                 path: ':taskId',
-                element: <TaskModal />
+                element: <TaskPanel />
               }
             ]
           },
@@ -60,7 +60,7 @@ const AppRouter = createHashRouter([
             children: [
               {
                 path: ':userId',
-                element: <UserModal />,
+                element: <UserPanel />,
               }
             ]
           },
@@ -71,7 +71,7 @@ const AppRouter = createHashRouter([
               {
                 errorElement: <ErrorBaner />,
                 path: ':projectId',
-                element: <ProjectModal />,
+                element: <ProjectPanel />,
               },
             ]
           },
@@ -82,7 +82,7 @@ const AppRouter = createHashRouter([
             children: [
               {
                 path: ':taskId',
-                element: <TaskModal />,
+                element: <TaskPanel />,
               }
             ]
           },

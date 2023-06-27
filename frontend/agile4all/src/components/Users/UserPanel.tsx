@@ -9,8 +9,8 @@ import Project from "../../models/project";
 import User, { UserRole } from "../../models/user";
 import { remove, update } from "../../store/usersSlice";
 import EditableTextField from "../common/EditableTextField";
-import Modal from "../common/Modal";
 import NamedAvatar from "../Tasks/NamedAvatar";
+import SidePanel from "../common/SidePanel";
 
 
 
@@ -28,7 +28,7 @@ function selectProjectsOfUser(projects: Project[], userId: UUID) {
     )
 }
 
-export default function UserModal() {
+export default function UserPanel() {
     const navigate = useNavigate();
     const { userId } = useParams();
     const dispatch = useAppDispatch();
@@ -79,14 +79,7 @@ export default function UserModal() {
 
 
     return (
-        <Modal
-            title='user window'
-            description='detailed task window'
-            sx={{
-                width: '500px',
-                bgcolor: 'background.componentBg',
-            }}
-        >
+        <SidePanel>
             <NamedAvatar user={user} />
             <Sheet
                 sx={{
@@ -178,6 +171,6 @@ export default function UserModal() {
                     )
                 }
             </List>
-        </Modal >
+        </SidePanel>
     )
 }

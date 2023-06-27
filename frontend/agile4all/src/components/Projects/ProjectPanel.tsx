@@ -1,6 +1,5 @@
-import { Box, Avatar, Typography, IconButton, Sheet, Button } from "@mui/joy";
+import { Box, Avatar, Typography, IconButton, Button } from "@mui/joy";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import Modal from "../common/Modal";
 import FilesPanel from "../FilesPanel";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
@@ -14,6 +13,7 @@ import { useAppDispatch, useAppSelector, useCheckAdmin } from "../../hooks";
 import { ProjectsApi } from "../../client";
 import { remove, update } from "../../store/projectSlice";
 import SmallUsersList from "./ProjectListItem/SmallUsersList";
+import SidePanel from "../common/SidePanel";
 
 
 
@@ -25,7 +25,7 @@ const demoProject: Project = {
 }
 
 
-export default function ProjectModal() {
+export default function ProjectPanel() {
     const { projectId } = useParams();
     const dispatch = useAppDispatch();
     const [editMode, setEditMode] = useState<boolean>(false);
@@ -64,15 +64,7 @@ export default function ProjectModal() {
 
 
     return (
-        <Modal
-            title='user window'
-            description='detailed task window'
-            sx={{
-                maxWidth: '700px',
-                width: '90%',
-                bgcolor: 'background.componentBg',
-            }}
-        >
+        <SidePanel>
             <Box sx={{ display: 'flex', gap: 2 }}>
                 <Avatar
                     title={project.name}
@@ -84,7 +76,7 @@ export default function ProjectModal() {
                 </Typography>
             </Box>
 
-            <Sheet sx={{ display: 'flex', gap: 1, bgcolor: 'inherit', justifyContent: 'flex-end' }}>
+            <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end' }}>
                 <Button
                     size='sm'
                     variant="soft"
@@ -108,7 +100,7 @@ export default function ProjectModal() {
                         </IconButton>
                     </>
                 }
-            </Sheet>
+            </Box>
 
             <EditableTextField
                 title='Project name'
@@ -130,7 +122,7 @@ export default function ProjectModal() {
                 : <SmallUsersList users={project.users} />
             }
 
-            <FilesPanel/>
-        </Modal>
+            <FilesPanel />
+        </SidePanel>
     )
 }

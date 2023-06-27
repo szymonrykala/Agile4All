@@ -19,13 +19,13 @@ export default function App() {
 
       <Layout.Root>
         <ChatContextProvider>
+
           <Layout.Header >
             <Header
-              setDrawerOpen={()=>setDrawerOpen(!drawerOpen)}
+              setDrawerOpen={() => setDrawerOpen(!drawerOpen)}
               session={session}
             />
           </Layout.Header>
-
 
           <Layout.SideNav isOpen={drawerOpen}>
             <SideNav />
@@ -33,8 +33,10 @@ export default function App() {
 
           <Layout.Main>
             <Outlet />
-            <Chat />
           </Layout.Main>
+
+          <Chat />
+
         </ChatContextProvider>
       </Layout.Root>
     </>

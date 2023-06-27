@@ -4,13 +4,13 @@ import { ReactNode } from 'react';
 import { SxProps } from '@mui/joy/styles/types';
 
 
-interface IBasePage {
+interface INoSessionPage {
     children: ReactNode,
     sx?: SxProps
 }
 
-function BasePage({ children, sx }: IBasePage) {
-    return <>
+function NoSessionPage({ children, sx }: INoSessionPage) {
+    return (
         <Layout.Root
             sx={{
                 gridTemplateColumns: {
@@ -31,10 +31,10 @@ function BasePage({ children, sx }: IBasePage) {
 
             </Layout.Main>
         </Layout.Root>
-    </>
+    )
 }
 
-export default BasePage
+export default NoSessionPage
 
 
 

@@ -46,7 +46,6 @@ export default function Projects() {
                     <AddListItem onClick={createProject} />
                 </ProjectsList>
             </Stack>
-
         </ParameterBarContextProvider>
     )
 }

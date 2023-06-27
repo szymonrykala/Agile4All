@@ -1,7 +1,7 @@
 import { List, ListItem, ListItemContent, IconButton, Typography, Stack, Avatar, ListItemDecorator } from "@mui/joy";
 import { ReactNode, useCallback, useMemo, useState } from "react";
 import { ProjectsApi } from "../../client";
-import { useAppDispatch, useAppSelector} from "../../hooks";
+import { useAppDispatch, useAppSelector } from "../../hooks";
 import { UUID } from "../../models/common";
 import User from "../../models/user";
 import EditableTextField from "../common/EditableTextField";
@@ -23,7 +23,10 @@ interface IUserItem {
 
 function UserItem({ children, onRemove, onAdd }: IUserItem) {
     return (
-        <ListItem sx={{ bgcolor: "background.componentBg" }}>
+        <ListItem sx={{ 
+            bgcolor: "background.appBody", 
+            borderRadius: 10 
+        }}>
             <ListItemDecorator sx={{ alignSelf: 'flex-start' }}>
                 <Avatar src="/static/images/avatar/1.jpg" />
             </ListItemDecorator>&nbsp;&nbsp;&nbsp;
@@ -45,6 +48,23 @@ function UserItem({ children, onRemove, onAdd }: IUserItem) {
             </ListItemContent>
         </ListItem>
     )
+}
+
+
+const style = {
+    assignedUsersList: {
+        maxHeight: '200px',
+        overflowY: 'scroll',
+        bgcolor: "background.componentBg",
+        "--List-gap": '5px',
+        "--List-padding": "5px"
+    },
+    searchedUsersList: {
+        "--List-gap": '5px',
+        "--List-padding": "5px",
+        bgcolor: "background.componentBg",
+        maxHeight: '350px'
+    }
 }
 
 
@@ -98,13 +118,7 @@ export default function ProjectUsersList({ projectId, users }: IProjectUsersList
             <Typography level='body3'>
                 Assigned users:
             </Typography>
-            <List size="sm" sx={{
-                maxHeight: '200px',
-                overflowY: 'scroll',
-                bgcolor: "background.appBody",
-                "--List-gap": '5px',
-                "--List-padding": "5px"
-            }}>
+            <List size="sm" sx={style.assignedUsersList}>
                 {
                     localUsers.length > 0 ?
                         localUsers.map((user, index) =>
@@ -126,12 +140,7 @@ export default function ProjectUsersList({ projectId, users }: IProjectUsersList
                 value={search}
                 onChange={setSearch}
             />
-            <List size="sm" sx={{
-                "--List-gap": '5px',
-                "--List-padding": "5px",
-                bgcolor: "background.appBody",
-                maxHeight: '350px'
-            }}>
+            <List size="sm" sx={style.searchedUsersList}>
                 {
                     filteredAllUsers.map((user, index) =>
                         <UserItem
@@ -143,7 +152,6 @@ export default function ProjectUsersList({ projectId, users }: IProjectUsersList
                     )
                 }
             </List>
-
         </>
     )
 }

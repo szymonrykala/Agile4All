@@ -1,6 +1,6 @@
 import { Input, Typography } from '@mui/joy';
 import { useCallback, useState } from 'react';
-import BasePage from '../common/BasePage';
+import NoSessionPage from './NoSessionPage';
 import FormWrapper from '../common/FormWrapper';
 import { Link, useNavigate } from "react-router-dom";
 import { ICreateUserData } from '../../client/users';
@@ -33,7 +33,7 @@ function Registration() {
     }, [navigate, setError, data])
 
 
-    return <BasePage sx={{
+    return <NoSessionPage sx={{
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -80,7 +80,7 @@ function Registration() {
                 onChange={({ target }) => setData({ ...data, password: target.value })}
             />
         </FormWrapper>
-    </BasePage >
+    </NoSessionPage >
 }
 
 export default Registration

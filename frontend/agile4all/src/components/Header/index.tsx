@@ -24,7 +24,6 @@ interface IHeader {
 export default function Header(props: IHeader) {
     const { chatOpen, toggleChat } = useChatContext();
 
-
     return (
         <>
             <Box
@@ -39,7 +38,6 @@ export default function Header(props: IHeader) {
                     variant="outlined"
                     size="sm"
                     onClick={() => props.setDrawerOpen && props.setDrawerOpen(true)}
-                    // sx={{ display: { sm: 'none' } }}
                 >
                     <MenuIcon />
                 </IconButton>
@@ -54,26 +52,6 @@ export default function Header(props: IHeader) {
                     Agile4All
                 </Typography>
             </Box>
-
-            {/* <TextField
-                size="sm"
-                placeholder="Search anything…"
-                startDecorator={<SearchRoundedIcon color="primary" />}
-                endDecorator={
-                    <IconButton variant="outlined" size="sm" color="neutral">
-                        <Typography fontWeight="lg" fontSize="sm" textColor="text.tertiary">
-                            /
-                        </Typography>
-                    </IconButton>
-                }
-                sx={{
-                    flexBasis: '500px',
-                    display: {
-                        xs: 'none',
-                        sm: 'flex',
-                    },
-                }}
-            /> */}
 
             <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1.5 }}>
                 <ColorSchemeToggle />

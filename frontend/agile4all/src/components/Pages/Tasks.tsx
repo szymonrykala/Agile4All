@@ -1,4 +1,4 @@
-import { Button, List, Typography } from "@mui/joy";
+import { Button, List, Stack, Typography } from "@mui/joy";
 import Link from "../common/Link";
 import TaskCard from "../Tasks/TaskCard";
 import CollapsibleListItem from "../common/CollapsibleListItem";
@@ -102,7 +102,7 @@ function ProjectTasksListItem({ project }: IProjectTasksListItem) {
             await TasksApi.create(task);
             trigger.reload('tasks');
         }
-    }, [sessionUser?.id, trigger]);
+    }, [queryParams.userId, sessionUser?.id, trigger]);
 
 
     const renderedTasks = useMemo(() => {
@@ -167,22 +167,23 @@ export default function Tasks() {
         projectsReduxSelector(projects, queryParams)
     );
 
-
     return (
         <ParameterBarContextProvider<Task>>
-            <ParameterBar<Task> sorts={sorts} filters={filters} init={{ filter: 0, sort: 0 }} />
-            <Outlet />
-            <List>
-                {projects?.length === 0 ?
-                    <Typography p='50px 0px' textAlign='center'>
-                        Create a project to see it tasks
-                    </Typography>
-                    :
-                    projects && projects.map((project, index) =>
-                        <ProjectTasksListItem project={project} key={`tl${index}`} />
-                    )
-                }
-            </List>
+            <Stack spacing={2} >
+                <ParameterBar<Task> sorts={sorts} filters={filters} init={{ filter: 0, sort: 0 }} />
+                <Outlet />
+                <List>
+                    {projects?.length === 0 ?
+                        <Typography textAlign='center'>
+                            Create a project to see it tasks
+                        </Typography>
+                        :
+                        projects && projects.map((project, index) =>
+                            <ProjectTasksListItem project={project} key={`tl${index}`} />
+                        )
+                    }
+                </List>
+            </Stack>
         </ParameterBarContextProvider >
     )
 }
