@@ -2,7 +2,7 @@ import { Box, Divider, IconButton, Option, Select, Typography } from "@mui/joy";
 import Task, { TaskStatus } from "../../models/task";
 import { getStatusColor } from "./StatusChip";
 import NamedAvatar from "./NamedAvatar";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import FilesPanel from "../FilesPanel";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
@@ -32,9 +32,11 @@ export default function TaskPanel() {
     const [editMode, setEditMode] = useState<boolean>(false);
     const dispatch = useAppDispatch();
     const { taskId } = useParams()
-    const initTask = useAppSelector(({ tasks }) => tasks.find(({ id }) => id === Number(taskId)))
 
+    const initTask = useAppSelector(({ tasks }) => tasks.find(({ id }) => id === Number(taskId)))
     const project = useAppSelector(({ projects }) => projects.find(({ id }) => id === initTask?.projectId));
+
+    const [task, setTask] = useState<Task>(initTask || demoTaskData);
 
     const user = useMemo(() => {
         return project?.users.find(({ id }) => id === initTask?.userId)
@@ -42,10 +44,6 @@ export default function TaskPanel() {
         initTask?.userId,
         project?.users
     ])
-
-
-    const [task, setTask] = useState<Task>(initTask || demoTaskData);
-
 
     const deleteTask = useCallback(async () => {
         const proceed = await confirm('Do You want to delete this task?')
@@ -68,8 +66,12 @@ export default function TaskPanel() {
                 })
             } catch (err) { alert(err) }
         }
-
     }, [task, dispatch, initTask])
+
+
+    useEffect(()=>{
+        initTask && setTask(initTask)
+    },[taskId])
 
 
     const updateAssignedUser = useCallback((event: any, user: UUID | null) => {
