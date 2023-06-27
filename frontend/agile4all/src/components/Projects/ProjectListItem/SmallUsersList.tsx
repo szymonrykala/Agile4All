@@ -17,7 +17,7 @@ export default function SmallUsersList({ users }: ISmallUsersList) {
                     Boolean(users) && users.map((user, index) =>
                         <ListItem key={index} >
                             <Tooltip title={`${user.firstName} ${user.lastName}`}>
-                                <ListItemButton component={Link} to={`/app/users/${user.id}`}>
+                                <ListItemButton component={Link} to={`/app/projects/user-lookup/${user.id}`}>
                                     <Avatar
                                         size="sm"
                                         src="https://cdn-icons-png.flaticon.com/512/2202/2202112.png"

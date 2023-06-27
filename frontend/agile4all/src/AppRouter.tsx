@@ -69,10 +69,20 @@ const AppRouter = createHashRouter([
             element: <Projects />,
             children: [
               {
-                errorElement: <ErrorBaner />,
                 path: ':projectId',
                 element: <ProjectPanel />,
+                errorElement: <ErrorBaner />,
               },
+              {
+                path: ":projectId/task-lookup/:taskId",
+                element: <TaskPanel/>,
+                errorElement: <ErrorBaner />,
+              },
+              {
+                path: "user-lookup/:userId",
+                element: <UserPanel/>,
+                errorElement: <ErrorBaner />,
+              }
             ]
           },
           {
@@ -83,6 +93,17 @@ const AppRouter = createHashRouter([
               {
                 path: ':taskId',
                 element: <TaskPanel />,
+                errorElement: <ErrorBaner />,
+              },
+              {
+                path: "user-lookup/:userId",
+                element: <UserPanel/>,
+                errorElement: <ErrorBaner />,
+              },
+              {
+                path: "project-lookup",
+                element: <ProjectPanel/>,
+                errorElement: <ErrorBaner />,
               }
             ]
           },

@@ -119,7 +119,7 @@ function ProjectTasksListItem({ project }: IProjectTasksListItem) {
                 <>
                     <Typography
                         component={Link}
-                        to={`/app/projects/${project.id}`}
+                        to={`/app/projects/${project.id}/tasks/project-lookup`}
                     >
                         {project.name}
                     </Typography>&nbsp;&nbsp;

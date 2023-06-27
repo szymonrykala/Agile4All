@@ -59,7 +59,7 @@ export default function TaskCard({ task }: ITaskCard) {
 
                 <span>
                     <small>asignee:&nbsp;</small>
-                    <Link sx={{ fontSize: 14 }} to={`/app/users/${task.userId}`}>
+                    <Link sx={{ fontSize: 14 }} to={`user-lookup/${task.userId}`}>
                         {`${user?.firstName} ${user?.lastName}`}
                     </Link>
                 </span>
