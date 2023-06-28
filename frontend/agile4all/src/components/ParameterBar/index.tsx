@@ -93,7 +93,7 @@ export default function ParameterBar<T>({ sorts, filters, init }: IParameterBar<
                         size="sm"
                         value={filter?.value || ''}
                         onChange={delayedUpdateFilterValue}
-                        placeholder='filter value'
+                        placeholder='filter regexp'
                         sx={{
                             minWidth: '50px'
                         }}

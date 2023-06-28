@@ -55,7 +55,7 @@ export default function TaskListDemo(props: ITaskListDemo) {
                 variant="plain"
                 endDecorator={<KeyboardArrowRightRoundedIcon fontSize="small" />}
                 component={Link}
-                to={`${props.projectId}/tasks`}
+                to={`/app/tasks/projects/${props.projectId}`}
             >
                 More tasks
             </Button>

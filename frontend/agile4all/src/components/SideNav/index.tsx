@@ -19,12 +19,12 @@ const clicked = {
 }
 
 
-function TasksItem() {
-  const [folded, setFolded] = useState(true);
+function ProjectsTasksListsItem() {
+  const [folded, setFolded] = useState(false);
 
   const loc = useLocation();
   const path = useResolvedPath(loc);
-  const sessionUserProjects = useAppSelector(({ session }) => session?.projects || [])
+  const session = useAppSelector(({ session }) => session)
 
   return (
     <ListItem nested>
@@ -39,23 +39,36 @@ function TasksItem() {
         {folded ? <KeyboardArrowDown /> : <KeyboardArrowUp />}
       </ListItemButton>
       <List sx={{
-        height: folded ? "unset" : "0px",
+        height: folded ? "0px" : "unset",
         overflow: "hidden"
       }}>
-        {sessionUserProjects ?
-          sessionUserProjects.map(project =>
+        {session?.projects ?
+          [
+            session.projects.map(project =>
+              <ListItem key={project.id}>
+                <ListItemButton
+                  {...path.pathname.includes(`/app/tasks/users/${session.user.id}/projects/${project.id}`) ? clicked : Object()}
+                  component={Link} to={`/app/tasks/users/${session.user.id}/projects/${project.id}`}
+                >
+                  <ListItemDecorator sx={{ color: 'inherit' }}>
+                    <KeyboardArrowRight fontSize="small" />
+                  </ListItemDecorator>
+                  <ListItemContent>{project.name}</ListItemContent>
+                </ListItemButton>
+              </ListItem>
+            ),
             <ListItem>
               <ListItemButton
-                {...path.pathname === `/app/projects/${project.id}/tasks` ? clicked : Object()}
-                component={Link} to={`/app/projects/${project.id}/tasks`}
+                {...path.pathname === `/app/tasks/users/${session.user.id}` ? clicked : Object()}
+                component={Link} to={`/app/tasks/users/${session.user.id}`}
               >
                 <ListItemDecorator sx={{ color: 'inherit' }}>
                   <KeyboardArrowRight fontSize="small" />
                 </ListItemDecorator>
-                <ListItemContent>{project.name}</ListItemContent>
+                <ListItemContent>All tasks</ListItemContent>
               </ListItemButton>
             </ListItem>
-          )
+          ]
           :
           <ListItem>
             <small><i>No projects assigned yet ...</i></small>
@@ -98,7 +111,7 @@ export default function SideNav() {
         Menu
       </ListSubheader>
 
-      <TasksItem />
+      <ProjectsTasksListsItem />
 
       {
         navLinks.map(({ link, name, Icon }) => (

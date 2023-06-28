@@ -10,7 +10,7 @@ import ResourceLoader from './components/common/ReourceLoader';
 
 
 export default function App() {
-  const [drawerOpen, setDrawerOpen] = React.useState(false);
+  const [drawerOpen, setDrawerOpen] = React.useState(true);
   const session = useAppSelector(({ session }) => session);
 
   return (

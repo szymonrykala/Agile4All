@@ -33,15 +33,15 @@ export default function TaskPanel() {
     const dispatch = useAppDispatch();
     const { taskId } = useParams()
 
-    const initTask = useAppSelector(({ tasks }) => tasks.find(({ id }) => id === Number(taskId)))
-    const project = useAppSelector(({ projects }) => projects.find(({ id }) => id === initTask?.projectId));
+    const taskFormRedux = useAppSelector(({ tasks }) => tasks.find(({ id }) => id === Number(taskId)))
+    const project = useAppSelector(({ projects }) => projects.find(({ id }) => id === taskFormRedux?.projectId));
 
-    const [task, setTask] = useState<Task>(initTask || demoTaskData);
+    const [task, setTask] = useState<Task>(taskFormRedux || demoTaskData);
 
     const user = useMemo(() => {
-        return project?.users.find(({ id }) => id === initTask?.userId)
+        return project?.users.find(({ id }) => id === taskFormRedux?.userId)
     }, [
-        initTask?.userId,
+        taskFormRedux?.userId,
         project?.users
     ])
 
@@ -55,7 +55,7 @@ export default function TaskPanel() {
 
 
     const updateTask = useCallback(async () => {
-        if (task !== initTask) {
+        if (task !== taskFormRedux) {
             dispatch(update(task))
             try {
                 await TasksApi.update(task.id, {
@@ -66,12 +66,12 @@ export default function TaskPanel() {
                 })
             } catch (err) { alert(err) }
         }
-    }, [task, dispatch, initTask])
+    }, [task, dispatch, taskFormRedux])
 
 
     useEffect(()=>{
-        initTask && setTask(initTask)
-    },[taskId])
+        taskFormRedux && setTask(taskFormRedux)
+    },[taskFormRedux])
 
 
     const updateAssignedUser = useCallback((event: any, user: UUID | null) => {

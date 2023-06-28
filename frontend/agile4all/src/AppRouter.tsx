@@ -15,6 +15,17 @@ import { ErrorBaner } from "./components/Errors";
 import ProjectPanel from "./components/Projects/ProjectPanel";
 
 
+const SIDE_PANEL_LOOKUPS = [
+  {
+    path: 'task-lookup/:taskId',
+    element: <TaskPanel />
+  },
+  {
+    path: 'project-lookup/:projectId',
+    element: <ProjectPanel />
+  }
+]
+
 
 const AppRouter = createHashRouter([
   {
@@ -43,14 +54,27 @@ const AppRouter = createHashRouter([
         element: <SessionController element={<App />} />,
         children: [
           {
-            path: 'users/:userId/tasks',
-            element: <Tasks />,
+            path: "tasks",
             errorElement: <ErrorBaner />,
             children: [
               {
-                path: ':taskId',
-                element: <TaskPanel />
-              }
+                path: "users/:userId/projects/:projectId",
+                element: <Tasks />,
+                errorElement: <ErrorBaner />,
+                children: SIDE_PANEL_LOOKUPS
+              },
+              {
+                path: "users/:userId",
+                element: <Tasks />,
+                errorElement: <ErrorBaner />,
+                children: SIDE_PANEL_LOOKUPS
+              },
+              {
+                path: "projects/:projectId",
+                element: <Tasks />,
+                errorElement: <ErrorBaner />,
+                children: SIDE_PANEL_LOOKUPS
+              },
             ]
           },
           {
@@ -84,31 +108,9 @@ const AppRouter = createHashRouter([
                 errorElement: <ErrorBaner />,
               }
             ]
-          },
-          {
-            path: 'projects/:projectId/tasks',
-            element: <Tasks />,
-            errorElement: <ErrorBaner />,
-            children: [
-              {
-                path: ':taskId',
-                element: <TaskPanel />,
-                errorElement: <ErrorBaner />,
-              },
-              {
-                path: "user-lookup/:userId",
-                element: <UserPanel/>,
-                errorElement: <ErrorBaner />,
-              },
-              {
-                path: "project-lookup",
-                element: <ProjectPanel/>,
-                errorElement: <ErrorBaner />,
-              }
-            ]
-          },
+          }
         ]
-      },
+      }
     ]
   },
 ], {

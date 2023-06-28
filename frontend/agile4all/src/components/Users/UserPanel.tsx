@@ -110,7 +110,7 @@ export default function UserPanel() {
                         size="sm"
                         variant="soft"
                         component={Link}
-                        to="tasks"
+                        to={`/app/tasks/users/${user.id}`}
                     >
                         Tasks
                     </Button>
@@ -154,7 +154,7 @@ export default function UserPanel() {
                 {
                     projects.map((project, index) =>
                         < ListItem key={index}>
-                            <ListItemButton component={Link} to={`/app/projects/${project.id}`}>
+                            <ListItemButton component={Link} to={`/app/tasks/users/${user.id}/projects/${project.id}`}>
                                 <ListItemContent>
                                     <Typography startDecorator={
                                         <Avatar

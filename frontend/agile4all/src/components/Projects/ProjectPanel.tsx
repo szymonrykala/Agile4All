@@ -60,7 +60,8 @@ export default function ProjectPanel() {
         if (reduxProject.id === -1) {
             throw Error(`Project with id="${projectId}" not Found`)
         }
-    }, [reduxProject.id, projectId]);
+        setProject({ ...reduxProject })
+    }, [reduxProject, projectId]);
 
 
     return (
@@ -81,7 +82,7 @@ export default function ProjectPanel() {
                     size='sm'
                     variant="soft"
                     component={Link}
-                    to={'tasks'}
+                    to={`/app/tasks/projects/${project.id}`}
                 >
                     Show tasks
                 </Button>

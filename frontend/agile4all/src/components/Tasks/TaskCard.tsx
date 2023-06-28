@@ -25,13 +25,12 @@ export default function TaskCard({ task }: ITaskCard) {
             p: 1,
             borderRadius: 10,
             bgcolor: 'background.componentBg',
-            width: '100%',
         }}>
-            <Stack spacing={0.8}>
+            <Stack spacing={0.5}>
 
                 <Box display="flex" justifyContent="space-between">
-                    <Link to={`${task.id}`}>A4A-{task.id}</Link>
-                    <StatusChip status={task.status} />
+                    <Link to={`task-lookup/${task.id}`}>A4A-{task.id}</Link>
+                    <StatusChip status={task.status}/>
                 </Box>
 
                 <Typography
@@ -50,16 +49,16 @@ export default function TaskCard({ task }: ITaskCard) {
                         level='body2'
                         textOverflow='ellipsis'
                         overflow='hidden'
-                        maxHeight='60px'
+                        maxHeight='40px'
                     >
                         {task.description}
                     </Typography>
-                    <Link sx={{ fontSize: 13 }} to={`${task.id}`}>see more...</Link>
+                    <Link sx={{ fontSize: 13 }} to={`task-lookup/${task.id}`}>see more...</Link>
                 </span>
 
                 <span>
                     <small>asignee:&nbsp;</small>
-                    <Link sx={{ fontSize: 14 }} to={`user-lookup/${task.userId}`}>
+                    <Link sx={{ fontSize: 14 }} to={`task-lookup/${task.id}`}>
                         {`${user?.firstName} ${user?.lastName}`}
                     </Link>
                 </span>
