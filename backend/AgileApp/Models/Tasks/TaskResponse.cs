@@ -18,7 +18,7 @@ namespace AgileApp.Models.Tasks
 
         public DateTime? CreationDate { get; set; }
 
-        public string? LastChangedBy { get; set; }
+        public int? LastChangedBy { get; set; }
 
         public int UserId { get; set; }
 

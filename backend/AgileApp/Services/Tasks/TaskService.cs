@@ -1,25 +1,18 @@
 ﻿using AgileApp.Enums;
 using AgileApp.Models.Tasks;
 using AgileApp.Repository.Tasks;
-using AgileApp.Repository.Users;
 using AgileApp.Utils;
-using Microsoft.VisualBasic;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AgileApp.Services.Tasks
 {
     public class TaskService : ITaskService
     {
         private readonly ITaskRepository _taskRepository;
-        private readonly IUserRepository _userRepository;
 
         public TaskService(
-            ITaskRepository taskRepository,
-            IUserRepository userRepository)
+            ITaskRepository taskRepository)
         {
             _taskRepository = taskRepository;
-            _userRepository = userRepository;
         }
         public bool DeleteTask(int id) => _taskRepository.DeleteTask(id) == 1;
 
@@ -30,11 +23,6 @@ namespace AgileApp.Services.Tasks
 
             foreach (var task in tasksDb)
             {
-                var user = _userRepository?.GetUserById(task?.LastChangedBy ?? -1);
-                var username = new StringBuilder(user?.FirstName ?? "");
-                username.Append(" ");
-                username.Append(user?.LastName ?? "");
-
                 response.Add(new TaskResponse
                 {
                     Id = task.Id,
@@ -43,7 +31,7 @@ namespace AgileApp.Services.Tasks
                     Status = Enum.GetName(task.Status),
                     CreationDate = task.CreationDate,
                     DueDate = task.DueDate,
-                    LastChangedBy = username.ToString(),
+                    LastChangedBy = task.LastChangedBy,
                     StoryPoints = task.StoryPoints,
                     ProjectId = task.ProjectId,
                     UserId = task.UserId
@@ -85,11 +73,6 @@ namespace AgileApp.Services.Tasks
             var response = new TaskResponse();
             var taskDb = _taskRepository.GetTaskById(id);
 
-            var user = _userRepository?.GetUserById(taskDb?.LastChangedBy ?? -1);
-            var username = new StringBuilder(user?.FirstName ?? "");
-            username.Append(" ");
-            username.Append(user?.LastName ?? "");
-
             if (taskDb != null)
             {
                 response.Id = taskDb.Id;
@@ -97,7 +80,7 @@ namespace AgileApp.Services.Tasks
                 response.Status = Enum.GetName(taskDb.Status);
                 response.CreationDate = taskDb.CreationDate;
                 response.DueDate = taskDb.DueDate;
-                response.LastChangedBy = username.ToString();
+                response.LastChangedBy = taskDb.LastChangedBy;
                 response.StoryPoints = taskDb.StoryPoints;
                 response.Description = taskDb.Description;
                 response.ProjectId = taskDb.ProjectId;
@@ -112,11 +95,6 @@ namespace AgileApp.Services.Tasks
             var response = new TaskResponse();
             var taskDb = _taskRepository.GetTaskByName(name);
 
-            var user = _userRepository?.GetUserById(taskDb?.LastChangedBy ?? -1);
-            var username = new StringBuilder(user?.FirstName ?? "");
-            username.Append(" ");
-            username.Append(user?.LastName ?? "");
-
             if (taskDb != null)
             {
                 response.Id = taskDb.Id;
@@ -124,7 +102,7 @@ namespace AgileApp.Services.Tasks
                 response.Status = Enum.GetName(taskDb.Status);
                 response.CreationDate = taskDb.CreationDate;
                 response.DueDate = taskDb.DueDate;
-                response.LastChangedBy = username.ToString();
+                response.LastChangedBy = taskDb.LastChangedBy;
                 response.StoryPoints = taskDb.StoryPoints;
                 response.Description = taskDb.Description;
                 response.ProjectId = taskDb.ProjectId;
