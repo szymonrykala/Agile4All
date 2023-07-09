@@ -10,7 +10,15 @@ namespace AgileApp.Models.Tasks
 
         public string Description { get; set; }
 
-        public string Status { get; set; } 
+        public string Status { get; set; }
+
+        public int? StoryPoints { get; set; }
+
+        public DateTime? DueDate { get; set; }
+
+        public DateTime? CreationDate { get; set; }
+
+        public string? LastChangedBy { get; set; }
 
         public int UserId { get; set; }
 

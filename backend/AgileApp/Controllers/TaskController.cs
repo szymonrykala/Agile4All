@@ -59,6 +59,7 @@ namespace AgileApp.Controllers
                 taskUpdate.Status = request.Status;
                 taskUpdate.UserId = request.UserId;
                 taskUpdate.ProjectId = request.ProjectId;
+                taskUpdate.LastChangedBy = JwtMiddleware.GetCurrentUserId(reverseTokenResult);
 
                 return new OkObjectResult(_taskService.UpdateTask(taskUpdate));
             }

@@ -16,6 +16,5 @@ namespace AgileApp
         public DbSet<FileDb>? Files { get; set; }
         public DbSet<Proj_UserDb>? Proj_Users { get; set; }
         public DbSet<MessageDb>? Messages { get; set; }
-
     }
 }
