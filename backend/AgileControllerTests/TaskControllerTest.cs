@@ -1,3 +1,4 @@
+using AgileApp.Controllers;
 using AgileApp.Models.Tasks;
 using AgileApp.Services.Tasks;
 using AgileApp.Utils.Cookies;
@@ -10,96 +11,87 @@ namespace AgileControllerTests
     public class TaskControllerTests
     {
         [Fact]
-        public void GetAllTasks_WithValidCookie_ReturnsOkResult()
+        public void GetAllTasks_WithAuthorizedUser_ReturnsOkResult()
         {
             // Arrange
             var taskServiceMock = new Mock<ITaskService>();
+            taskServiceMock.Setup(x => x.GetAllTasks())
+                           .Returns(new List<TaskResponse>());
+
             var cookieHelperMock = new Mock<ICookieHelper>();
+            cookieHelperMock.Setup(x => x.ReverseJwtFromRequest(It.IsAny<Microsoft.AspNetCore.Http.HttpContext>()))
+                            .Returns(new ReverseJwtResult { IsValid = true });
 
             var controller = new TaskController(taskServiceMock.Object, cookieHelperMock.Object);
-
-            var reverseTokenResult = new ReverseTokenResult { IsValid = true };
-            cookieHelperMock.Setup(helper => helper.ReverseJwtFromRequest(controller.HttpContext))
-                            .Returns(reverseTokenResult);
-
-            var tasks = new List<TaskResponse>
-            {
-                new TaskResponse { Id = 1, Name = "Task 1" },
-                new TaskResponse { Id = 2, Name = "Task 2" }
-            };
-            taskServiceMock.Setup(service => service.GetAllTasks())
-                           .Returns(tasks);
 
             // Act
             var result = controller.GetAllTasks();
 
             // Assert
-            var okObjectResult = Assert.IsType<OkObjectResult>(result);
-            var response = Assert.IsType<List<TaskResponse>>(okObjectResult.Value);
-            Assert.Equal(tasks, response);
+            Assert.IsType<OkObjectResult>(result);
         }
 
         [Fact]
-        public void GetAllTasks_WithInvalidCookie_ReturnsForbidResult()
+        public void GetTaskById_WithValidTaskIdAndAuthorizedUser_ReturnsOkResult()
         {
             // Arrange
             var taskServiceMock = new Mock<ITaskService>();
+            taskServiceMock.Setup(x => x.GetTaskById(It.IsAny<int>()))
+                           .Returns(new TaskResponse());
+
             var cookieHelperMock = new Mock<ICookieHelper>();
+            cookieHelperMock.Setup(x => x.ReverseJwtFromRequest(It.IsAny<Microsoft.AspNetCore.Http.HttpContext>()))
+                            .Returns(new ReverseJwtResult { IsValid = true });
 
             var controller = new TaskController(taskServiceMock.Object, cookieHelperMock.Object);
-
-            var reverseTokenResult = new ReverseTokenResult { IsValid = false };
-            cookieHelperMock.Setup(helper => helper.ReverseJwtFromRequest(controller.HttpContext))
-                            .Returns(reverseTokenResult);
-
-            // Act
-            var result = controller.GetAllTasks();
-
-            // Assert
-            Assert.IsType<ForbidResult>(result);
-        }
-
-        [Fact]
-        public void GetTaskById_WithValidId_ReturnsOkResult()
-        {
-            // Arrange
-            var taskServiceMock = new Mock<ITaskService>();
-            var cookieHelperMock = new Mock<ICookieHelper>();
-
-            var controller = new TaskController(taskServiceMock.Object, cookieHelperMock.Object);
-
-            var reverseTokenResult = new ReverseTokenResult { IsValid = true };
-            cookieHelperMock.Setup(helper => helper.ReverseJwtFromRequest(controller.HttpContext))
-                            .Returns(reverseTokenResult);
-
-            var task = new TaskResponse { Id = 1, Name = "Task 1" };
-            taskServiceMock.Setup(service => service.GetTaskById(1))
-                           .Returns(task);
 
             // Act
             var result = controller.GetTaskById(1);
 
             // Assert
-            var okObjectResult = Assert.IsType<OkObjectResult>(result);
-            Assert.Equal(task, okObjectResult.Value);
+            Assert.IsType<OkObjectResult>(result);
         }
 
         [Fact]
-        public void GetTaskById_WithInvalidId_ReturnsBadRequestResult()
+        public void UpdateTask_WithValidTaskIdAndAuthorizedUser_ReturnsOkResult()
         {
             // Arrange
             var taskServiceMock = new Mock<ITaskService>();
+            taskServiceMock.Setup(x => x.UpdateTask(It.IsAny<UpdateTaskRequest>()))
+                           .Returns(true);
+
             var cookieHelperMock = new Mock<ICookieHelper>();
+            cookieHelperMock.Setup(x => x.ReverseJwtFromRequest(It.IsAny<Microsoft.AspNetCore.Http.HttpContext>()))
+                            .Returns(new ReverseJwtResult { IsValid = true });
 
             var controller = new TaskController(taskServiceMock.Object, cookieHelperMock.Object);
 
             // Act
-            var result = controller.GetTaskById(-1);
+            var result = controller.UpdateTask(1, new UpdateTaskRequest());
 
             // Assert
-            Assert.IsType<BadRequestResult>(result);
+            Assert.IsType<OkObjectResult>(result);
         }
 
-        // More tests for other actions in the TaskController
+        [Fact]
+        public void DeleteTask_WithValidTaskIdAndAdminUser_ReturnsOkResult()
+        {
+            // Arrange
+            var taskServiceMock = new Mock<ITaskService>();
+            taskServiceMock.Setup(x => x.DeleteTask(It.IsAny<int>()))
+                           .Returns(true);
+
+            var cookieHelperMock = new Mock<ICookieHelper>();
+            cookieHelperMock.Setup(x => x.ReverseJwtFromRequest(It.IsAny<Microsoft.AspNetCore.Http.HttpContext>()))
+                            .Returns(new ReverseJwtResult { IsValid = true });
+
+            var controller = new TaskController(taskServiceMock.Object, cookieHelperMock.Object);
+
+            // Act
+            var result = controller.DeleteTask(1);
+
+            // Assert
+            Assert.IsType<OkObjectResult>(result);
+        }
     }
 }

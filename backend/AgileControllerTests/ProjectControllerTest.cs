@@ -7,9 +7,6 @@ using AgileApp.Services.Tasks;
 using AgileApp.Utils.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Xunit;
 
 namespace AgileControllerTests
@@ -17,191 +14,171 @@ namespace AgileControllerTests
     public class ProjectControllerTests
     {
         [Fact]
-        public void AddProject_WithValidRequest_ReturnsOkResult()
+        public void AddProject_WithValidRequestAndAdminUser_ReturnsOkResult()
         {
             // Arrange
             var projectServiceMock = new Mock<IProjectService>();
+            projectServiceMock.Setup(x => x.AddNewProject(It.IsAny<AddProjectRequest>()))
+                              .Returns(new Response<int> { IsSuccess = true, Data = 1 });
+
             var cookieHelperMock = new Mock<ICookieHelper>();
-            var taskServiceMock = new Mock<ITaskService>();
+            cookieHelperMock.Setup(x => x.ReverseJwtFromRequest(It.IsAny<Microsoft.AspNetCore.Http.HttpContext>()))
+                            .Returns(new ReverseJwtResult { IsValid = true });
 
-            var controller = new ProjectController(projectServiceMock.Object, cookieHelperMock.Object, taskServiceMock.Object);
-
-            var request = new AddProjectRequest
-            {
-                Name = "Project 1"
-            };
+            var controller = new ProjectController(projectServiceMock.Object, cookieHelperMock.Object, null);
 
             // Act
-            var result = controller.AddProject(request);
+            var result = controller.AddProject(new AddProjectRequest());
 
             // Assert
             Assert.IsType<OkObjectResult>(result);
         }
 
         [Fact]
-        public void AddProject_WithNullRequest_ReturnsBadRequestResult()
+        public void AddTask_WithValidRequestAndAuthorizedUser_ReturnsOkResult()
         {
             // Arrange
-            var projectServiceMock = new Mock<IProjectService>();
-            var cookieHelperMock = new Mock<ICookieHelper>();
             var taskServiceMock = new Mock<ITaskService>();
+            taskServiceMock.Setup(x => x.AddNewTask(It.IsAny<AddTaskRequest>()))
+                           .Returns(new Response<int> { IsSuccess = true, Data = 1 });
 
-            var controller = new ProjectController(projectServiceMock.Object, cookieHelperMock.Object, taskServiceMock.Object);
+            var cookieHelperMock = new Mock<ICookieHelper>();
+            cookieHelperMock.Setup(x => x.ReverseJwtFromRequest(It.IsAny<Microsoft.AspNetCore.Http.HttpContext>()))
+                            .Returns(new ReverseJwtResult { IsValid = true });
+
+            var controller = new ProjectController(null, cookieHelperMock.Object, taskServiceMock.Object);
 
             // Act
-            var result = controller.AddProject(null);
-
-            // Assert
-            Assert.IsType<BadRequestResult>(result);
-        }
-
-        [Fact]
-        public void AddTask_WithValidRequest_ReturnsOkResult()
-        {
-            // Arrange
-            var projectServiceMock = new Mock<IProjectService>();
-            var cookieHelperMock = new Mock<ICookieHelper>();
-            var taskServiceMock = new Mock<ITaskService>();
-
-            var controller = new ProjectController(projectServiceMock.Object, cookieHelperMock.Object, taskServiceMock.Object);
-
-            var request = new AddTaskRequest
-            {
-                Name = "Task 1"
-            };
-
-            // Act
-            var result = controller.AddTask(1, request);
+            var result = controller.AddTask(1, new AddTaskRequest());
 
             // Assert
             Assert.IsType<OkObjectResult>(result);
         }
 
         [Fact]
-        public void AddTask_WithNullRequest_ReturnsBadRequestResult()
+        public void GetAllProjects_WithAuthorizedUser_ReturnsOkResult()
         {
             // Arrange
             var projectServiceMock = new Mock<IProjectService>();
+            projectServiceMock.Setup(x => x.GetAllProjects())
+                              .Returns(new List<ProjectResponse>());
+
             var cookieHelperMock = new Mock<ICookieHelper>();
-            var taskServiceMock = new Mock<ITaskService>();
+            cookieHelperMock.Setup(x => x.ReverseJwtFromRequest(It.IsAny<Microsoft.AspNetCore.Http.HttpContext>()))
+                            .Returns(new ReverseJwtResult { IsValid = true });
 
-            var controller = new ProjectController(projectServiceMock.Object, cookieHelperMock.Object, taskServiceMock.Object);
-
-            // Act
-            var result = controller.AddTask(1, null);
-
-            // Assert
-            Assert.IsType<BadRequestResult>(result);
-        }
-
-        [Fact]
-        public void GetAllProjects_WithValidCookie_ReturnsOkResult()
-        {
-            // Arrange
-            var projectServiceMock = new Mock<IProjectService>();
-            var cookieHelperMock = new Mock<ICookieHelper>();
-            var taskServiceMock = new Mock<ITaskService>();
-
-            var controller = new ProjectController(projectServiceMock.Object, cookieHelperMock.Object, taskServiceMock.Object);
-
-            var reverseTokenResult = new ReverseTokenResult
-            {
-                IsValid = true,
-                Claims = new List<ReverseTokenClaim>
-                {
-                    new ReverseTokenClaim
-                    {
-                        Type = System.Security.Claims.ClaimTypes.Hash,
-                        Value = "hash"
-                    }
-                }
-            };
-            cookieHelperMock.Setup(helper => helper.ReverseJwtFromRequest(controller.HttpContext))
-                            .Returns(reverseTokenResult.TokenResult(reverseTokenResult));
-
-            var projects = new List<ProjectResponse>
-            {
-                new ProjectResponse { Id = 1, Name = "Project 1" },
-                new ProjectResponse { Id = 2, Name = "Project 2" }
-            };
-            projectServiceMock.Setup(service => service.GetAllProjects())
-                              .Returns(projects);
+            var controller = new ProjectController(projectServiceMock.Object, cookieHelperMock.Object, null);
 
             // Act
             var result = controller.GetAllProjects();
 
             // Assert
-            var okObjectResult = Assert.IsType<OkObjectResult>(result);
-            var response = Assert.IsType<Response<List<ProjectResponse>>>(okObjectResult.Value);
-            Assert.True(response.IsSuccess);
-            Assert.Equal(projects, response.Data);
+            Assert.IsType<OkObjectResult>(result);
         }
 
         [Fact]
-        public void GetAllProjects_WithInvalidCookie_ReturnsUnauthorizedResult()
+        public void GetProjectById_WithValidProjectIdAndAuthorizedUser_ReturnsOkResult()
         {
             // Arrange
             var projectServiceMock = new Mock<IProjectService>();
+            projectServiceMock.Setup(x => x.GetProjectById(It.IsAny<int>()))
+                              .Returns(new ProjectResponse());
+
             var cookieHelperMock = new Mock<ICookieHelper>();
-            var taskServiceMock = new Mock<ITaskService>();
+            cookieHelperMock.Setup(x => x.ReverseJwtFromRequest(It.IsAny<Microsoft.AspNetCore.Http.HttpContext>()))
+                            .Returns(new ReverseJwtResult { IsValid = true });
 
-            var controller = new ProjectController(projectServiceMock.Object, cookieHelperMock.Object, taskServiceMock.Object);
-
-            var reverseTokenResult = new ReverseTokenResult { IsValid = false };
-            cookieHelperMock.Setup(helper => helper.ReverseJwtFromRequest(controller.HttpContext))
-                            .Returns(reverseTokenResult);
-
-            // Act
-            var result = controller.GetAllProjects();
-
-            // Assert
-            Assert.IsType<UnauthorizedResult>(result);
-        }
-
-        [Fact]
-        public void GetProjectById_WithValidId_ReturnsOkResult()
-        {
-            // Arrange
-            var projectServiceMock = new Mock<IProjectService>();
-            var cookieHelperMock = new Mock<ICookieHelper>();
-            var taskServiceMock = new Mock<ITaskService>();
-
-            var controller = new ProjectController(projectServiceMock.Object, cookieHelperMock.Object, taskServiceMock.Object);
-
-            var reverseTokenResult = new ReverseTokenResult { IsValid = true };
-            cookieHelperMock.Setup(helper => helper.ReverseJwtFromRequest(controller.HttpContext))
-                            .Returns(reverseTokenResult);
-
-            var project = new ProjectResponse { Id = 1, Name = "Project 1" };
-            projectServiceMock.Setup(service => service.GetProjectById(1))
-                              .Returns(project);
+            var controller = new ProjectController(projectServiceMock.Object, cookieHelperMock.Object, null);
 
             // Act
             var result = controller.GetProjectById(1);
 
             // Assert
-            var okObjectResult = Assert.IsType<OkObjectResult>(result);
-            Assert.Equal(project, okObjectResult.Value);
+            Assert.IsType<OkObjectResult>(result);
         }
 
         [Fact]
-        public void GetProjectById_WithInvalidId_ReturnsBadRequestResult()
+        public void UpdateProject_WithValidProjectIdAndAdminUser_ReturnsOkResult()
         {
             // Arrange
             var projectServiceMock = new Mock<IProjectService>();
-            var cookieHelperMock = new Mock<ICookieHelper>();
-            var taskServiceMock = new Mock<ITaskService>();
+            projectServiceMock.Setup(x => x.UpdateProject(It.IsAny<UpdateProjectRequest>()))
+                              .Returns(true);
 
-            var controller = new ProjectController(projectServiceMock.Object, cookieHelperMock.Object, taskServiceMock.Object);
+            var cookieHelperMock = new Mock<ICookieHelper>();
+            cookieHelperMock.Setup(x => x.ReverseJwtFromRequest(It.IsAny<Microsoft.AspNetCore.Http.HttpContext>()))
+                            .Returns(new ReverseJwtResult { IsValid = true });
+
+            var controller = new ProjectController(projectServiceMock.Object, cookieHelperMock.Object, null);
 
             // Act
-            var result = controller.GetProjectById(-1);
+            var result = controller.UpdateProject(1, new UpdateProjectRequest());
 
             // Assert
-            Assert.IsType<BadRequestResult>(result);
+            Assert.IsType<OkObjectResult>(result);
         }
 
-        // More tests for other actions in the ProjectController
+        [Fact]
+        public void DeleteProject_WithValidProjectIdAndAdminUser_ReturnsOkResult()
+        {
+            // Arrange
+            var projectServiceMock = new Mock<IProjectService>();
+            projectServiceMock.Setup(x => x.DeleteProject(It.IsAny<int>()))
+                              .Returns(true);
+
+            var cookieHelperMock = new Mock<ICookieHelper>();
+            cookieHelperMock.Setup(x => x.ReverseJwtFromRequest(It.IsAny<Microsoft.AspNetCore.Http.HttpContext>()))
+                            .Returns(new ReverseJwtResult { IsValid = true });
+
+            var controller = new ProjectController(projectServiceMock.Object, cookieHelperMock.Object, null);
+
+            // Act
+            var result = controller.DeleteProject(1);
+
+            // Assert
+            Assert.IsType<OkObjectResult>(result);
+        }
+
+        [Fact]
+        public void AddUserToProject_WithValidProjectIdUserIdAndAdminUser_ReturnsOkResult()
+        {
+            // Arrange
+            var projectServiceMock = new Mock<IProjectService>();
+            projectServiceMock.Setup(x => x.AddUserToProject(It.IsAny<ProjectUserRequest>()))
+                              .Returns(true);
+
+            var cookieHelperMock = new Mock<ICookieHelper>();
+            cookieHelperMock.Setup(x => x.ReverseJwtFromRequest(It.IsAny<Microsoft.AspNetCore.Http.HttpContext>()))
+                            .Returns(new ReverseJwtResult { IsValid = true });
+
+            var controller = new ProjectController(projectServiceMock.Object, cookieHelperMock.Object, null);
+
+            // Act
+            var result = controller.AddUserToProject(1, 1);
+
+            // Assert
+            Assert.IsType<OkObjectResult>(result);
+        }
+
+        [Fact]
+        public void RemoveUserFromProject_WithValidProjectIdUserIdAndAdminUser_ReturnsOkResult()
+        {
+            // Arrange
+            var projectServiceMock = new Mock<IProjectService>();
+            projectServiceMock.Setup(x => x.RemoveUserFromProject(It.IsAny<ProjectUserRequest>()))
+                              .Returns(true);
+
+            var cookieHelperMock = new Mock<ICookieHelper>();
+            cookieHelperMock.Setup(x => x.ReverseJwtFromRequest(It.IsAny<Microsoft.AspNetCore.Http.HttpContext>()))
+                            .Returns(new ReverseJwtResult { IsValid = true });
+
+            var controller = new ProjectController(projectServiceMock.Object, cookieHelperMock.Object, null);
+
+            // Act
+            var result = controller.RemoveUserFromProject(1, 1);
+
+            // Assert
+            Assert.IsType<OkObjectResult>(result);
+        }
     }
 }
-

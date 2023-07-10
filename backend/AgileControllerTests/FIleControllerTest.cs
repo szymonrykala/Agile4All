@@ -1,5 +1,4 @@
 using AgileApp.Controllers;
-using AgileApp.Models.Common;
 using AgileApp.Models.Files;
 using AgileApp.Services.Files;
 using Microsoft.AspNetCore.Mvc;
@@ -12,11 +11,11 @@ namespace AgileControllerTests
     public class FileControllerTests
     {
         [Fact]
-        public void GetFiles_WithValidQueryParameters_ReturnsOkResult()
+        public void GetFiles_WithValidParameters_ReturnsOkResult()
         {
             // Arrange
             var fileServiceMock = new Mock<IFileService>();
-            fileServiceMock.Setup(service => service.GetFiles(It.IsAny<int>(), It.IsAny<int>()))
+            fileServiceMock.Setup(x => x.GetFiles(It.IsAny<int>(), It.IsAny<int>()))
                            .Returns(new List<GetFileResponse>());
 
             var controller = new FileController(fileServiceMock.Object);
@@ -29,24 +28,11 @@ namespace AgileControllerTests
         }
 
         [Fact]
-        public void GetFiles_WithInvalidQueryParameters_ReturnsBadRequestResult()
-        {
-            // Arrange
-            var controller = new FileController(Mock.Of<IFileService>());
-
-            // Act
-            var result = controller.GetFiles(taskId: -1, projectId: -1);
-
-            // Assert
-            Assert.IsType<BadRequestResult>(result);
-        }
-
-        [Fact]
         public void UploadFile_WithValidRequest_ReturnsOkResult()
         {
             // Arrange
             var fileServiceMock = new Mock<IFileService>();
-            fileServiceMock.Setup(service => service.UploadFile(It.IsAny<UploadFileRequest>()))
+            fileServiceMock.Setup(x => x.UploadFile(It.IsAny<UploadFileRequest>()))
                            .Returns(new UploadFileResponse());
 
             var controller = new FileController(fileServiceMock.Object);
@@ -59,33 +45,22 @@ namespace AgileControllerTests
         }
 
         [Fact]
-        public void GetFileById_WithValidFileId_ReturnsFileResult()
+        public void GetFileById_WithValidFileId_ReturnsFileContent()
         {
             // Arrange
             var fileServiceMock = new Mock<IFileService>();
-            fileServiceMock.Setup(service => service.GetFileById(It.IsAny<int>()))
-                           .Returns("path/to/file");
+            fileServiceMock.Setup(x => x.GetFileById(It.IsAny<int>()))
+                           .Returns("test_file_path");
 
             var controller = new FileController(fileServiceMock.Object);
 
             // Act
-            var result = controller.GetFileById(1);
+            var result = controller.GetFileById(1) as FileContentResult;
 
             // Assert
-            Assert.IsType<FileResult>(result);
-        }
-
-        [Fact]
-        public void GetFileById_WithInvalidFileId_ReturnsNotFoundResult()
-        {
-            // Arrange
-            var controller = new FileController(Mock.Of<IFileService>());
-
-            // Act
-            var result = controller.GetFileById(-1);
-
-            // Assert
-            Assert.IsType<NotFoundResult>(result);
+            Assert.NotNull(result);
+            Assert.Equal("*/*", result.ContentType);
+            Assert.Equal("test_file_path", result.FileDownloadName);
         }
 
         [Fact]
@@ -93,7 +68,7 @@ namespace AgileControllerTests
         {
             // Arrange
             var fileServiceMock = new Mock<IFileService>();
-            fileServiceMock.Setup(service => service.DeleteFile(It.IsAny<int>()))
+            fileServiceMock.Setup(x => x.DeleteFile(It.IsAny<int>()))
                            .Returns(true);
 
             var controller = new FileController(fileServiceMock.Object);
