@@ -22,4 +22,8 @@ if ! installed dotnet-sdk-6.0; then
 fi
 
 /entrypoint.sh dotnet tool install --global dotnet-ef --version 6.* &> /dev/null
+
+# Temporary fix until proper prod/dev setup
+chown -R user /backend
+
 /entrypoint.sh "$@"

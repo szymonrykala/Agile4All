@@ -23,6 +23,10 @@ services:
       dockerfile: ./docker/backend/Dockerfile
     volumes:
       - ./backend:/backend
+      - /backend/AgileApp/bin/
+      - /backend/AgileApp/obj/
+      - /backend/AgileControllerTests/bin/
+      - /backend/AgileControllerTests/obj/
       - ./docker/backend/entrypoint.sh:/entrypoint.sh
       - ./docker/backend/entrypoint.dev.sh:/entrypoint.dev.sh
       - ~/.nuget/packages:/root/.nuget/packages:rw

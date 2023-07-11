@@ -35,6 +35,9 @@ If you are running this setup on Windows I highly recommend doing it in WSL2. Yo
 - `./compose-dev` same as `./compose` but instead of production it loads development environment variables
 - `./dotnet-ef` dotnet-ef tool used for migrations. You can create migrations outside of docker too. But its nice to have ability to do that in docker. Eg. `./dotnet-ef migrations add InitialMigration --project /backend/AgileApp`
 
+# Tests
+To run backend tests start the app with `./start-dev` and then after backend container builds successfuly, run `./compose-dev exec backend /entrypoint.dev.sh "dotnet test /backend/AgileApp"`
+
 # Running in WSL
 In WSL you may encounter problems with mounting volumes: `rslave is mounted on / but it is not a shared or slave mount`
 
