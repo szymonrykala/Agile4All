@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AgileUnitTests", "..\AgileU
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AgileFunctionalTests", "..\AgileFunctionalTests\AgileFunctionalTests.csproj", "{7835E5D2-E646-4AC8-991A-FB8F2500D047}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AgileControllerTests", "..\AgileControllerTests\AgileControllerTests.csproj", "{A7CB9C80-6D6A-4FBB-A85D-0EF007F03DAD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{7835E5D2-E646-4AC8-991A-FB8F2500D047}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7835E5D2-E646-4AC8-991A-FB8F2500D047}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7835E5D2-E646-4AC8-991A-FB8F2500D047}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A7CB9C80-6D6A-4FBB-A85D-0EF007F03DAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7CB9C80-6D6A-4FBB-A85D-0EF007F03DAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7CB9C80-6D6A-4FBB-A85D-0EF007F03DAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7CB9C80-6D6A-4FBB-A85D-0EF007F03DAD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
