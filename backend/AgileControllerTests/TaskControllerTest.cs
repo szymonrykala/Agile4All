@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using AgileApp.Controllers;
+using AgileApp.Models.Jwt;
 using AgileApp.Models.Tasks;
 using AgileApp.Services.Tasks;
 using AgileApp.Utils.Cookies;
@@ -20,7 +22,7 @@ namespace AgileControllerTests
 
             var cookieHelperMock = new Mock<ICookieHelper>();
             cookieHelperMock.Setup(x => x.ReverseJwtFromRequest(It.IsAny<Microsoft.AspNetCore.Http.HttpContext>()))
-                            .Returns(new ReverseJwtResult { IsValid = true });
+                            .Returns(new JwtReverseResult { IsValid = true });
 
             var controller = new TaskController(taskServiceMock.Object, cookieHelperMock.Object);
 
@@ -41,7 +43,7 @@ namespace AgileControllerTests
 
             var cookieHelperMock = new Mock<ICookieHelper>();
             cookieHelperMock.Setup(x => x.ReverseJwtFromRequest(It.IsAny<Microsoft.AspNetCore.Http.HttpContext>()))
-                            .Returns(new ReverseJwtResult { IsValid = true });
+                            .Returns(new JwtReverseResult { IsValid = true });
 
             var controller = new TaskController(taskServiceMock.Object, cookieHelperMock.Object);
 
@@ -62,7 +64,7 @@ namespace AgileControllerTests
 
             var cookieHelperMock = new Mock<ICookieHelper>();
             cookieHelperMock.Setup(x => x.ReverseJwtFromRequest(It.IsAny<Microsoft.AspNetCore.Http.HttpContext>()))
-                            .Returns(new ReverseJwtResult { IsValid = true });
+                            .Returns(new JwtReverseResult { IsValid = true });
 
             var controller = new TaskController(taskServiceMock.Object, cookieHelperMock.Object);
 
@@ -83,7 +85,7 @@ namespace AgileControllerTests
 
             var cookieHelperMock = new Mock<ICookieHelper>();
             cookieHelperMock.Setup(x => x.ReverseJwtFromRequest(It.IsAny<Microsoft.AspNetCore.Http.HttpContext>()))
-                            .Returns(new ReverseJwtResult { IsValid = true });
+                            .Returns(new JwtReverseResult { IsValid = true });
 
             var controller = new TaskController(taskServiceMock.Object, cookieHelperMock.Object);
 

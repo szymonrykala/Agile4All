@@ -1,4 +1,5 @@
 using AgileApp.Controllers;
+using AgileApp.Models.Common;
 using AgileApp.Models.Files;
 using AgileApp.Services.Files;
 using Microsoft.AspNetCore.Mvc;
@@ -33,7 +34,7 @@ namespace AgileControllerTests
             // Arrange
             var fileServiceMock = new Mock<IFileService>();
             fileServiceMock.Setup(x => x.UploadFile(It.IsAny<UploadFileRequest>()))
-                           .Returns(new UploadFileResponse());
+                           .Returns(new Response<bool> { IsSuccess = true });
 
             var controller = new FileController(fileServiceMock.Object);
 
@@ -69,7 +70,7 @@ namespace AgileControllerTests
             // Arrange
             var fileServiceMock = new Mock<IFileService>();
             fileServiceMock.Setup(x => x.DeleteFile(It.IsAny<int>()))
-                           .Returns(true);
+                           .Returns(new Response { IsSuccess = true });
 
             var controller = new FileController(fileServiceMock.Object);
 
