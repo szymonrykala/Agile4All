@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using System.Security.Claims;
 using AgileApp.Controllers;
+using AgileApp.Enums;
 using AgileApp.Models.Common;
 using AgileApp.Models.Jwt;
 using AgileApp.Models.Projects;
@@ -7,6 +9,7 @@ using AgileApp.Models.Tasks;
 using AgileApp.Services.Projects;
 using AgileApp.Services.Tasks;
 using AgileApp.Utils.Cookies;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
@@ -25,9 +28,22 @@ namespace AgileControllerTests
 
             var cookieHelperMock = new Mock<ICookieHelper>();
             cookieHelperMock.Setup(x => x.ReverseJwtFromRequest(It.IsAny<Microsoft.AspNetCore.Http.HttpContext>()))
-                            .Returns(new JwtReverseResult { IsValid = true });
+                            .Returns(new JwtReverseResult
+                            {
+                                IsValid = true,
+                                Claims = new List<Claim>
+                                {
+                                    new Claim(ClaimTypes.Role, ((int)UserRoleEnum.ADMIN).ToString())
+                                }
+                            });
 
             var controller = new ProjectController(projectServiceMock.Object, cookieHelperMock.Object, null);
+
+            // Setup HttpContext
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext()
+            };
 
             // Act
             var result = controller.AddProject(new AddProjectRequest());
@@ -67,9 +83,22 @@ namespace AgileControllerTests
 
             var cookieHelperMock = new Mock<ICookieHelper>();
             cookieHelperMock.Setup(x => x.ReverseJwtFromRequest(It.IsAny<Microsoft.AspNetCore.Http.HttpContext>()))
-                            .Returns(new JwtReverseResult { IsValid = true });
+                            .Returns(new JwtReverseResult
+                            {
+                                IsValid = true,
+                                Claims = new List<Claim>
+                                {
+                                    new Claim(ClaimTypes.Hash, "hash")
+                                }
+                            });
 
             var controller = new ProjectController(projectServiceMock.Object, cookieHelperMock.Object, null);
+
+            // Setup HttpContext
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext()
+            };
 
             // Act
             var result = controller.GetAllProjects();
@@ -109,9 +138,22 @@ namespace AgileControllerTests
 
             var cookieHelperMock = new Mock<ICookieHelper>();
             cookieHelperMock.Setup(x => x.ReverseJwtFromRequest(It.IsAny<Microsoft.AspNetCore.Http.HttpContext>()))
-                            .Returns(new JwtReverseResult { IsValid = true });
+                            .Returns(new JwtReverseResult
+                            {
+                                IsValid = true,
+                                Claims = new List<Claim>
+                                {
+                                    new Claim(ClaimTypes.Role, ((int)UserRoleEnum.ADMIN).ToString())
+                                }
+                            });
 
             var controller = new ProjectController(projectServiceMock.Object, cookieHelperMock.Object, null);
+
+            // Setup HttpContext
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext()
+            };
 
             // Act
             var result = controller.UpdateProject(1, new UpdateProjectRequest());
@@ -130,9 +172,22 @@ namespace AgileControllerTests
 
             var cookieHelperMock = new Mock<ICookieHelper>();
             cookieHelperMock.Setup(x => x.ReverseJwtFromRequest(It.IsAny<Microsoft.AspNetCore.Http.HttpContext>()))
-                            .Returns(new JwtReverseResult { IsValid = true });
+                            .Returns(new JwtReverseResult
+                            {
+                                IsValid = true,
+                                Claims = new List<Claim>
+                                {
+                                    new Claim(ClaimTypes.Role, ((int)UserRoleEnum.ADMIN).ToString())
+                                }
+                            });
 
             var controller = new ProjectController(projectServiceMock.Object, cookieHelperMock.Object, null);
+
+            // Setup HttpContext
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext()
+            };
 
             // Act
             var result = controller.DeleteProject(1);
@@ -151,9 +206,22 @@ namespace AgileControllerTests
 
             var cookieHelperMock = new Mock<ICookieHelper>();
             cookieHelperMock.Setup(x => x.ReverseJwtFromRequest(It.IsAny<Microsoft.AspNetCore.Http.HttpContext>()))
-                            .Returns(new JwtReverseResult { IsValid = true });
+                            .Returns(new JwtReverseResult
+                            {
+                                IsValid = true,
+                                Claims = new List<Claim>
+                                {
+                                    new Claim(ClaimTypes.Role, ((int)UserRoleEnum.ADMIN).ToString())
+                                }
+                            });
 
             var controller = new ProjectController(projectServiceMock.Object, cookieHelperMock.Object, null);
+
+            // Setup HttpContext
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext()
+            };
 
             // Act
             var result = controller.AddUserToProject(1, 1);
@@ -172,9 +240,22 @@ namespace AgileControllerTests
 
             var cookieHelperMock = new Mock<ICookieHelper>();
             cookieHelperMock.Setup(x => x.ReverseJwtFromRequest(It.IsAny<Microsoft.AspNetCore.Http.HttpContext>()))
-                            .Returns(new JwtReverseResult { IsValid = true });
+                            .Returns(new JwtReverseResult
+                            {
+                                IsValid = true,
+                                Claims = new List<Claim>
+                                {
+                                    new Claim(ClaimTypes.Role, ((int)UserRoleEnum.ADMIN).ToString())
+                                }
+                            });
 
             var controller = new ProjectController(projectServiceMock.Object, cookieHelperMock.Object, null);
+
+            // Setup HttpContext
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext()
+            };
 
             // Act
             var result = controller.RemoveUserFromProject(1, 1);

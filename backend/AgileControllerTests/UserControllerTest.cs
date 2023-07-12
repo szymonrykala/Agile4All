@@ -1,4 +1,5 @@
 using AgileApp.Controllers;
+using AgileApp.Enums;
 using AgileApp.Models;
 using AgileApp.Models.Common;
 using AgileApp.Models.Jwt;
@@ -6,9 +7,11 @@ using AgileApp.Models.Requests;
 using AgileApp.Models.Users;
 using AgileApp.Services.Users;
 using AgileApp.Utils.Cookies;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -43,7 +46,7 @@ namespace AgileControllerTests
 
             var cookieHelperMock = new Mock<ICookieHelper>();
             cookieHelperMock.Setup(x => x.ReturnJwtTokenString(It.IsAny<Microsoft.AspNetCore.Http.HttpContext>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>()))
-                            .Returns("test_token");
+                            .Returns(It.IsAny<string>());
 
             var controller = new UserController(userServiceMock.Object, cookieHelperMock.Object);
 
@@ -63,14 +66,25 @@ namespace AgileControllerTests
                            .Returns(false);
 
             userServiceMock.Setup(x => x.AddUser(It.IsAny<AuthorizationDataRequest>()))
-                           .Returns("abvc");
+                           .Returns(It.IsAny<string>);
 
             var cookieHelperMock = new Mock<ICookieHelper>();
 
             var controller = new UserController(userServiceMock.Object, cookieHelperMock.Object);
 
+            // Create a valid AuthorizationDataRequest
+            var request = new AuthorizationDataRequest()
+            {
+                // Set necessary properties here. e.g.,
+                Email = "test@test.com",
+                Password = "password",
+                FirstName = "FirstName",
+                LastName = "LastName"
+                // etc.
+            };
+
             // Act
-            var result = controller.AddUser(new AuthorizationDataRequest());
+            var result = controller.AddUser(request);
 
             // Assert
             Assert.IsType<OkObjectResult>(result);
@@ -86,9 +100,22 @@ namespace AgileControllerTests
 
             var cookieHelperMock = new Mock<ICookieHelper>();
             cookieHelperMock.Setup(x => x.ReverseJwtFromRequest(It.IsAny<Microsoft.AspNetCore.Http.HttpContext>()))
-                            .Returns(new JwtReverseResult { IsValid = true });
+                            .Returns(new JwtReverseResult
+                            {
+                                IsValid = true,
+                                Claims = new List<Claim>
+                                {
+                                    new Claim(ClaimTypes.Hash, "hash")
+                                }
+                            });
 
             var controller = new UserController(userServiceMock.Object, cookieHelperMock.Object);
+
+            // Setup HttpContext
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext()
+            };
 
             // Act
             var result = controller.GetAllUsers();
@@ -124,16 +151,29 @@ namespace AgileControllerTests
             // Arrange
             var userServiceMock = new Mock<IUserService>();
             userServiceMock.Setup(x => x.GetUserById(It.IsAny<int>()))
-                           .Returns(new GetAllUsersResponse { Role = "Admin" });
+                           .Returns(new GetAllUsersResponse { Role = ((int)UserRoleEnum.ADMIN).ToString() });
 
             userServiceMock.Setup(x => x.UpdateUser(It.IsAny<UpdateUserRequest>()))
                            .Returns(true);
 
             var cookieHelperMock = new Mock<ICookieHelper>();
             cookieHelperMock.Setup(x => x.ReverseJwtFromRequest(It.IsAny<Microsoft.AspNetCore.Http.HttpContext>()))
-                            .Returns(new JwtReverseResult { IsValid = true });
+                            .Returns(new JwtReverseResult
+                            {
+                                IsValid = true,
+                                Claims = new List<Claim>
+                                {
+                                    new Claim(ClaimTypes.Role, ((int)UserRoleEnum.ADMIN).ToString())
+                                }
+                            });
 
             var controller = new UserController(userServiceMock.Object, cookieHelperMock.Object);
+
+            // Setup HttpContext
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext()
+            };
 
             // Act
             var result = controller.UpdateUser(1, new UpdateUserRequest());
@@ -152,9 +192,22 @@ namespace AgileControllerTests
 
             var cookieHelperMock = new Mock<ICookieHelper>();
             cookieHelperMock.Setup(x => x.ReverseJwtFromRequest(It.IsAny<Microsoft.AspNetCore.Http.HttpContext>()))
-                            .Returns(new JwtReverseResult { IsValid = true });
+                            .Returns(new JwtReverseResult
+                            {
+                                IsValid = true,
+                                Claims = new List<Claim>
+                                {
+                                    new Claim(ClaimTypes.Role, ((int)UserRoleEnum.ADMIN).ToString())
+                                }
+                            });
 
             var controller = new UserController(userServiceMock.Object, cookieHelperMock.Object);
+
+            // Setup HttpContext
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext()
+            };
 
             // Act
             var result = controller.DeleteUser(1);

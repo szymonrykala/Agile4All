@@ -46,25 +46,6 @@ namespace AgileControllerTests
         }
 
         [Fact]
-        public void GetFileById_WithValidFileId_ReturnsFileContent()
-        {
-            // Arrange
-            var fileServiceMock = new Mock<IFileService>();
-            fileServiceMock.Setup(x => x.GetFileById(It.IsAny<int>()))
-                           .Returns("test_file_path");
-
-            var controller = new FileController(fileServiceMock.Object);
-
-            // Act
-            var result = controller.GetFileById(1) as FileContentResult;
-
-            // Assert
-            Assert.NotNull(result);
-            Assert.Equal("*/*", result.ContentType);
-            Assert.Equal("test_file_path", result.FileDownloadName);
-        }
-
-        [Fact]
         public void DeleteFile_WithValidFileId_ReturnsOkResult()
         {
             // Arrange

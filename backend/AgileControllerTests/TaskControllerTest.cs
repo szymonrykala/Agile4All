@@ -1,9 +1,12 @@
 using System.Collections.Generic;
+using System.Security.Claims;
 using AgileApp.Controllers;
+using AgileApp.Enums;
 using AgileApp.Models.Jwt;
 using AgileApp.Models.Tasks;
 using AgileApp.Services.Tasks;
 using AgileApp.Utils.Cookies;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
@@ -85,9 +88,22 @@ namespace AgileControllerTests
 
             var cookieHelperMock = new Mock<ICookieHelper>();
             cookieHelperMock.Setup(x => x.ReverseJwtFromRequest(It.IsAny<Microsoft.AspNetCore.Http.HttpContext>()))
-                            .Returns(new JwtReverseResult { IsValid = true });
+                            .Returns(new JwtReverseResult
+                            {
+                                IsValid = true,
+                                Claims = new List<Claim>
+                                {
+                                    new Claim(ClaimTypes.Role, ((int)UserRoleEnum.ADMIN).ToString())
+                                }
+                            });
 
             var controller = new TaskController(taskServiceMock.Object, cookieHelperMock.Object);
+
+            // Setup HttpContext
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext()
+            };
 
             // Act
             var result = controller.DeleteTask(1);

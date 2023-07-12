@@ -1,5 +1,6 @@
 using AgileApp.Controllers;
 using AgileApp.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -43,6 +44,12 @@ namespace AgileControllerTests
             // Arrange
             var loggerMock = new Mock<ILogger<HomeController>>();
             var controller = new HomeController(loggerMock.Object);
+
+            // Setup HttpContext
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext()
+            };
 
             // Act
             var result = controller.Error() as ViewResult;
