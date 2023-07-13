@@ -1,0 +1,10 @@
+FROM node:18-bullseye-slim
+
+VOLUME [ "/frontend/agile4all" ]
+WORKDIR /frontend/agile4all
+
+COPY frontend/agile4all/package.json /frontend/agile4all/package.json
+
+RUN npm install
+
+ENTRYPOINT npm run start

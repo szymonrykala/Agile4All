@@ -1,3 +1,6 @@
 #!/bin/bash
 
-ENVIRONMENT=DEVELOPMENT ./compose $@
+ENV="dev"                                           \
+ENV_FILE="./env/.env.dev"                           \
+DOCKER_ARGUMENTS="-f ./docker-compose.dev.yml"      \
+./compose $@

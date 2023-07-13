@@ -1,18 +1,15 @@
 version: '3.9'
 
 services:
-  frontend:
-    image: blayer.mooo.com:5000/agile-project/frontend:latest
-    restart: 'unless-stopped'
-    env_file:
-      - ${ENV_FILE}
   nginx:
-    image: blayer.mooo.com:5000/agile-project/nginx:latest
+    image: blayer.mooo.com:5000/agile-project/nginx:${ENV}
+    pull_policy: always
     restart: 'unless-stopped'
     ports:
       - 5700:80
   backend:
-    image: blayer.mooo.com:5000/agile-project/backend:latest
+    image: blayer.mooo.com:5000/agile-project/backend:${ENV}
+    pull_policy: always
     restart: 'unless-stopped'
     depends_on:
       - db
@@ -26,10 +23,12 @@ services:
       - ${ENV_FILE}
   db:
     image: postgres:15-alpine
+    pull_policy: always
     restart: 'unless-stopped'
     env_file:
       - ${ENV_FILE}
     volumes:
+      - ./docker/db/data:/var/lib/postgresql/data
       - type: bind
         source: ./docker/db/migrations/
         target: /docker-entrypoint-initdb.d/

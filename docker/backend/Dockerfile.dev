@@ -1,0 +1,10 @@
+FROM mcr.microsoft.com/dotnet/sdk:6.0
+
+VOLUME [ "/backend" ]
+COPY ./docker/backend/entrypoint /entrypoint
+
+RUN apt-get update && apt-get install -y gosu
+RUN dotnet tool install dotnet-ef --tool-path /usr/local/dotnet/tools
+
+WORKDIR /backend
+ENTRYPOINT /entrypoint dotnet watch run --project "./AgileApp"

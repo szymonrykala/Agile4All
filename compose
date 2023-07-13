@@ -3,13 +3,8 @@
 export LOCAL_USER_ID=${LOCAL_USER_ID:-`id -u`}
 export LOCAL_GROUP_ID=${LOCAL_GROUP_ID:-`id -g`}
 
-if [ "$ENVIRONMENT" = DEVELOPMENT ]; then
-    ENV=DEVELOPMENT
-    ENV_FILE=./env/.env.dev
-else
-    ENV=PRODUCTION
-    ENV_FILE=./env/.env
-fi
+export ENV=${ENV:-"prod"}
+export ENV_FILE=${ENV_FILE:-"./env/.env"}
 
 set -a
 source $ENV_FILE
@@ -17,11 +12,9 @@ set +a
 
 COMMAND="$1"
 COMMAND_ARGUMENTS="${@:2}"
-DOCKER_ARGUMENTS="-p $PROJECT_NAME -f ./docker-compose.yml"
+DOCKER_ARGUMENTS="-p $PROJECT_NAME -f ./docker-compose.prod.yml $DOCKER_ARGUMENTS"
 
-if [ "$ENV" = DEVELOPMENT ]; then
-    DOCKER_ARGUMENTS+="${ARGUMENTS} -f ./docker-compose.dev.yml"
-elif [ "$COMMAND" = up ]; then
+if [ "$COMMAND" = up ] && [ "$ENV" = prod ]; then
     COMMAND_ARGUMENTS+=" --no-build"
 fi
 

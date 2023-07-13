@@ -2,6 +2,7 @@
 
 USER_ID=${LOCAL_USER_ID:-9001}
 GROUP_ID=${LOCAL_GROUP_ID:-9001}
+PATH=$PATH:/usr/local/dotnet/tools
 
 # Create user with matching group, but only if it doesn't exist yet
 id user > /dev/null 2>&1 || groupadd -g $GROUP_ID user

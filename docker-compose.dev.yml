@@ -4,34 +4,33 @@ services:
   frontend:
     build:
       context: ./
-      dockerfile: ./docker/frontend/Dockerfile
+      dockerfile: ./docker/frontend/Dockerfile.${ENV}
     volumes:
-      - ./frontend/agile4all:/usr/app
-      - ./frontend/agile4all/node_modules:/usr/app/node_modules
-    entrypoint: /bin/bash -c "npm install && npm run start"
+      - ./frontend/agile4all:/frontend/agile4all
+      - ./frontend/agile4all/node_modules:/frontend/agile4all/node_modules
   nginx:
     build:
       context: ./
-      dockerfile: ./docker/nginx/Dockerfile
+      dockerfile: ./docker/nginx/Dockerfile.${ENV}
     ports:
       - 4200:80
     depends_on:
       - frontend
+    volumes:
+      - ./docker/nginx/nginx.dev.conf:/etc/nginx/nginx.conf
   backend:
     build:
       context: ./
-      dockerfile: ./docker/backend/Dockerfile
+      dockerfile: ./docker/backend/Dockerfile.${ENV}
     volumes:
       - ./backend:/backend
-      - /backend/AgileApp/bin/
-      - /backend/AgileApp/obj/
-      - /backend/AgileControllerTests/bin/
-      - /backend/AgileControllerTests/obj/
-      - ./docker/backend/entrypoint.sh:/entrypoint.sh
-      - ./docker/backend/entrypoint.dev.sh:/entrypoint.dev.sh
-      - ~/.nuget/packages:/root/.nuget/packages:rw
       - ./docker/db/migrations:/migrations
     environment:
       - LOCAL_USER_ID=${LOCAL_USER_ID:-9001}
       - LOCAL_GROUP_ID=${LOCAL_GROUP_ID:-9001}
-    entrypoint: /entrypoint.dev.sh "dotnet watch run --urls 'http://0.0.0.0:8000;http://0.0.0.0:9000' --project /backend/AgileApp"
+  db:
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+volumes:
+  postgres-data:
