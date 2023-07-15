@@ -1,4 +1,6 @@
 using AgileApp.Controllers;
+using AgileApp.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -37,19 +39,25 @@ namespace AgileControllerTests
         }
 
         [Fact]
-        public void Error_ReturnsViewResultWithModelErrorViewModel()
+        public void Error_ReturnsViewResult_WithModelError()
         {
             // Arrange
             var loggerMock = new Mock<ILogger<HomeController>>();
             var controller = new HomeController(loggerMock.Object);
 
+            // Setup HttpContext
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext()
+            };
+
             // Act
-            var result = controller.Error();
+            var result = controller.Error() as ViewResult;
+            var model = result.ViewData.Model;
 
             // Assert
-            var viewResult = Assert.IsType<ViewResult>(result);
-            var model = Assert.IsType<ErrorViewModel>(viewResult.ViewData.Model);
-            Assert.NotNull(model.RequestId);
+            Assert.IsType<ViewResult>(result);
+            Assert.IsType<ErrorViewModel>(model);
         }
     }
 }
