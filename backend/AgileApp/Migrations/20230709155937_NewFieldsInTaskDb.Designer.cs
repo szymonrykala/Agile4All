@@ -3,6 +3,7 @@ using System;
 using AgileApp;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AgileApp.Migrations
 {
     [DbContext(typeof(AgileDbContext))]
-    partial class AgileDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230709155937_NewFieldsInTaskDb")]
+    partial class NewFieldsInTaskDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
