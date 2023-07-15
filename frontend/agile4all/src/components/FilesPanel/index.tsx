@@ -1,11 +1,12 @@
-import { Sheet, IconButton } from "@mui/joy";
+import { IconButton, Box } from "@mui/joy";
 import FileModel from "../../models/file";
 import UploadIcon from '@mui/icons-material/Upload';
 import File from './File';
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { FilesApi, UsersApi } from "../../client";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { FilesApi } from "../../client";
 import { UUID } from "../../models/common";
 import { useParams } from "react-router";
+import { mockedFiles } from "../../client/mocks/files";
 
 
 interface IFilesPanel {
@@ -15,12 +16,18 @@ interface IFilesPanel {
 export default function FilesPanel(props: IFilesPanel) {
     const queryParams = useParams();
     const [files, setFiles] = useState<FileModel[]>(props.files || [])
-    const userId = useMemo(() => UsersApi.getSavedUserId(), []);
     const fileInputRef: React.MutableRefObject<HTMLInputElement | null> = useRef(null)
 
 
     const fetchFiles = useCallback(async () => {
-        const resp = await FilesApi.getAll(queryParams) as unknown as FileModel[]
+        let resp: FileModel[];
+
+        if (process.env.NODE_ENV === "development") {
+            resp = mockedFiles
+        } else {
+            resp = await FilesApi.getAll(queryParams) as unknown as FileModel[]
+        }
+
         setFiles(resp)
 
     }, [queryParams])
@@ -48,7 +55,7 @@ export default function FilesPanel(props: IFilesPanel) {
         }
         fileInputRef.current.value = ''
 
-    }, [files, setFiles, userId, queryParams, fetchFiles]);
+    }, [queryParams, fetchFiles]);
 
 
 
@@ -83,7 +90,7 @@ export default function FilesPanel(props: IFilesPanel) {
 
 
     return (
-        <Sheet sx={{
+        <Box sx={{
             display: 'flex',
             alignItems: 'flex-start',
             gap: 2,
@@ -96,7 +103,7 @@ export default function FilesPanel(props: IFilesPanel) {
                     onDelete={deleteFile}
                 />)
             }
-            <Sheet sx={{ bgcolor: 'inherit' }}>
+            <Box sx={{ bgcolor: 'inherit' }}>
                 <input style={{ display: 'none' }} type='file' name="file" ref={fileInputRef} />
                 <IconButton
                     onClick={loadFile}
@@ -105,7 +112,7 @@ export default function FilesPanel(props: IFilesPanel) {
                 >
                     <UploadIcon fontSize="large" />
                 </IconButton>
-            </Sheet>
-        </Sheet>
+            </Box>
+        </Box>
     )
 }

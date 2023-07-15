@@ -4,7 +4,7 @@ import { useNavigate } from "react-router";
 import { UsersApi } from "../../client";
 import { useAppDispatch } from "../../hooks";
 import { removeSession } from "../../store/sessionSlice";
-import BasePage from "../common/BasePage";
+import NoSessionPage from "./NoSessionPage";
 
 
 
@@ -18,7 +18,7 @@ function Logout() {
         navigate('/login')
     }, [navigate, dispatch])
 
-    return <BasePage>
+    return <NoSessionPage>
         <Sheet sx={{
             display: 'flex',
             flexDirection: 'column',
@@ -33,7 +33,7 @@ function Logout() {
             </Typography>
 
         </Sheet>
-    </BasePage>
+    </NoSessionPage>
 }
 
 export default Logout;

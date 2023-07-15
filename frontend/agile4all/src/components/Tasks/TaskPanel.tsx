@@ -1,9 +1,8 @@
-import Modal from "../common/Modal";
-import { Divider, IconButton, Option, Select, Sheet, Typography } from "@mui/joy";
+import { Box, Divider, IconButton, Option, Select, Typography } from "@mui/joy";
 import Task, { TaskStatus } from "../../models/task";
 import { getStatusColor } from "./StatusChip";
 import NamedAvatar from "./NamedAvatar";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import FilesPanel from "../FilesPanel";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
@@ -15,6 +14,7 @@ import { useAppDispatch, useAppSelector } from "../../hooks";
 import { TasksApi } from "../../client";
 import { remove, update } from "../../store/taskSlice";
 import { useParams } from "react-router";
+import SidePanel from "../common/SidePanel";
 
 
 
@@ -28,24 +28,22 @@ const demoTaskData = {
 }
 
 
-export default function TaskModal() {
+export default function TaskPanel() {
     const [editMode, setEditMode] = useState<boolean>(false);
     const dispatch = useAppDispatch();
     const { taskId } = useParams()
-    const initTask = useAppSelector(({ tasks }) => tasks.find(({ id }) => id === Number(taskId)))
 
-    const project = useAppSelector(({ projects }) => projects.find(({ id }) => id === initTask?.projectId));
+    const taskFormRedux = useAppSelector(({ tasks }) => tasks.find(({ id }) => id === Number(taskId)))
+    const project = useAppSelector(({ projects }) => projects.find(({ id }) => id === taskFormRedux?.projectId));
+
+    const [task, setTask] = useState<Task>(taskFormRedux || demoTaskData);
 
     const user = useMemo(() => {
-        return project?.users.find(({ id }) => id === initTask?.userId)
+        return project?.users.find(({ id }) => id === taskFormRedux?.userId)
     }, [
-        initTask?.userId,
+        taskFormRedux?.userId,
         project?.users
     ])
-
-
-    const [task, setTask] = useState<Task>(initTask || demoTaskData);
-
 
     const deleteTask = useCallback(async () => {
         const proceed = await confirm('Do You want to delete this task?')
@@ -55,8 +53,9 @@ export default function TaskModal() {
         dispatch(remove(task))
     }, [task, dispatch])
 
+
     const updateTask = useCallback(async () => {
-        if (task !== initTask) {
+        if (task !== taskFormRedux) {
             dispatch(update(task))
             try {
                 await TasksApi.update(task.id, {
@@ -67,8 +66,13 @@ export default function TaskModal() {
                 })
             } catch (err) { alert(err) }
         }
+    }, [task, dispatch, taskFormRedux])
 
-    }, [task, dispatch, initTask])
+
+    useEffect(()=>{
+        taskFormRedux && setTask(taskFormRedux)
+    },[taskFormRedux])
+
 
     const updateAssignedUser = useCallback((event: any, user: UUID | null) => {
         if (!user) return;
@@ -77,27 +81,19 @@ export default function TaskModal() {
     }, [task])
 
     const statusUpdate = useCallback((event: any, newStatus: TaskStatus | null) => {
-        // api call ??
         if (newStatus) setTask({ ...task, status: newStatus })
     }, [task]);
 
 
     return (
-        <Modal
-            title='task window'
-            description='detailed task window'
-            sx={{
-                width: '500px',
-                bgcolor: 'background.componentBg',
-            }}
-        >
+        <SidePanel>
+
             {user && <NamedAvatar user={user} />}
 
-            <Sheet
+            <Box
                 sx={{
                     display: 'flex',
                     flexDirection: 'row',
-                    bgcolor: 'inherit',
                     justifyContent: 'space-between'
                 }}>
 
@@ -114,7 +110,8 @@ export default function TaskModal() {
                     <Option value={TaskStatus.TODO}>To Do</Option>
                     <Option value={TaskStatus.ARCHIVED}>archived</Option>
                 </Select>
-                <Sheet sx={{ display: 'flex', gap: 1, bgcolor: 'inherit' }}>
+
+                <Box sx={{ display: 'flex', gap: 1, bgcolor: 'inherit' }}>
                     <IconButton onClick={() => setEditMode(!editMode)}>
                         <EditIcon />
                     </IconButton>
@@ -126,8 +123,9 @@ export default function TaskModal() {
                     <IconButton onClick={deleteTask} color='danger'>
                         <DeleteIcon />
                     </IconButton>
-                </Sheet>
-            </Sheet>
+                </Box>
+
+            </Box>
 
             <Typography component='label' level='body3'>
                 Assigned user
@@ -164,6 +162,6 @@ export default function TaskModal() {
 
             <Divider />
             <FilesPanel files={[]} />
-        </Modal>
+        </SidePanel>
     )
 }

@@ -17,7 +17,10 @@ export default function UsersList() {
 
         if (sort?.key) {
             if (filter?.value) {
-                localUsers = localUsers.filter((user) => String(user[filter.key]).match(RegExp(filter.value || '', 'ig')))
+                try {
+                    const regexp = new RegExp(filter?.value || "", 'ig')
+                    localUsers = localUsers.filter(user => String(user[filter.key]).match(regexp))
+                } catch{}
             }
             localUsers.sort((u1, u2) => String(u1[sort.key]).localeCompare('' + u2[sort.key]));
             return localUsers

@@ -1,23 +1,22 @@
-import { ListItem, IconButton } from "@mui/joy";
+import { IconButton, BoxProps, IconButtonPropsSizeOverrides } from "@mui/joy";
 import AddIcon from "@mui/icons-material/Add";
 
 
 
-interface IAddListItem {
+interface IAddListItem extends BoxProps {
     onClick(): void
-    component?: React.ElementType<any>
+    size?: IconButtonPropsSizeOverrides
 }
 
-export default function AddListItem({ onClick, component }: IAddListItem) {
+export default function AddListItem(props: IAddListItem) {
 
     return (
-        <ListItem {...component && { 'component': component }}>
-            <IconButton
-                onClick={onClick}
-                size='lg'
-            >
-                <AddIcon />
-            </IconButton>
-        </ListItem >
+        <IconButton
+            onClick={props.onClick}
+            size={props?.size as any || "md"}
+            sx={props.sx}
+        >
+            <AddIcon />
+        </IconButton>
     )
 }

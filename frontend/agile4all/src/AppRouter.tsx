@@ -5,15 +5,26 @@ import App from "./App";
 import Projects from "./components/Pages/Projects";
 import Users from "./components/Pages/Users";
 import Tasks from "./components/Pages/Tasks";
-import TaskModal from "./components/Tasks/TaskModal";
+import TaskPanel from "./components/Tasks/TaskPanel";
 import Login from "./components/Pages/Login";
 import Registration from "./components/Pages/Registration";
 import SessionController from "./components/Pages/SessionControler";
 import Logout from "./components/Pages/Logout";
-import UserModal from "./components/Users/UserModal";
+import UserPanel from "./components/Users/UserPanel";
 import { ErrorBaner } from "./components/Errors";
-import ProjectModal from "./components/Projects/ProjectModal";
+import ProjectPanel from "./components/Projects/ProjectPanel";
 
+
+const SIDE_PANEL_LOOKUPS = [
+  {
+    path: 'task-lookup/:taskId',
+    element: <TaskPanel />
+  },
+  {
+    path: 'project-lookup/:projectId',
+    element: <ProjectPanel />
+  }
+]
 
 
 const AppRouter = createHashRouter([
@@ -43,14 +54,27 @@ const AppRouter = createHashRouter([
         element: <SessionController element={<App />} />,
         children: [
           {
-            path: 'users/:userId/tasks',
-            element: <Tasks />,
+            path: "tasks",
             errorElement: <ErrorBaner />,
             children: [
               {
-                path: ':taskId',
-                element: <TaskModal />
-              }
+                path: "users/:userId/projects/:projectId",
+                element: <Tasks />,
+                errorElement: <ErrorBaner />,
+                children: SIDE_PANEL_LOOKUPS
+              },
+              {
+                path: "users/:userId",
+                element: <Tasks />,
+                errorElement: <ErrorBaner />,
+                children: SIDE_PANEL_LOOKUPS
+              },
+              {
+                path: "projects/:projectId",
+                element: <Tasks />,
+                errorElement: <ErrorBaner />,
+                children: SIDE_PANEL_LOOKUPS
+              },
             ]
           },
           {
@@ -60,7 +84,7 @@ const AppRouter = createHashRouter([
             children: [
               {
                 path: ':userId',
-                element: <UserModal />,
+                element: <UserPanel />,
               }
             ]
           },
@@ -69,25 +93,24 @@ const AppRouter = createHashRouter([
             element: <Projects />,
             children: [
               {
-                errorElement: <ErrorBaner />,
                 path: ':projectId',
-                element: <ProjectModal />,
+                element: <ProjectPanel />,
+                errorElement: <ErrorBaner />,
               },
-            ]
-          },
-          {
-            path: 'projects/:projectId/tasks',
-            element: <Tasks />,
-            errorElement: <ErrorBaner />,
-            children: [
               {
-                path: ':taskId',
-                element: <TaskModal />,
+                path: ":projectId/task-lookup/:taskId",
+                element: <TaskPanel/>,
+                errorElement: <ErrorBaner />,
+              },
+              {
+                path: "user-lookup/:userId",
+                element: <UserPanel/>,
+                errorElement: <ErrorBaner />,
               }
             ]
-          },
+          }
         ]
-      },
+      }
     ]
   },
 ], {

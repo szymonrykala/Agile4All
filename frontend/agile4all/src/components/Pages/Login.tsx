@@ -1,6 +1,6 @@
 import { Input, Typography } from '@mui/joy';
 import { useCallback, useState } from 'react';
-import BasePage from '../common/BasePage';
+import NoSessionPage from './NoSessionPage';
 import FormWrapper from '../common/FormWrapper';
 import { Link, useNavigate } from "react-router-dom";
 import { ILoginData } from '../../client/users';
@@ -32,7 +32,7 @@ function Login() {
     }, [navigate, setError, data])
 
 
-    return <BasePage sx={{
+    return <NoSessionPage sx={{
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -65,7 +65,7 @@ function Login() {
                 onChange={(evt) => setData({ ...data, password: evt.target.value })}
             />
         </FormWrapper>
-    </BasePage >
+    </NoSessionPage >
 }
 
 export default Login;

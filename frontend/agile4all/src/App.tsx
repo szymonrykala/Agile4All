@@ -10,42 +10,33 @@ import ResourceLoader from './components/common/ReourceLoader';
 
 
 export default function App() {
-  const [drawerOpen, setDrawerOpen] = React.useState(false);
+  const [drawerOpen, setDrawerOpen] = React.useState(true);
   const session = useAppSelector(({ session }) => session);
 
   return (
     <>
       {session && <ResourceLoader />}
-      {drawerOpen && (
-        <Layout.SideDrawer onClose={() => setDrawerOpen(false)}>
-          <SideNav />
-        </Layout.SideDrawer>
-      )}
 
-      <Layout.Root
-        sx={{
-          ...(drawerOpen && {
-            height: '100vh',
-            overflow: 'hidden',
-          }),
-        }}
-      >
+      <Layout.Root>
         <ChatContextProvider>
+
           <Layout.Header >
             <Header
-              setDrawerOpen={setDrawerOpen}
+              setDrawerOpen={() => setDrawerOpen(!drawerOpen)}
               session={session}
             />
           </Layout.Header>
 
-          <Layout.SideNav>
+          <Layout.SideNav isOpen={drawerOpen}>
             <SideNav />
           </Layout.SideNav>
 
           <Layout.Main>
             <Outlet />
-            <Chat />
           </Layout.Main>
+
+          <Chat />
+
         </ChatContextProvider>
       </Layout.Root>
     </>

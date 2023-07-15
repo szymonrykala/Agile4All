@@ -4,6 +4,8 @@ import Project from "../models/project"
 import User, { Session, UserRole } from "../models/user"
 import ApiClient, { ResponseData } from "./ApiClient"
 import { BadCredentialsError, NoValidUserSessionError, UserRegistrationError } from "./exceptions"
+import { mockedUserProjects } from "./mocks/project"
+import { mockedUserMain, userLoginResp } from "./mocks/user"
 
 
 export interface ILoginData {
@@ -48,6 +50,13 @@ export default class UsersClient
         if (userId === -1) throw new NoValidUserSessionError()
 
         try {
+            if(process.env.NODE_ENV === "development"){
+                return {
+                    user: mockedUserMain,
+                    projects: mockedUserProjects
+                }
+            }
+            
             const user = await this.getOne(userId) as User
             const userProjects = await ProjectsApi.getAll({ userId: userId }) as Project[]
 
@@ -63,7 +72,12 @@ export default class UsersClient
 
     async login(data: ILoginData) {
         try {
-            const resp = await this._post(`${this.path}/login`, data) as ILoginResponse;
+            let resp: ILoginResponse;
+            if(process.env.NODE_ENV === "development"){
+                resp = userLoginResp
+            }else{
+                resp = await this._post(`${this.path}/login`, data) as ILoginResponse;
+            }
 
             this.authToken = resp.token
             this.saveUserId(resp.userId)

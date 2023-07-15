@@ -28,9 +28,6 @@ export default function EditableTextArea(props: IEditableTextArea) {
                 maxRows={15}
                 placeholder='Type a text'
                 onChange={changeHandler}
-                sx={{
-                    // bgcolor: 'inherit'
-                }}
             />
         </Typography>
     )

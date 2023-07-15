@@ -49,8 +49,9 @@ export function ChatContextProvider({ children }: IChatContextProvider) {
         dispatch(add(message))
     }, [dispatch])
 
+
     const reconnectWS = useCallback(() => {
-        if ([socket.CLOSED, socket.CLOSING].includes(socket.readyState)) {
+        if ([socket.CLOSED, socket.CLOSING].includes(socket.readyState as any)) {
             console.debug('creating new connection to ws')
             const conn = new WebSocket(ws_url)
             setSocket(conn)
@@ -63,7 +64,7 @@ export function ChatContextProvider({ children }: IChatContextProvider) {
             type: WSMessageType.PING,
             payload: null
         }
-        if ([socket.CLOSED, socket.CLOSING].includes(socket.readyState)) reconnectWS()
+        if ([socket.CLOSED, socket.CLOSING].includes(socket.readyState as any)) reconnectWS()
         try {
             socket.send(JSON.stringify(ping));
             console.debug('WS Ping message sent')
@@ -87,7 +88,7 @@ export function ChatContextProvider({ children }: IChatContextProvider) {
         if ([
             socket.CLOSING,
             socket.CLOSED
-        ].includes(socket.readyState)) return;
+        ].includes(socket.readyState as any)) return;
 
         socket.addEventListener('open', (event) => {
             console.debug('WS connected')

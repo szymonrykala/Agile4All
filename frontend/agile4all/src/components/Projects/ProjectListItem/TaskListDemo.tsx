@@ -34,7 +34,7 @@ export default function TaskListDemo(props: ITaskListDemo) {
                 {
                     tasks.map(({ name, id, status }, index) =>
                         <ListItem key={index} sx={{ alignItems: 'flex-start' }}>
-                            <ListItemButton component={Link} to={`${props.projectId}/tasks/${id}`}>
+                            <ListItemButton component={Link} to={`${props.projectId}/task-lookup/${id}`}>
                                 <ListItemContent>
                                     <Typography level="body2" sx={{
                                         textOverflow: "ellipsis",
@@ -55,7 +55,7 @@ export default function TaskListDemo(props: ITaskListDemo) {
                 variant="plain"
                 endDecorator={<KeyboardArrowRightRoundedIcon fontSize="small" />}
                 component={Link}
-                to={`${props.projectId}/tasks`}
+                to={`/app/tasks/projects/${props.projectId}`}
             >
                 More tasks
             </Button>
