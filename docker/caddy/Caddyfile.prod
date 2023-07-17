@@ -1,0 +1,21 @@
+http://:80 {
+    log {
+        output file /var/log/caddy/agile4all-access.log
+    }
+
+	encode gzip
+
+	handle /api/* {
+		reverse_proxy backend:8000
+	}
+
+    handle /chat {
+        reverse_proxy backend:9000
+    }
+
+	handle {
+		root * /usr/share/caddy/html
+		try_files {path} /index.html
+		file_server
+	}
+}

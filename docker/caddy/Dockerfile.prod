@@ -1,0 +1,14 @@
+FROM node:18-bullseye-slim as frontend
+
+WORKDIR /usr/app
+COPY frontend/agile4all/ /usr/app
+
+RUN npm ci
+RUN npm run build
+
+FROM caddy:2.7
+
+EXPOSE 80
+
+COPY ./docker/caddy/Caddyfile.prod /etc/caddy/Caddyfile
+COPY --from=frontend /usr/app/build /usr/share/caddy/html

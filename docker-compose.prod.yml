@@ -1,12 +1,12 @@
 version: '3.9'
 
 services:
-  nginx:
-    image: ${DOCKER_REGISTRY}/agile-project/nginx:${ENV}
+  caddy:
+    image: ${DOCKER_REGISTRY}/agile-project/caddy:${ENV}
     pull_policy: always
     restart: 'unless-stopped'
     ports:
-      - 5700:80
+      - ${APP_PORT}:80
   backend:
     image: ${DOCKER_REGISTRY}/agile-project/backend:${ENV}
     pull_policy: always

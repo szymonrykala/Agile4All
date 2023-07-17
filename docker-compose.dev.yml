@@ -8,16 +8,17 @@ services:
     volumes:
       - ./frontend/agile4all:/frontend/agile4all
       - ./frontend/agile4all/node_modules:/frontend/agile4all/node_modules
-  nginx:
+  caddy:
     build:
       context: ./
-      dockerfile: ./docker/nginx/Dockerfile.${ENV}
+      dockerfile: ./docker/caddy/Dockerfile.${ENV}
     ports:
-      - 4200:80
+      - ${APP_PORT}:80
     depends_on:
       - frontend
     volumes:
-      - ./docker/nginx/nginx.dev.conf:/etc/nginx/nginx.conf
+      - ./docker/caddy/Caddyfile.dev:/etc/caddy/Caddyfile
+      - ./docker/caddy/logs:/var/log/caddy
   backend:
     build:
       context: ./

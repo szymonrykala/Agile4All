@@ -1,3 +1,4 @@
 .env
 .vscode
 docker/db/data
+logs
