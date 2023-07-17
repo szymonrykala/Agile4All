@@ -2,13 +2,13 @@ version: '3.9'
 
 services:
   nginx:
-    image: blayer.mooo.com:5000/agile-project/nginx:${ENV}
+    image: ${DOCKER_REGISTRY}/agile-project/nginx:${ENV}
     pull_policy: always
     restart: 'unless-stopped'
     ports:
       - 5700:80
   backend:
-    image: blayer.mooo.com:5000/agile-project/backend:${ENV}
+    image: ${DOCKER_REGISTRY}/agile-project/backend:${ENV}
     pull_policy: always
     restart: 'unless-stopped'
     depends_on:
