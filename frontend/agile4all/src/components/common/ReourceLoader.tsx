@@ -17,9 +17,9 @@ export default function ResourceLoader() {
     const trigger = useReloadTrigger();
 
     const loadUsers = useCallback(async () => {
-        let users:User[] 
+        let users:User[]
 
-        if(process.env.NODE_ENV === "development"){
+        if(process.env.NODE_ENV === "development" && process.env.REACT_APP_MOCK_API === "true"){
             users = mockedUsers
         }else{
             users = await UsersApi.getAll() as unknown as User[];
@@ -35,7 +35,7 @@ export default function ResourceLoader() {
     const loadProjects = useCallback(async () => {
         let projects:Project[];
 
-        if(process.env.NODE_ENV === "development"){
+        if(process.env.NODE_ENV === "development" && process.env.REACT_APP_MOCK_API === "true"){
             projects = mockedProjects
         }else{
             projects = await ProjectsApi.getAll() as Project[]
@@ -48,6 +48,6 @@ export default function ResourceLoader() {
         loadProjects()
     }, [loadProjects, trigger.projects])
 
-    
+
     return <></>
 }
