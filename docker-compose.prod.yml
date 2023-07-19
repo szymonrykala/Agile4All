@@ -21,6 +21,7 @@ services:
           propagation: "rslave"
     env_file:
       - ${ENV_FILE}
+      - ${ENV_FILE_OVERRIDE}
   db:
     image: postgres:15-alpine
     pull_policy: always

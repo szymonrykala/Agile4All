@@ -2,5 +2,6 @@
 
 ENV="dev"                                           \
 ENV_FILE="./env/.env.dev"                           \
+ENV_FILE_OVERRIDE="./env/.env"                      \
 DOCKER_ARGUMENTS="-f ./docker-compose.dev.yml"      \
 ./compose $@

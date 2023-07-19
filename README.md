@@ -25,6 +25,10 @@ This setup is done primary for Unix operating systems. If you are running this s
 - `./dotnet-ef` dotnet-ef tool used for migrations. You can create migrations outside of docker too. But its nice to have ability to do that in docker. Eg. `./dotnet-ef migrations add InitialMigration --project /backend/AgileApp`
 - `./generate-migration-scripts` used to generate `.sql` files from existing .NET migrations
 
+# Env
+For development environment default environment variables are used from file `./env/env.dev`. You can override them without triggering git changes by creating `./env/.env` file and placing your altered envs there and then restarting docker containers.
+Production uses only `./env/.env`.
+
 # Tests
 To run backend tests start the app with `./start-dev` and then after backend container builds successfuly, run `./compose-dev exec backend /entrypoint "dotnet test /backend/AgileApp"`
 

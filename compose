@@ -5,9 +5,13 @@ export LOCAL_GROUP_ID=${LOCAL_GROUP_ID:-`id -g`}
 
 export ENV=${ENV:-"prod"}
 export ENV_FILE=${ENV_FILE:-"./env/.env"}
+if [ ! -v ENV_FILE_OVERRIDE ] || [ ! -f $ENV_FILE_OVERRIDE ]; then
+    export ENV_FILE_OVERRIDE="/dev/null"
+fi
 
 set -a
 source $ENV_FILE
+source $ENV_FILE_OVERRIDE
 set +a
 
 COMMAND="$1"
@@ -20,11 +24,12 @@ fi
 
 echo "Running $ENV environment"
 
-LOCAL_USER_ID=$LOCAL_USER_ID    \
-LOCAL_GROUP_ID=$LOCAL_GROUP_ID  \
-ENV_FILE=$ENV_FILE              \
-docker                          \
-    compose                     \
-    $DOCKER_ARGUMENTS           \
-    $COMMAND                    \
+LOCAL_USER_ID=$LOCAL_USER_ID            \
+LOCAL_GROUP_ID=$LOCAL_GROUP_ID          \
+ENV_FILE=$ENV_FILE                      \
+ENV_FILE_OVERRIDE=$ENV_FILE_OVERRIDE    \
+docker                                  \
+    compose                             \
+    $DOCKER_ARGUMENTS                   \
+    $COMMAND                            \
     $COMMAND_ARGUMENTS

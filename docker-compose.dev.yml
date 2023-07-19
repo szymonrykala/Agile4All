@@ -8,6 +8,9 @@ services:
     volumes:
       - ./frontend/agile4all:/frontend/agile4all
       - ./frontend/agile4all/node_modules:/frontend/agile4all/node_modules
+    env_file:
+      - ${ENV_FILE}
+      - ${ENV_FILE_OVERRIDE}
   caddy:
     build:
       context: ./
