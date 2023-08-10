@@ -35,9 +35,6 @@ const AppRouter = createHashRouter([
     children: [
       {
         index: true,
-        element: <Navigate to="/app" />
-      },
-      {
         path: 'login',
         element: <Login />
       },
@@ -110,7 +107,11 @@ const AppRouter = createHashRouter([
             ]
           }
         ]
-      }
+      },
+      {
+        path: '*',
+        element: <Navigate to="/app" replace />
+      },
     ]
   },
 ], {

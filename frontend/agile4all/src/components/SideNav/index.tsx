@@ -57,7 +57,7 @@ function ProjectsTasksListsItem() {
                 </ListItemButton>
               </ListItem>
             ),
-            <ListItem>
+            <ListItem key="all_tasks_item">
               <ListItemButton
                 {...path.pathname === `/app/tasks/users/${session.user.id}` ? clicked : Object()}
                 component={Link} to={`/app/tasks/users/${session.user.id}`}

@@ -27,7 +27,7 @@ export default function App() {
             />
           </Layout.Header>
 
-          <Layout.SideNav isOpen={drawerOpen}>
+          <Layout.SideNav open={drawerOpen}>
             <SideNav />
           </Layout.SideNav>
 

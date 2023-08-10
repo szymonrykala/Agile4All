@@ -47,20 +47,20 @@ function Header(props: BoxProps) {
 }
 
 interface ISideNav extends BoxProps {
-  isOpen: boolean
+  open: boolean
 }
 
 function SideNav(props: ISideNav) {
   const commonStyle = React.useMemo(() => {
     return {
-      width: props.isOpen ? {
+      width: props.open ? {
         sm: "220px",
         md: "250px"
       } : "0px",
-      transform: `translateX(${!props.isOpen ? "-150px" : "0px"})`,
+      transform: `translateX(${!props.open ? "-150px" : "0px"})`,
       transition: "0.3s ease-out",
     }
-  }, [props.isOpen])
+  }, [props.open])
 
   return (
     <>
@@ -72,7 +72,7 @@ function SideNav(props: ISideNav) {
           top: 50,
           height: "100vh",
 
-          p: props.isOpen ? 1 : 1,
+          p: props.open ? 1 : 1,
           bgcolor: 'background.componentBg',
           borderRight: '1px solid',
           borderColor: 'divider',
