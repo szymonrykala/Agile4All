@@ -1,2 +1,5 @@
 # Force line endings so windows wont fuck up our unix bash executables...
-*.sh eol=lf
+* eol=lf
+
+# Unsiecify eol for rest of the files, so git will get it from its config
+*.* !eol

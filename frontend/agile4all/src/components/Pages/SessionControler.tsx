@@ -25,7 +25,7 @@ function SessionController(props: ISessionController) {
             }
 
             if (window.location.href.match(/\/app$/)) {
-                navigate(`/app/users/${userId}/tasks`)
+                navigate(`/app/tasks/users/${userId}`)
             }
 
         } catch (e) {
@@ -35,8 +35,8 @@ function SessionController(props: ISessionController) {
             navigate('/login');
             console.info('No active user session')
         }
-        // there is no need to check session on each route change    
-        // eslint-disable-next-line react-hooks/exhaustive-deps    
+        // there is no need to check session on each route change
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [dispatch, isSessionSet])
 
     React.useEffect(() => {

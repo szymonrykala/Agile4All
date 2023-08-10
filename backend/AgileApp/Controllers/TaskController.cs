@@ -75,7 +75,7 @@ namespace AgileApp.Controllers
             var reverseTokenResult = _cookieHelper.ReverseJwtFromRequest(HttpContext);
 
             if (taskId < 1) return BadRequest();
-            if (!reverseTokenResult.IsValid || !JwtMiddleware.IsAdmin(reverseTokenResult)) return Unauthorized();
+            if (!reverseTokenResult.IsValid) return Unauthorized(); // || !JwtMiddleware.IsAdmin(reverseTokenResult)
 
             return new OkObjectResult(_taskService.DeleteTask(taskId));
         }

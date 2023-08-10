@@ -30,7 +30,7 @@ namespace AgileApp.Controllers
         {
             var reverseTokenResult = _cookieHelper.ReverseJwtFromRequest(HttpContext);
 
-            if (request == null || !reverseTokenResult.IsValid || !JwtMiddleware.IsAdmin(reverseTokenResult))
+            if (request == null || !reverseTokenResult.IsValid)// || !JwtMiddleware.IsAdmin(reverseTokenResult))
             {
                 return BadRequest();
             }
@@ -121,7 +121,7 @@ namespace AgileApp.Controllers
             var reverseTokenResult = _cookieHelper.ReverseJwtFromRequest(HttpContext);
 
             if (request == null) return BadRequest();
-            if (!reverseTokenResult.IsValid || !JwtMiddleware.IsAdmin(reverseTokenResult)) return Unauthorized();
+            if (!reverseTokenResult.IsValid) return Unauthorized(); // || !JwtMiddleware.IsAdmin(reverseTokenResult)
 
 
             var projectUpdate = new UpdateProjectRequest();
@@ -145,7 +145,7 @@ namespace AgileApp.Controllers
             var reverseTokenResult = _cookieHelper.ReverseJwtFromRequest(HttpContext);
 
             if (projectId < 1) return BadRequest();
-            if (!reverseTokenResult.IsValid || !JwtMiddleware.IsAdmin(reverseTokenResult)) return Unauthorized();
+            if (!reverseTokenResult.IsValid) return Unauthorized(); // || !JwtMiddleware.IsAdmin(reverseTokenResult)
 
 
             return new OkObjectResult(_projectService.DeleteProject(projectId));
@@ -156,7 +156,7 @@ namespace AgileApp.Controllers
         {
             var reverseTokenResult = _cookieHelper.ReverseJwtFromRequest(HttpContext);
 
-            if (projectId < 1 || userId < 0 || !reverseTokenResult.IsValid || !JwtMiddleware.IsAdmin(reverseTokenResult))
+            if (projectId < 1 || userId < 0 || !reverseTokenResult.IsValid)// || !JwtMiddleware.IsAdmin(reverseTokenResult))
             {
                 return BadRequest();
             }
@@ -169,7 +169,7 @@ namespace AgileApp.Controllers
         {
             var reverseTokenResult = _cookieHelper.ReverseJwtFromRequest(HttpContext);
 
-            if (projectId < 1 || userId < 0 || !reverseTokenResult.IsValid || !JwtMiddleware.IsAdmin(reverseTokenResult))
+            if (projectId < 1 || userId < 0 || !reverseTokenResult.IsValid)// || !JwtMiddleware.IsAdmin(reverseTokenResult))
             {
                 return BadRequest();
             }

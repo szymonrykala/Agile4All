@@ -3,16 +3,16 @@
 echo "Running migration generation script..."
 
 # Function to return array of regex matches
-global_rematch() { 
-    local s=$1 regex=$2 
-    while [[ $s =~ $regex ]]; do 
+global_rematch() {
+    local s=$1 regex=$2
+    while [[ $s =~ $regex ]]; do
         echo "${BASH_REMATCH[1]}"
         s=${s#*"${BASH_REMATCH[1]}"}
     done
 }
 
 # Retrieve list of migrations from dotnet ef
-migration_list=$(global_rematch "$(./compose-dev exec backend /entrypoint.dev.sh "~/.dotnet/tools/dotnet-ef --no-build --project /backend/AgileApp migrations list --json")" '"id":\s"(\w+)",?')
+migration_list=$(global_rematch "$(./compose-dev exec backend /entrypoint "dotnet-ef --no-build --project ./AgileApp migrations list --json --msbuildprojectextensionspath ./build/AgileApp/obj")" '"id":\s"(\w+)",?')
 
 echo "Found ${#migration_list[@]} migrations."
 
@@ -27,10 +27,10 @@ for migration in $migration_list; do
     migration_path="$migration_directory/`printf %03d $migration_index`_$migration.sql"
 
     # Generate .sql files only for migrations that are not present in the directory
-    ./compose-dev exec backend /entrypoint.dev.sh "test -f $migration_path" > /dev/null
+    ./compose-dev exec backend /entrypoint "test -f $migration_path" > /dev/null
     if [ $? -ne 0 ]; then
         echo "Migration $migration not found. Generating .sql file..."
-        ./compose-dev exec backend /entrypoint.dev.sh "~/.dotnet/tools/dotnet-ef --no-build --project /backend/AgileApp migrations script $last_migration $migration --idempotent -o '$migration_path'" > /dev/null
+        ./compose-dev exec backend /entrypoint "dotnet-ef --no-build --project ./AgileApp migrations script $last_migration $migration --idempotent -o '$migration_path' --msbuildprojectextensionspath ./build/AgileApp/obj" > /dev/null
     else
         echo "Migration $migration already exists, skipping."
     fi

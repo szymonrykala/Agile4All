@@ -2,4 +2,5 @@
 
 echo "Pushing images to the registry"
 
-./compose-dev push $@
+DOCKER_ARGUMENTS="-f ./docker-compose.dev.yml"  \
+./compose push $@

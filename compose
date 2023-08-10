@@ -3,35 +3,33 @@
 export LOCAL_USER_ID=${LOCAL_USER_ID:-`id -u`}
 export LOCAL_GROUP_ID=${LOCAL_GROUP_ID:-`id -g`}
 
-if [ "$ENVIRONMENT" = DEVELOPMENT ]; then
-    ENV=DEVELOPMENT
-    ENV_FILE=./env/.env.dev
-else
-    ENV=PRODUCTION
-    ENV_FILE=./env/.env
+export ENV=${ENV:-"prod"}
+export ENV_FILE=${ENV_FILE:-"./env/.env"}
+if [ ! -v ENV_FILE_OVERRIDE ] || [ ! -f $ENV_FILE_OVERRIDE ]; then
+    export ENV_FILE_OVERRIDE="/dev/null"
 fi
 
 set -a
 source $ENV_FILE
+source $ENV_FILE_OVERRIDE
 set +a
 
 COMMAND="$1"
 COMMAND_ARGUMENTS="${@:2}"
-DOCKER_ARGUMENTS="-p $PROJECT_NAME -f ./docker-compose.yml"
+DOCKER_ARGUMENTS="-p $PROJECT_NAME -f ./docker-compose.prod.yml $DOCKER_ARGUMENTS"
 
-if [ "$ENV" = DEVELOPMENT ]; then
-    DOCKER_ARGUMENTS+="${ARGUMENTS} -f ./docker-compose.dev.yml"
-elif [ "$COMMAND" = up ]; then
+if [ "$COMMAND" = up ] && [ "$ENV" = prod ]; then
     COMMAND_ARGUMENTS+=" --no-build"
 fi
 
 echo "Running $ENV environment"
 
-LOCAL_USER_ID=$LOCAL_USER_ID    \
-LOCAL_GROUP_ID=$LOCAL_GROUP_ID  \
-ENV_FILE=$ENV_FILE              \
-docker                          \
-    compose                     \
-    $DOCKER_ARGUMENTS           \
-    $COMMAND                    \
+LOCAL_USER_ID=$LOCAL_USER_ID            \
+LOCAL_GROUP_ID=$LOCAL_GROUP_ID          \
+ENV_FILE=$ENV_FILE                      \
+ENV_FILE_OVERRIDE=$ENV_FILE_OVERRIDE    \
+docker                                  \
+    compose                             \
+    $DOCKER_ARGUMENTS                   \
+    $COMMAND                            \
     $COMMAND_ARGUMENTS

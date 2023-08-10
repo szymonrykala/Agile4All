@@ -2,4 +2,5 @@
 
 echo "Building images"
 
-./compose-dev build $@
+DOCKER_ARGUMENTS="-f ./docker-compose.dev.yml"  \
+./compose build $@

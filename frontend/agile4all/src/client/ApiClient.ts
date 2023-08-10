@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router";
 import { UUID } from "../models/common";
 import { QueryParams } from "./interface";
 
@@ -37,6 +38,10 @@ abstract class BaseClient {
     private TOKEN_NAME: string = 'auth_token'; // local storage token variable name
     protected BASE_URL: string = process.env.REACT_APP_API_URL as string
 
+    private HandleRedirect = (path: string) => {
+        const navigate = useNavigate();
+        navigate(path);
+    };
 
     protected get authToken(): string {
         return window.localStorage.getItem(this.TOKEN_NAME) || '';
@@ -97,10 +102,10 @@ abstract class BaseClient {
 
         if (process.env.NODE_ENV !== 'production') console.debug(data);
 
-        // if user is not authenticated - 
+        // if user is not authenticated -
         // redirect to let sessionContext to resolve redirections
         if (response.status === 401 && !fetchObject.endpoint.match('/login|register')) {
-            alert("No access - You need to have an admin rights.");
+            this.HandleRedirect('/login');
         }
 
         if (!response.ok) {

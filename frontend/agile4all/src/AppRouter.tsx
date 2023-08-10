@@ -1,5 +1,5 @@
 import {
-  createHashRouter, Outlet
+  createHashRouter, Navigate, Outlet
 } from "react-router-dom";
 import App from "./App";
 import Projects from "./components/Pages/Projects";
@@ -35,7 +35,7 @@ const AppRouter = createHashRouter([
     children: [
       {
         index: true,
-        element: <Login />
+        element: <Navigate to="/app" />
       },
       {
         path: 'login',
