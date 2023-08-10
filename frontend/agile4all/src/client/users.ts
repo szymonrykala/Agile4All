@@ -50,7 +50,7 @@ export default class UsersClient
         if (userId === -1) throw new NoValidUserSessionError()
 
         try {
-            if(process.env.NODE_ENV === "development" && process.env.REACT_APP_MOCK_API === "true"){
+            if(process.env.REACT_APP_MOCK_MODE){
                 return {
                     user: mockedUserMain,
                     projects: mockedUserProjects
@@ -73,7 +73,7 @@ export default class UsersClient
     async login(data: ILoginData) {
         try {
             let resp: ILoginResponse;
-            if(process.env.NODE_ENV === "development" && process.env.REACT_APP_MOCK_API === "true"){
+            if(process.env.REACT_APP_MOCK_MODE){
                 resp = userLoginResp
             }else{
                 resp = await this._post(`${this.path}/login`, data) as ILoginResponse;

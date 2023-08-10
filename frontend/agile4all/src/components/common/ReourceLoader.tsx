@@ -19,7 +19,7 @@ export default function ResourceLoader() {
     const loadUsers = useCallback(async () => {
         let users:User[]
 
-        if(process.env.NODE_ENV === "development" && process.env.REACT_APP_MOCK_API === "true"){
+        if(process.env.REACT_APP_MOCK_MODE){
             users = mockedUsers
         }else{
             users = await UsersApi.getAll() as unknown as User[];
@@ -35,7 +35,7 @@ export default function ResourceLoader() {
     const loadProjects = useCallback(async () => {
         let projects:Project[];
 
-        if(process.env.NODE_ENV === "development" && process.env.REACT_APP_MOCK_API === "true"){
+        if(process.env.REACT_APP_MOCK_MODE){
             projects = mockedProjects
         }else{
             projects = await ProjectsApi.getAll() as Project[]

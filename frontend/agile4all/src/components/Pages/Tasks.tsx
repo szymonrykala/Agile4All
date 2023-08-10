@@ -62,7 +62,7 @@ function ProjectTasksListItem({ project }: IProjectTasksListItem) {
         try {
             let taskItems: Task[];
 
-            if (process.env.NODE_ENV === "development" && process.env.REACT_APP_MOCK_API === "true") {
+            if (process.env.REACT_APP_MOCK_MODE) {
                 taskItems = mockedTasks
             } else {
                 taskItems = await TasksApi.getAll(queryParams) as unknown as Task[]

@@ -22,7 +22,7 @@ export default function FilesPanel(props: IFilesPanel) {
     const fetchFiles = useCallback(async () => {
         let resp: FileModel[];
 
-        if (process.env.NODE_ENV === "development" && process.env.REACT_APP_MOCK_API === "true") {
+        if (process.env.REACT_APP_MOCK_MODE) {
             resp = mockedFiles
         } else {
             resp = await FilesApi.getAll(queryParams) as unknown as FileModel[]
