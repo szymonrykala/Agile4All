@@ -2,9 +2,12 @@
 using AgileApp.Models;
 using AgileApp.Models.Common;
 using AgileApp.Models.Requests;
+using AgileApp.Models.Users;
 using AgileApp.Services.Users;
+using AgileApp.Utils;
 using AgileApp.Utils.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.RegularExpressions;
 
 namespace AgileApp.Controllers
 {
@@ -37,7 +40,7 @@ namespace AgileApp.Controllers
 
             var authorizationResult = await _userService.AuthorizeUser(request);
 
-            if (authorizationResult == null)
+            if (authorizationResult == null || !authorizationResult.Exists)
             {
                 return new OkObjectResult(new Response { IsSuccess = false, Error = "Bad credentials" });
             }
@@ -52,7 +55,7 @@ namespace AgileApp.Controllers
         }
 
         [HttpPost("")]
-        public IActionResult AddUser([FromBody] AuthorizationDataRequest request)
+        public IActionResult AddUser([FromBody] RegistrationDataRequest request)
         {
             if (request == null || !request.IsValid)
             {
@@ -64,6 +67,11 @@ namespace AgileApp.Controllers
             if (request.Email == null || request.FirstName == null || request.LastName == null)
             {
                 return new OkObjectResult(Models.Common.Response.Failed("Mandatory field missing"));
+            }
+
+            if (string.IsNullOrWhiteSpace(request.Email) || !Regex.IsMatch(request.Email, AppSettings.EmailExpression))
+            {
+                return new OkObjectResult(Models.Common.Response.Failed("Email format is uncorrect"));
             }
 
             if (isEmailTaken)
@@ -103,7 +111,10 @@ namespace AgileApp.Controllers
             if (userId < 1) return BadRequest();
             if (!reverseTokenResult.IsValid) return Unauthorized();
 
-            return new OkObjectResult(Response<Models.Users.GetAllUsersResponse>.Succeeded(_userService.GetUserById(userId)));
+            var responseData = _userService.GetUserById(userId);
+            return new OkObjectResult(responseData.Id == 0
+                ? Response<Models.Users.GetAllUsersResponse>.Failed("User has not been found")
+                : Response<Models.Users.GetAllUsersResponse>.Succeeded(responseData));
         }
 
         [HttpPatch("{userId}")]
@@ -112,10 +123,10 @@ namespace AgileApp.Controllers
             var reverseTokenResult = _cookieHelper.ReverseJwtFromRequest(HttpContext);
 
             if (request == null) return BadRequest();
-            if (!reverseTokenResult.IsValid) return Unauthorized(); // || !JwtMiddleware.IsAdmin(reverseTokenResult)
+            if (!reverseTokenResult.IsValid || !JwtMiddleware.IsAdmin(reverseTokenResult)) return Unauthorized();
 
 
-            var userUpdate = new UpdateUserRequest();
+            var userUpdate = new UpdateUserDTO();
             try
             {
                 userUpdate.Id = userId;
@@ -124,7 +135,7 @@ namespace AgileApp.Controllers
                 userUpdate.Email = request.Email ?? string.Empty;
                 userUpdate.Password = request.Password ?? string.Empty;
 
-                userUpdate.Role = request.Role ?? Enum.Parse<UserRoleEnum>(_userService.GetUserById(request.Id).Role);
+                userUpdate.Role = request.Role ?? Enum.Parse<UserRoleEnum>(_userService.GetUserById(userId).Role);
             }
             catch (Exception)
             {
@@ -142,7 +153,9 @@ namespace AgileApp.Controllers
             if (userId < 1) return BadRequest();
             if (!reverseTokenResult.IsValid) return Unauthorized(); // || !JwtMiddleware.IsAdmin(reverseTokenResult)
 
-            return new OkObjectResult(Response<bool>.Succeeded(_userService.DeleteUser(userId)));
+            var result = _userService.DeleteUser(userId);
+
+            return new OkObjectResult(result ? Response<bool>.Succeeded(result) : Response<bool>.Failed("Error during deletion. Ensure that user with given Id exists"));
         }
     }
 }

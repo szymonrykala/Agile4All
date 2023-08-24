@@ -54,9 +54,18 @@ namespace AgileApp.Repository.Users
 
         public int DeleteUser(int id)
         {
+            // relations to be checked
             var userOld = _dbContext.Users.FirstOrDefault(u => u.Id == id);
+            var projUsers_userOld = _dbContext.Proj_Users.Where(u => u.User_Id == id).ToList();
+            var tasts_userOld = _dbContext.Tasks.Where(u => u.UserId == id).ToList();
             if (userOld != null)
             {
+                if (projUsers_userOld.Count() > 0)
+                    projUsers_userOld.ForEach(item => _dbContext.Proj_Users.Remove(item));
+
+                if (tasts_userOld.Count() > 0)
+                    tasts_userOld.ForEach(item => _dbContext.Tasks.Remove(item));
+
                 _dbContext.Users.Remove(userOld);
                 return _dbContext.SaveChanges();
             }
