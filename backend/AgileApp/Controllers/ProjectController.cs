@@ -1,4 +1,5 @@
-﻿using AgileApp.Models.Common;
+﻿using AgileApp.Controllers.Responses;
+using AgileApp.Models.Common;
 using AgileApp.Models.Projects;
 using AgileApp.Models.Tasks;
 using AgileApp.Services.Projects;
@@ -30,28 +31,27 @@ namespace AgileApp.Controllers
         {
             var reverseTokenResult = _cookieHelper.ReverseJwtFromRequest(HttpContext);
 
-            if (request == null || !reverseTokenResult.IsValid)// || !JwtMiddleware.IsAdmin(reverseTokenResult))
+            if (request == null || !reverseTokenResult.IsValid)
             {
-                return BadRequest();
+                return new BadRequestObjectResult("Request must be valid");
             }
+
+            if (!JwtMiddleware.IsAdmin(reverseTokenResult))
+                return new UnauthorizedObjectResult("User performing adding action must be an Admin");
 
             if (request.Name == null)
             {
-                return new OkObjectResult(Models.Common.Response.Failed("Mandatory field missing"));
+                return new NotAcceptableObjectResult(Models.Common.Response.Failed("Mandatory field missing"));
             }
 
             var creationResult = _projectService.AddNewProject(request);
 
             if (creationResult == null || !creationResult.IsSuccess || creationResult.Data <= 0)
             {
-                return new OkObjectResult(Models.Common.Response.Failed("Adding project internal error"));
-            }
-            else
-            {
-                AddUserToProject(creationResult.Data, JwtMiddleware.GetCurrentUserId(reverseTokenResult));
+                return new InternalServerErrorObjectResult(Models.Common.Response.Failed("Adding project internal error"));
             }
 
-            return new OkObjectResult(true);
+            return AddUserToProject(creationResult.Data, JwtMiddleware.GetCurrentUserId(reverseTokenResult));
         }
 
         [HttpPost("{projectId}/tasks")]
@@ -59,13 +59,12 @@ namespace AgileApp.Controllers
         {
             var reverseTokenResult = _cookieHelper.ReverseJwtFromRequest(HttpContext);
 
-            if (request == null) return BadRequest();
-            if (!reverseTokenResult.IsValid) return Unauthorized();
-
+            if (request == null) return new BadRequestObjectResult(Response<bool>.Failed("Request must be valid"));
+            if (!reverseTokenResult.IsValid) return new UnauthorizedObjectResult(Response<bool>.Failed("User performing task adding action must be logged in"));
 
             if (request.Name == null)
             {
-                return new OkObjectResult(Models.Common.Response.Failed("Mandatory field missing"));
+                return new OkObjectResult(Models.Common.Response.Failed("Mandatory field is missing"));
             }
 
             request.ProjectId = projectId;
@@ -73,7 +72,7 @@ namespace AgileApp.Controllers
 
             if (creationResult == null)
             {
-                return new OkObjectResult(Models.Common.Response.Failed("Adding task internal error"));
+                return new InternalServerErrorObjectResult(Models.Common.Response.Failed("Adding task internal error"));
             }
 
             return new OkObjectResult(true);
@@ -84,20 +83,19 @@ namespace AgileApp.Controllers
         {
             var reverseTokenResult = _cookieHelper.ReverseJwtFromRequest(HttpContext);
 
-            if (!reverseTokenResult.IsValid) return Unauthorized();
-
+            if (!reverseTokenResult.IsValid) return new UnauthorizedObjectResult("User performing adding action must be logged in");
 
             string hash = reverseTokenResult.Claims.FirstOrDefault(x => x.Type == System.Security.Claims.ClaimTypes.Hash)?.Value;
 
             if (string.IsNullOrWhiteSpace(hash))
             {
-                return new BadRequestResult();
+                return new BadRequestObjectResult("User performing adding action must be logged in");
             }
 
             var projects = _projectService.GetAllProjects();
             if (projects == null)
             {
-                return new OkObjectResult(Response<List<ProjectResponse>>.Succeeded(new List<ProjectResponse>()));
+                return new NotFoundObjectResult(Response<List<ProjectResponse>>.Succeeded(new List<ProjectResponse>()));
             }
 
             return new OkObjectResult(Response<List<ProjectResponse>>.Succeeded(projects));
@@ -108,11 +106,13 @@ namespace AgileApp.Controllers
         {
             var reverseTokenResult = _cookieHelper.ReverseJwtFromRequest(HttpContext);
 
-            if (projectId < 1) return BadRequest();
-            if (!reverseTokenResult.IsValid) return Unauthorized();
+            if (projectId < 1) return new BadRequestObjectResult("Request must be valid");
+            if (reverseTokenResult == null || !reverseTokenResult.IsValid) return new UnauthorizedObjectResult("User performing adding action must be logged in");
 
-
-            return new OkObjectResult(_projectService.GetProjectById(projectId));
+            var result = _projectService.GetProjectById(projectId);
+            return result != null
+                ? new OkObjectResult(result)
+                : new NotFoundObjectResult(Response<ProjectResponse>.Failed("Project not found"));
         }
 
         [HttpPatch("{projectId}")]
@@ -120,9 +120,8 @@ namespace AgileApp.Controllers
         {
             var reverseTokenResult = _cookieHelper.ReverseJwtFromRequest(HttpContext);
 
-            if (request == null) return BadRequest();
-            if (!reverseTokenResult.IsValid) return Unauthorized(); // || !JwtMiddleware.IsAdmin(reverseTokenResult)
-
+            if (request == null) return new BadRequestObjectResult("Request must be valid");
+            if (!reverseTokenResult.IsValid || !JwtMiddleware.IsAdmin(reverseTokenResult)) return new UnauthorizedObjectResult("User performing adding action must be an Admin");
 
             var projectUpdate = new UpdateProjectRequest();
             try
@@ -130,13 +129,13 @@ namespace AgileApp.Controllers
                 projectUpdate.Id = projectId;
                 projectUpdate.Name = request.Name ?? string.Empty;
                 projectUpdate.Description = request.Description ?? string.Empty;
+
+                return new OkObjectResult(_projectService.UpdateProject(projectUpdate));
             }
             catch (Exception)
             {
-                return BadRequest();
+                return new InternalServerErrorObjectResult("An exception occured during updating the project");
             }
-
-            return new OkObjectResult(_projectService.UpdateProject(projectUpdate));
         }
 
         [HttpDelete("{projectId}")]
@@ -144,11 +143,13 @@ namespace AgileApp.Controllers
         {
             var reverseTokenResult = _cookieHelper.ReverseJwtFromRequest(HttpContext);
 
-            if (projectId < 1) return BadRequest();
-            if (!reverseTokenResult.IsValid) return Unauthorized(); // || !JwtMiddleware.IsAdmin(reverseTokenResult)
+            if (projectId < 1) return new BadRequestObjectResult("Request must be valid, check if the project id is correct");
+            if (!reverseTokenResult.IsValid || !JwtMiddleware.IsAdmin(reverseTokenResult)) return new UnauthorizedObjectResult("User performing adding action must be an Admin");
 
-
-            return new OkObjectResult(_projectService.DeleteProject(projectId));
+            var result = _projectService.DeleteProject(projectId);
+            return result
+                ? new OkObjectResult(result)
+                : new InternalServerErrorObjectResult("An internal error occured during deletion process");
         }
 
         [HttpPut("{projectId}/users/{userId}")]
@@ -156,12 +157,18 @@ namespace AgileApp.Controllers
         {
             var reverseTokenResult = _cookieHelper.ReverseJwtFromRequest(HttpContext);
 
-            if (projectId < 1 || userId < 0 || !reverseTokenResult.IsValid)// || !JwtMiddleware.IsAdmin(reverseTokenResult))
+            if (projectId < 1 || userId < 0)
             {
-                return BadRequest();
+                return new BadRequestObjectResult(Response<bool>.Failed("Wrong ProjectID or userID during adding to the project"));
             }
 
-            return new OkObjectResult(_projectService.AddUserToProject(new ProjectUserRequest { ProjectId = projectId, UserId = userId }));
+            if (!reverseTokenResult.IsValid || !JwtMiddleware.IsAdmin(reverseTokenResult))
+                return new UnauthorizedObjectResult(Response<bool>.Failed("User performing adding action must be an Admin"));
+
+            var result = _projectService.AddUserToProject(new ProjectUserRequest { ProjectId = projectId, UserId = userId });
+            return result.IsSuccess
+                ? new OkObjectResult(result)
+                : new InternalServerErrorObjectResult(result);
         }
 
         [HttpDelete("{projectId}/users/{userId}")]
@@ -169,12 +176,18 @@ namespace AgileApp.Controllers
         {
             var reverseTokenResult = _cookieHelper.ReverseJwtFromRequest(HttpContext);
 
-            if (projectId < 1 || userId < 0 || !reverseTokenResult.IsValid)// || !JwtMiddleware.IsAdmin(reverseTokenResult))
+            if (projectId < 1 || userId < 0 || !reverseTokenResult.IsValid)
             {
-                return BadRequest();
+                return new BadRequestObjectResult(Response<bool>.Failed("Passed data must be valid"));
             }
 
-            return new OkObjectResult(_projectService.RemoveUserFromProject(new ProjectUserRequest { ProjectId = projectId, UserId = userId }));
+            if (!JwtMiddleware.IsAdmin(reverseTokenResult))
+                return new UnauthorizedObjectResult(Response<bool>.Failed("User performing deletion process must be an Admin"));
+
+            var response = _projectService.RemoveUserFromProject(new ProjectUserRequest { ProjectId = projectId, UserId = userId });
+            return response.IsSuccess
+                ? new OkObjectResult(response)
+                : new InternalServerErrorObjectResult(response);
         }
     }
 }

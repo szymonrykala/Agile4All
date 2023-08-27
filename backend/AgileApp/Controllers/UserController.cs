@@ -31,7 +31,7 @@ namespace AgileApp.Controllers
         {
             var response = _cookieHelper.InvalidateJwtCookie(HttpContext);
 
-            return response.IsSuccess ? new OkObjectResult(_cookieHelper.InvalidateJwtCookie(HttpContext)) : new BadRequestResult();
+            return response.IsSuccess ? new OkObjectResult(_cookieHelper.InvalidateJwtCookie(HttpContext)) : new BadRequestObjectResult("Request must be valid");
         }
 
         [HttpPost("login/")]
@@ -43,7 +43,7 @@ namespace AgileApp.Controllers
                 || string.IsNullOrWhiteSpace(request.Password)
                 || string.IsNullOrWhiteSpace(request.Email))
             {
-                return new BadRequestResult();
+                return new BadRequestObjectResult("Request must be valid");
             }
 
             var authorizationResult = await _userService.AuthorizeUser(request);
@@ -67,7 +67,7 @@ namespace AgileApp.Controllers
         {
             if (request == null || !request.IsValid)
             {
-                return new BadRequestResult();
+                return new BadRequestObjectResult("Request must be valid");
             }
 
             var isEmailTaken = _userService.IsEmailTaken(request.Email);
@@ -102,17 +102,17 @@ namespace AgileApp.Controllers
         {
             var reverseTokenResult = _cookieHelper.ReverseJwtFromRequest(HttpContext);
 
-            if (!reverseTokenResult.IsValid) return new UnauthorizedResult();
+            if (!reverseTokenResult.IsValid) return new UnauthorizedObjectResult("User performing adding action must be logged in");
 
             string hash = reverseTokenResult.Claims.FirstOrDefault(x => x.Type == System.Security.Claims.ClaimTypes.Hash)?.Value;
 
             if (string.IsNullOrWhiteSpace(hash))
-                return new UnauthorizedResult();
+                return new UnauthorizedObjectResult("User performing adding action must be logged in");
 
             var result = _userService.GetAllUsers();
             return result?.Count() > 0
                 ? new OkObjectResult(Response<List<Models.Users.GetAllUsersResponse>>.Succeeded(result))
-                : new NotFoundResult();
+                : new NotFoundObjectResult("The user list is empty (for some reason)");
         }
 
         [HttpGet("{userId}")]
@@ -120,8 +120,8 @@ namespace AgileApp.Controllers
         {
             var reverseTokenResult = _cookieHelper.ReverseJwtFromRequest(HttpContext);
 
-            if (userId < 1) return new BadRequestResult();
-            if (!reverseTokenResult.IsValid) return new UnauthorizedResult();
+            if (userId < 1) return new BadRequestObjectResult("Request must be valid");
+            if (!reverseTokenResult.IsValid) return new UnauthorizedObjectResult("User performing adding action must be logged in");
 
             var responseData = _userService.GetUserById(userId);
             return responseData.Id == 0
@@ -134,8 +134,8 @@ namespace AgileApp.Controllers
         {
             var reverseTokenResult = _cookieHelper.ReverseJwtFromRequest(HttpContext);
 
-            if (request == null) return new BadRequestResult();
-            if (!reverseTokenResult.IsValid || !JwtMiddleware.IsAdmin(reverseTokenResult)) return new UnauthorizedResult();
+            if (request == null) return new BadRequestObjectResult("Request must be valid");
+            if (!reverseTokenResult.IsValid || !JwtMiddleware.IsAdmin(reverseTokenResult)) return new UnauthorizedObjectResult("User performing adding action must be an Admin");
 
 
             var userUpdate = new UpdateUserDTO();
@@ -162,8 +162,8 @@ namespace AgileApp.Controllers
         {
             var reverseTokenResult = _cookieHelper.ReverseJwtFromRequest(HttpContext);
 
-            if (userId < 1) return new BadRequestResult();
-            if (!reverseTokenResult.IsValid || !JwtMiddleware.IsAdmin(reverseTokenResult)) return new UnauthorizedResult();
+            if (userId < 1) return new BadRequestObjectResult("Request must be valid");
+            if (!reverseTokenResult.IsValid || !JwtMiddleware.IsAdmin(reverseTokenResult)) return new UnauthorizedObjectResult("User performing adding action must be an Admin");
 
             var result = _userService.DeleteUser(userId);
 
