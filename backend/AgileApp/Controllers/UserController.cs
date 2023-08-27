@@ -1,4 +1,5 @@
-﻿using AgileApp.Enums;
+﻿using AgileApp.Controllers.Responses;
+using AgileApp.Enums;
 using AgileApp.Models;
 using AgileApp.Models.Common;
 using AgileApp.Models.Requests;
@@ -7,6 +8,7 @@ using AgileApp.Services.Users;
 using AgileApp.Utils;
 using AgileApp.Utils.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using System.Text.RegularExpressions;
 
 namespace AgileApp.Controllers
@@ -26,14 +28,21 @@ namespace AgileApp.Controllers
         }
 
         [HttpDelete("logout/")]
-        public IActionResult Logout() => new OkObjectResult(_cookieHelper.InvalidateJwtCookie(HttpContext));
+        public IActionResult Logout()
+        {
+            var response = _cookieHelper.InvalidateJwtCookie(HttpContext);
+
+            return response.IsSuccess ? new OkObjectResult(_cookieHelper.InvalidateJwtCookie(HttpContext)) : BadRequest();
+        }
 
         [HttpPost("login/")]
         public async Task<IActionResult> Login([FromBody] AuthorizationDataRequest request)
         {
             string token = string.Empty;
 
-            if (request == null)
+            if (request == null
+                || string.IsNullOrWhiteSpace(request.Password)
+                || string.IsNullOrWhiteSpace(request.Email))
             {
                 return BadRequest();
             }
@@ -42,7 +51,7 @@ namespace AgileApp.Controllers
 
             if (authorizationResult == null || !authorizationResult.Exists)
             {
-                return new OkObjectResult(new Response { IsSuccess = false, Error = "Bad credentials" });
+                return new UnauthorizedObjectResult(new Response { IsSuccess = false, Error = "Bad credentials" });
             }
 
             if (authorizationResult.Exists)
@@ -76,14 +85,14 @@ namespace AgileApp.Controllers
 
             if (isEmailTaken)
             {
-                return new OkObjectResult(Models.Common.Response.Failed("Email taken"));
+                return new ConflictObjectResult(Models.Common.Response.Failed("Email taken"));
             }
 
             var registerResult = _userService.AddUser(request);
 
             if (registerResult == null)
             {
-                return new OkObjectResult(Models.Common.Response.Failed("Registration internal error"));
+                return new InternalServerErrorObjectResult(Models.Common.Response.Failed("Registration internal error"));
             }
 
             return new OkObjectResult(Models.Common.Response.Succeeded());
@@ -94,13 +103,17 @@ namespace AgileApp.Controllers
         {
             var reverseTokenResult = _cookieHelper.ReverseJwtFromRequest(HttpContext);
 
-            if (!reverseTokenResult.IsValid) return Unauthorized();
+            if (!reverseTokenResult.IsValid) return new UnauthorizedResult();
 
             string hash = reverseTokenResult.Claims.FirstOrDefault(x => x.Type == System.Security.Claims.ClaimTypes.Hash)?.Value;
 
-            return string.IsNullOrWhiteSpace(hash)
-                ? (IActionResult)new BadRequestResult()
-                : new OkObjectResult(Response<List<Models.Users.GetAllUsersResponse>>.Succeeded(_userService.GetAllUsers()));
+            if (string.IsNullOrWhiteSpace(hash))
+                return new UnauthorizedResult();
+
+            var result = _userService.GetAllUsers();
+            return result?.Count() > 0
+                ? new OkObjectResult(Response<List<Models.Users.GetAllUsersResponse>>.Succeeded(result))
+                : new NotFoundResult();
         }
 
         [HttpGet("{userId}")]
@@ -108,13 +121,13 @@ namespace AgileApp.Controllers
         {
             var reverseTokenResult = _cookieHelper.ReverseJwtFromRequest(HttpContext);
 
-            if (userId < 1) return BadRequest();
-            if (!reverseTokenResult.IsValid) return Unauthorized();
+            if (userId < 1) return new BadRequestResult();
+            if (!reverseTokenResult.IsValid) return new UnauthorizedResult();
 
             var responseData = _userService.GetUserById(userId);
-            return new OkObjectResult(responseData.Id == 0
-                ? Response<Models.Users.GetAllUsersResponse>.Failed("User has not been found")
-                : Response<Models.Users.GetAllUsersResponse>.Succeeded(responseData));
+            return responseData.Id == 0
+                ? new NotFoundObjectResult(Response<Models.Users.GetAllUsersResponse>.Failed("User has not been found"))
+                : new OkObjectResult(Response<Models.Users.GetAllUsersResponse>.Succeeded(responseData));
         }
 
         [HttpPatch("{userId}")]
@@ -122,8 +135,8 @@ namespace AgileApp.Controllers
         {
             var reverseTokenResult = _cookieHelper.ReverseJwtFromRequest(HttpContext);
 
-            if (request == null) return BadRequest();
-            if (!reverseTokenResult.IsValid || !JwtMiddleware.IsAdmin(reverseTokenResult)) return Unauthorized();
+            if (request == null) return new BadRequestResult();
+            if (!reverseTokenResult.IsValid || !JwtMiddleware.IsAdmin(reverseTokenResult)) return new UnauthorizedResult();
 
 
             var userUpdate = new UpdateUserDTO();
@@ -139,7 +152,7 @@ namespace AgileApp.Controllers
             }
             catch (Exception)
             {
-                return BadRequest();
+                return new InternalServerErrorObjectResult(Response<bool>.Failed("Error during creation"));
             }
 
             return new OkObjectResult(Response<bool>.Succeeded(_userService.UpdateUser(userUpdate)));
@@ -150,12 +163,14 @@ namespace AgileApp.Controllers
         {
             var reverseTokenResult = _cookieHelper.ReverseJwtFromRequest(HttpContext);
 
-            if (userId < 1) return BadRequest();
-            if (!reverseTokenResult.IsValid) return Unauthorized(); // || !JwtMiddleware.IsAdmin(reverseTokenResult)
+            if (userId < 1) return new BadRequestResult();
+            if (!reverseTokenResult.IsValid || !JwtMiddleware.IsAdmin(reverseTokenResult)) return new UnauthorizedResult();
 
             var result = _userService.DeleteUser(userId);
 
-            return new OkObjectResult(result ? Response<bool>.Succeeded(result) : Response<bool>.Failed("Error during deletion. Ensure that user with given Id exists"));
+            if (result)
+                return new OkObjectResult(Response<bool>.Succeeded(result));
+            return new InternalServerErrorObjectResult(Response<bool>.Failed("Error during deletion. Ensure that user with given Id exists"));
         }
     }
 }

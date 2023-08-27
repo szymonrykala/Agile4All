@@ -41,7 +41,7 @@ namespace AgileApp.Utils.Cookies
 
                 if (!hasToken)
                 {
-                    return Response.Succeeded();
+                    return Response.Failed("Token not found");
                 }
 
                 DeleteCookie(context, AppSettings.JwtCookieKey);
