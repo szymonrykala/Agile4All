@@ -33,7 +33,7 @@ namespace AgileApp.Controllers
 
             if (request == null || !reverseTokenResult.IsValid)
             {
-                return new BadRequestObjectResult("Request must be valid");
+                return new BadRequestObjectResult(new Response { IsSuccess = false, Error = "Request must be valid" });
             }
 
             if (!JwtMiddleware.IsAdmin(reverseTokenResult))
