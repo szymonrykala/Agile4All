@@ -32,7 +32,7 @@ namespace AgileApp.Controllers
         {
             var response = _cookieHelper.InvalidateJwtCookie(HttpContext);
 
-            return response.IsSuccess ? new OkObjectResult(_cookieHelper.InvalidateJwtCookie(HttpContext)) : BadRequest();
+            return response.IsSuccess ? new OkObjectResult(_cookieHelper.InvalidateJwtCookie(HttpContext)) : new BadRequestResult();
         }
 
         [HttpPost("login/")]
@@ -44,7 +44,7 @@ namespace AgileApp.Controllers
                 || string.IsNullOrWhiteSpace(request.Password)
                 || string.IsNullOrWhiteSpace(request.Email))
             {
-                return BadRequest();
+                return new BadRequestResult();
             }
 
             var authorizationResult = await _userService.AuthorizeUser(request);
@@ -68,19 +68,19 @@ namespace AgileApp.Controllers
         {
             if (request == null || !request.IsValid)
             {
-                return BadRequest();
+                return new BadRequestResult();
             }
 
             var isEmailTaken = _userService.IsEmailTaken(request.Email);
 
             if (request.Email == null || request.FirstName == null || request.LastName == null)
             {
-                return new OkObjectResult(Models.Common.Response.Failed("Mandatory field missing"));
+                return new NotAcceptableObjectResult(Models.Common.Response.Failed("Mandatory field missing"));
             }
 
             if (string.IsNullOrWhiteSpace(request.Email) || !Regex.IsMatch(request.Email, AppSettings.EmailExpression))
             {
-                return new OkObjectResult(Models.Common.Response.Failed("Email format is uncorrect"));
+                return new NotAcceptableObjectResult(Models.Common.Response.Failed("Email format is not valid"));
             }
 
             if (isEmailTaken)
