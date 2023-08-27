@@ -1,5 +1,6 @@
 ﻿using AgileApp.Models;
 using AgileApp.Models.Requests;
+using AgileApp.Models.Users;
 
 namespace AgileApp.Services.Users
 {
@@ -16,9 +17,9 @@ namespace AgileApp.Services.Users
 
         public Models.Users.GetAllUsersResponse GetUserByEmail(string email);
 
-        public string AddUser(AuthorizationDataRequest request);
+        public string AddUser(RegistrationDataRequest request);
 
-        public bool UpdateUser(UpdateUserRequest user);
+        public bool UpdateUser(UpdateUserDTO user);
 
         public bool DeleteUser(int id);
 

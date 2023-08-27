@@ -1,6 +1,7 @@
 ﻿using AgileApp.Enums;
 using AgileApp.Models;
 using AgileApp.Models.Requests;
+using AgileApp.Models.Users;
 using AgileApp.Repository.Users;
 using AgileApp.Utils;
 
@@ -45,7 +46,7 @@ namespace AgileApp.Services.Users
             return response;
         }
 
-        public string AddUser(AuthorizationDataRequest request)
+        public string AddUser(RegistrationDataRequest request)
         {
             try
             {
@@ -71,7 +72,7 @@ namespace AgileApp.Services.Users
             }
         }
 
-        public bool DeleteUser(int id) => _userRepository.DeleteUser(id) == 1;
+        public bool DeleteUser(int id) => _userRepository.DeleteUser(id) >= 1;
 
         public Models.Users.GetAllUsersResponse GetUserByEmail(string email)
         {
@@ -124,7 +125,7 @@ namespace AgileApp.Services.Users
             return response;
         }
 
-        public bool UpdateUser(UpdateUserRequest user)
+        public bool UpdateUser(UpdateUserDTO user)
         {
             try
             {
@@ -133,6 +134,7 @@ namespace AgileApp.Services.Users
                 dbUser.Email = dbUser.Email.PropertyStringCompare(user.Email);
                 dbUser.LastName = dbUser.LastName.PropertyStringCompare(user.LastName);
                 dbUser.FirstName = dbUser.FirstName.PropertyStringCompare(user.FirstName);
+                dbUser.Password = dbUser.Password.PropertyStringCompare(user.Password);
 
                 dbUser.Role = user.Role != null && user.Role != dbUser.Role ? (UserRoleEnum)user.Role : dbUser.Role;
 
