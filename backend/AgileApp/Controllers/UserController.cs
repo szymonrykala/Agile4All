@@ -8,7 +8,6 @@ using AgileApp.Services.Users;
 using AgileApp.Utils;
 using AgileApp.Utils.Cookies;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Formatters;
 using System.Text.RegularExpressions;
 
 namespace AgileApp.Controllers
