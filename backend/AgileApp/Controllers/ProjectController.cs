@@ -37,7 +37,7 @@ namespace AgileApp.Controllers
             }
 
             if (!JwtMiddleware.IsAdmin(reverseTokenResult))
-                return new UnauthorizedObjectResult("User performing adding action must be an Admin");
+                return new UnauthorizedObjectResult(new Response { IsSuccess = false, Error = "User performing adding action must be an Admin" });
 
             if (request.Name == null)
             {
@@ -75,7 +75,7 @@ namespace AgileApp.Controllers
                 return new InternalServerErrorObjectResult(Models.Common.Response.Failed("Adding task internal error"));
             }
 
-            return new OkObjectResult(true);
+            return new OkObjectResult(new Response { IsSuccess = true });
         }
 
         [HttpGet("")]
@@ -83,13 +83,13 @@ namespace AgileApp.Controllers
         {
             var reverseTokenResult = _cookieHelper.ReverseJwtFromRequest(HttpContext);
 
-            if (!reverseTokenResult.IsValid) return new UnauthorizedObjectResult("User performing adding action must be logged in");
+            if (!reverseTokenResult.IsValid) return new UnauthorizedObjectResult(new Response { IsSuccess = false, Error = "User performing adding action must be logged in" });
 
             string hash = reverseTokenResult.Claims.FirstOrDefault(x => x.Type == System.Security.Claims.ClaimTypes.Hash)?.Value;
 
             if (string.IsNullOrWhiteSpace(hash))
             {
-                return new BadRequestObjectResult("User performing adding action must be logged in");
+                return new BadRequestObjectResult(new Response { IsSuccess = false, Error = "User performing adding action must be logged in" });
             }
 
             var projects = _projectService.GetAllProjects();
@@ -106,8 +106,10 @@ namespace AgileApp.Controllers
         {
             var reverseTokenResult = _cookieHelper.ReverseJwtFromRequest(HttpContext);
 
-            if (projectId < 1) return new BadRequestObjectResult("Request must be valid");
-            if (reverseTokenResult == null || !reverseTokenResult.IsValid) return new UnauthorizedObjectResult("User performing adding action must be logged in");
+            if (projectId < 1)
+                return new BadRequestObjectResult(new Response { IsSuccess = false, Error = "Request must be valid" });
+            if (reverseTokenResult == null || !reverseTokenResult.IsValid)
+                return new UnauthorizedObjectResult(new Response { IsSuccess = false, Error = "User performing adding action must be logged in" });
 
             var result = _projectService.GetProjectById(projectId);
             return result != null
@@ -120,8 +122,10 @@ namespace AgileApp.Controllers
         {
             var reverseTokenResult = _cookieHelper.ReverseJwtFromRequest(HttpContext);
 
-            if (request == null) return new BadRequestObjectResult("Request must be valid");
-            if (!reverseTokenResult.IsValid || !JwtMiddleware.IsAdmin(reverseTokenResult)) return new UnauthorizedObjectResult("User performing adding action must be an Admin");
+            if (request == null)
+                return new BadRequestObjectResult(new Response { IsSuccess = false, Error = "Request must be valid" });
+            if (!reverseTokenResult.IsValid || !JwtMiddleware.IsAdmin(reverseTokenResult))
+                return new UnauthorizedObjectResult(new Response { IsSuccess = false, Error = "User performing adding action must be an Admin" });
 
             var projectUpdate = new UpdateProjectRequest();
             try
@@ -134,7 +138,7 @@ namespace AgileApp.Controllers
             }
             catch (Exception)
             {
-                return new InternalServerErrorObjectResult("An exception occured during updating the project");
+                return new InternalServerErrorObjectResult(new Response { IsSuccess = false, Error = "An exception occured during updating the project" });
             }
         }
 
@@ -143,13 +147,15 @@ namespace AgileApp.Controllers
         {
             var reverseTokenResult = _cookieHelper.ReverseJwtFromRequest(HttpContext);
 
-            if (projectId < 1) return new BadRequestObjectResult("Request must be valid, check if the project id is correct");
-            if (!reverseTokenResult.IsValid || !JwtMiddleware.IsAdmin(reverseTokenResult)) return new UnauthorizedObjectResult("User performing adding action must be an Admin");
+            if (projectId < 1)
+                return new BadRequestObjectResult(new Response { IsSuccess = false, Error = "Request must be valid, check if the project id is correct" });
+            if (!reverseTokenResult.IsValid || !JwtMiddleware.IsAdmin(reverseTokenResult))
+                return new UnauthorizedObjectResult(new Response { IsSuccess = false, Error = "User performing adding action must be an Admin" });
 
             var result = _projectService.DeleteProject(projectId);
             return result
                 ? new OkObjectResult(result)
-                : new InternalServerErrorObjectResult("An internal error occured during deletion process");
+                : new InternalServerErrorObjectResult(new Response { IsSuccess = false, Error = "An internal error occured during deletion process" });
         }
 
         [HttpPut("{projectId}/users/{userId}")]
