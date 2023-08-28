@@ -22,8 +22,16 @@ namespace AgileApp.Repository.Tasks
 
         public int AddNewTask(TaskDb task)
         {
-            _dbContext.Tasks.Add(task);
-            return _dbContext.SaveChanges();
+            var proj = _dbContext.Projects.Where(p => p.Id == task.ProjectId).FirstOrDefault();
+            if (proj != null) 
+            {
+                task.ProjectId = proj.Id;
+                _dbContext.Tasks.Add(task);
+
+                return _dbContext.SaveChanges();
+            }
+
+            return -1;
         }
 
         public int DeleteTask(int id)

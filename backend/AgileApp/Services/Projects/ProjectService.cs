@@ -29,32 +29,46 @@ namespace AgileApp.Services.Projects
 
         public bool DeleteProject(int id)
         {
-            var tasks = _taskService.GetAllTasks().Where(t => t.ProjectId == id);
-            if (tasks.Count() > 0)
-                foreach (var task in tasks)
-                {
-                    _taskService.DeleteTask(task.Id);
-                }
+            try
+            {
+                var tasks = _taskService.GetAllTasks().Where(t => t.ProjectId == id);
+                if (tasks.Count() > 0)
+                    foreach (var task in tasks)
+                    {
+                        _taskService.DeleteTask(task.Id);
+                    }
 
-            return _projectRepository.DeleteProject(id) == 1;
+                return _projectRepository.DeleteProject(id) >= 1;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public List<ProjectResponse> GetAllProjects()
         {
-            var response = new List<ProjectResponse>();
-            var projectsDb = _projectRepository.GetAllProjects(p => !string.IsNullOrWhiteSpace(p.Name)).ToList();
+            try
+            {
+                var response = new List<ProjectResponse>();
+                var projectsDb = _projectRepository.GetAllProjects(p => !string.IsNullOrWhiteSpace(p.Name)).ToList();
 
-            foreach (var project in projectsDb)
-                response.Add(new ProjectResponse { Id = project.Id, Name = project.Name, Description = project.Description, Users = _userRepository.GetAllUsersOnProject(project.Id).ToList() });
+                foreach (var project in projectsDb)
+                    response.Add(new ProjectResponse { Id = project.Id, Name = project.Name, Description = project.Description, Users = _userRepository.GetAllUsersOnProject(project.Id).ToList() });
 
-            return response;
+                return response;
+            }
+            catch (Exception)
+            {
+                return new List<ProjectResponse>();
+            }
         }
 
         public Response<int> AddNewProject(AddProjectRequest project)
         {
             try
             {
-                int newProjectId= _projectRepository.AddNewProject(new Repository.Models.ProjectDb
+                int newProjectId = _projectRepository.AddNewProject(new Repository.Models.ProjectDb
                 {
                     Name = project.Name,
                     Description = project.Description
@@ -72,32 +86,47 @@ namespace AgileApp.Services.Projects
 
         public ProjectResponse GetProjectById(int id)
         {
-            var response = new ProjectResponse();
-            var projectDb = _projectRepository.GetProjectById(id);
-
-            if (projectDb != null)
+            try
             {
-                response.Id = projectDb.Id;
-                response.Name = projectDb.Name;
-                response.Description = projectDb.Description;
-                response.Users = _userRepository.GetAllUsersOnProject(id).ToList();
-            }
+                var response = new ProjectResponse();
+                var projectDb = _projectRepository.GetProjectById(id);
 
-            return response;
+                if (projectDb != null)
+                {
+                    response.Id = projectDb.Id;
+                    response.Name = projectDb.Name;
+                    response.Description = projectDb.Description;
+                    response.Users = _userRepository.GetAllUsersOnProject(id).ToList();
+                }
+
+                return response;
+            }
+            catch (Exception)
+            {
+                return new ProjectResponse();
+            }
         }
 
         public ProjectResponse GetProjectByName(string name)
         {
-            var response = new ProjectResponse();
-            var userDb = _projectRepository.GetProjectByName(name);
-
-            if (userDb != null)
+            try
             {
-                response.Name = userDb.Name;
-                response.Description = userDb.Description;
-            }
+                var response = new ProjectResponse();
+                var userDb = _projectRepository.GetProjectByName(name);
 
-            return response;
+                if (userDb != null)
+                {
+                    response.Name = userDb.Name;
+                    response.Description = userDb.Description;
+                }
+
+                return response;
+            }
+            catch (Exception)
+            {
+
+                return new ProjectResponse();
+            }
         }
 
         public bool UpdateProject(UpdateProjectRequest project)

@@ -4,6 +4,7 @@ using AgileApp.Models.Projects;
 using AgileApp.Models.Tasks;
 using AgileApp.Services.Projects;
 using AgileApp.Services.Tasks;
+using AgileApp.Services.Users;
 using AgileApp.Utils.Cookies;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,17 +14,20 @@ namespace AgileApp.Controllers
     public class ProjectController : Controller
     {
         private readonly IProjectService _projectService;
+        private readonly IUserService _userService;
         private readonly ICookieHelper _cookieHelper;
         private readonly ITaskService _taskService;
 
         public ProjectController(
             IProjectService projectService,
+            IUserService userService,
             ICookieHelper cookieHelper,
             ITaskService taskService)
         {
             _projectService = projectService;
             _cookieHelper = cookieHelper;
             _taskService = taskService;
+            _userService = userService;
         }
 
         [HttpPost("")]
@@ -39,7 +43,7 @@ namespace AgileApp.Controllers
             if (!JwtMiddleware.IsAdmin(reverseTokenResult))
                 return new UnauthorizedObjectResult(new Response { IsSuccess = false, Error = "User performing adding action must be an Admin" });
 
-            if (request.Name == null)
+            if (string.IsNullOrWhiteSpace(request.Name))
             {
                 return new NotAcceptableObjectResult(Models.Common.Response.Failed("Mandatory field missing"));
             }
@@ -62,18 +66,22 @@ namespace AgileApp.Controllers
             if (request == null) return new BadRequestObjectResult(Response<bool>.Failed("Request must be valid"));
             if (!reverseTokenResult.IsValid) return new UnauthorizedObjectResult(Response<bool>.Failed("User performing task adding action must be logged in"));
 
-            if (request.Name == null)
+            if (string.IsNullOrWhiteSpace(request.Name) || string.IsNullOrWhiteSpace(request.Description))
             {
-                return new OkObjectResult(Models.Common.Response.Failed("Mandatory field is missing"));
+                return new NotAcceptableObjectResult(Models.Common.Response.Failed("Mandatory field is missing"));
             }
+
+            // może nie wygląda jak by to miało sens, ale serwis wrzuci userowi ID 0 jak nie znajdzie
+            if (request.UserId < 1 || _userService.GetUserById(request.UserId).Id < 1)
+                return new NotAcceptableObjectResult(Models.Common.Response.Failed("UserID must be valid"));
 
             request.ProjectId = projectId;
             var creationResult = _taskService.AddNewTask(request);
 
             if (creationResult == null)
-            {
                 return new InternalServerErrorObjectResult(Models.Common.Response.Failed("Adding task internal error"));
-            }
+            else if (creationResult != "true")
+                return new InternalServerErrorObjectResult(Models.Common.Response.Failed(creationResult));
 
             return new OkObjectResult(new Response { IsSuccess = true });
         }
@@ -112,7 +120,7 @@ namespace AgileApp.Controllers
                 return new UnauthorizedObjectResult(new Response { IsSuccess = false, Error = "User performing adding action must be logged in" });
 
             var result = _projectService.GetProjectById(projectId);
-            return result != null
+            return result != null && result.Id > 0
                 ? new OkObjectResult(result)
                 : new NotFoundObjectResult(Response<ProjectResponse>.Failed("Project not found"));
         }
@@ -124,6 +132,7 @@ namespace AgileApp.Controllers
 
             if (request == null)
                 return new BadRequestObjectResult(new Response { IsSuccess = false, Error = "Request must be valid" });
+
             if (!reverseTokenResult.IsValid || !JwtMiddleware.IsAdmin(reverseTokenResult))
                 return new UnauthorizedObjectResult(new Response { IsSuccess = false, Error = "User performing adding action must be an Admin" });
 
@@ -134,7 +143,10 @@ namespace AgileApp.Controllers
                 projectUpdate.Name = request.Name ?? string.Empty;
                 projectUpdate.Description = request.Description ?? string.Empty;
 
-                return new OkObjectResult(_projectService.UpdateProject(projectUpdate));
+                var result = _projectService.UpdateProject(projectUpdate);
+                return result
+                    ? new OkObjectResult(new Response { IsSuccess = result })
+                    : new InternalServerErrorObjectResult(new Response { IsSuccess = result, Error = "Could not perform the alter action, check the given data" });
             }
             catch (Exception)
             {
@@ -152,9 +164,13 @@ namespace AgileApp.Controllers
             if (!reverseTokenResult.IsValid || !JwtMiddleware.IsAdmin(reverseTokenResult))
                 return new UnauthorizedObjectResult(new Response { IsSuccess = false, Error = "User performing adding action must be an Admin" });
 
+            var checkProject = GetProjectById(projectId);
+            if (checkProject is not OkObjectResult)
+                return checkProject;
+
             var result = _projectService.DeleteProject(projectId);
             return result
-                ? new OkObjectResult(result)
+                ? new OkObjectResult(new Response { IsSuccess = result })
                 : new InternalServerErrorObjectResult(new Response { IsSuccess = false, Error = "An internal error occured during deletion process" });
         }
 
@@ -163,7 +179,7 @@ namespace AgileApp.Controllers
         {
             var reverseTokenResult = _cookieHelper.ReverseJwtFromRequest(HttpContext);
 
-            if (projectId < 1 || userId < 0)
+            if (projectId < 1 || userId < 1)
             {
                 return new BadRequestObjectResult(Response<bool>.Failed("Wrong ProjectID or userID during adding to the project"));
             }

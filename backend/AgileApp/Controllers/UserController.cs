@@ -154,7 +154,7 @@ namespace AgileApp.Controllers
                 userUpdate.Email = request.Email ?? string.Empty;
                 userUpdate.Password = request.Password ?? string.Empty;
 
-                userUpdate.Role = request.Role ?? Enum.Parse<UserRoleEnum>(_userService.GetUserById(userId).Role);
+                userUpdate.Role = request?.Role ?? Enum.Parse<UserRoleEnum>(_userService.GetUserById(userId).Role);
             }
             catch (Exception)
             {

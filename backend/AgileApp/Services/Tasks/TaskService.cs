@@ -60,7 +60,7 @@ namespace AgileApp.Services.Tasks
 
                 return affectedRows == 1
                     ? "true"
-                    : "false";
+                    : affectedRows == -1 ? "Couldn't find a project specified" : "false";
             }
             catch (Exception ex)
             {

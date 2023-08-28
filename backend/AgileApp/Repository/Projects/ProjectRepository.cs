@@ -36,8 +36,14 @@ namespace AgileApp.Repository.Projects
             var projectOld = _dbContext.Projects.FirstOrDefault(p => p.Id == id);
             if (projectOld != null)
             {
-                _dbContext.Projects.Remove(projectOld);
-                return _dbContext.SaveChanges();
+                var toRm = _dbContext.Proj_Users.Where(p => p.Project_Id == projectOld.Id).FirstOrDefault();
+
+                if (projectOld != null && toRm != null)
+                {
+                    _dbContext.Proj_Users.Remove(toRm);
+                    _dbContext.Projects.Remove(projectOld);
+                    return _dbContext.SaveChanges();
+                }
             }
 
             return 0;
