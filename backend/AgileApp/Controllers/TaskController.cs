@@ -1,4 +1,6 @@
-﻿using AgileApp.Models.Tasks;
+﻿using AgileApp.Controllers.Responses;
+using AgileApp.Models.Common;
+using AgileApp.Models.Tasks;
 using AgileApp.Services.Tasks;
 using AgileApp.Utils.Cookies;
 using Microsoft.AspNetCore.Mvc;
@@ -24,9 +26,13 @@ namespace AgileApp.Controllers
         {
             var reverseTokenResult = _cookieHelper.ReverseJwtFromRequest(HttpContext);
 
-            if (!reverseTokenResult.IsValid) return Forbid();
+            if (!reverseTokenResult.IsValid)
+                return new UnauthorizedObjectResult(new Response { IsSuccess = false, Error = "User performing Get action must be logged in" });
 
-            return new OkObjectResult(_taskService.GetAllTasks());
+            var result = _taskService.GetAllTasks();
+            return result != null && result.Count() > 0
+                ? new OkObjectResult(result)
+                : new NotFoundObjectResult(new Response { IsSuccess = false, Error = "Tasks not found" });
         }
 
         [HttpGet("{taskId}")]
@@ -34,9 +40,10 @@ namespace AgileApp.Controllers
         {
             var reverseTokenResult = _cookieHelper.ReverseJwtFromRequest(HttpContext);
 
-            if (taskId < 1) return BadRequest();
-            if (!reverseTokenResult.IsValid) return Forbid();
-
+            if (taskId < 1)
+                return new BadRequestObjectResult(new Response { IsSuccess = false, Error = "Ensure that the given taskID is valid" });
+            if (!reverseTokenResult.IsValid)
+                return new UnauthorizedObjectResult(new Response { IsSuccess = false, Error = "User performing Get action must be logged in" });
 
             return new OkObjectResult(_taskService.GetTaskById(taskId));
         }
@@ -46,8 +53,10 @@ namespace AgileApp.Controllers
         {
             var reverseTokenResult = _cookieHelper.ReverseJwtFromRequest(HttpContext);
 
-            if (request == null) return BadRequest();
-            if (!reverseTokenResult.IsValid) return Forbid();
+            if (request == null)
+                return new BadRequestObjectResult(new Response { IsSuccess = false, Error = "Request must be valid" });
+            if (!reverseTokenResult.IsValid)
+                return new UnauthorizedObjectResult(new Response { IsSuccess = false, Error = "User performin an update action must be logged in" });
 
 
             var taskUpdate = new UpdateTaskRequest();
@@ -65,7 +74,7 @@ namespace AgileApp.Controllers
             }
             catch (Exception)
             {
-                return BadRequest();
+                return new InternalServerErrorObjectResult(new Response { IsSuccess = false, Error = "An error occured during altering the task, please try again" });
             }
         }
 
@@ -74,10 +83,15 @@ namespace AgileApp.Controllers
         {
             var reverseTokenResult = _cookieHelper.ReverseJwtFromRequest(HttpContext);
 
-            if (taskId < 1) return BadRequest();
-            if (!reverseTokenResult.IsValid) return Unauthorized(); // || !JwtMiddleware.IsAdmin(reverseTokenResult)
+            if (taskId < 1)
+                return new BadRequestObjectResult(new Response { IsSuccess = false, Error = "Request must be valid, ensure that given taskID is valid" });
+            if (!reverseTokenResult.IsValid || !JwtMiddleware.IsAdmin(reverseTokenResult))
+                return new UnauthorizedObjectResult(new Response { IsSuccess = false, Error = "User performing deletion action must be admin" });
 
-            return new OkObjectResult(_taskService.DeleteTask(taskId));
+            var result = _taskService.DeleteTask(taskId);
+            return result
+                ? new OkObjectResult(_taskService.DeleteTask(taskId))
+                : new InternalServerErrorObjectResult(new Response { IsSuccess = false, Error = "An error has occured during the deletion process" });
         }
     }
 }
