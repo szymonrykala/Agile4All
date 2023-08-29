@@ -48,7 +48,8 @@ namespace AgileApp.Services.Files
                         Name = file.FileData.FileName,
                         Path = fileFullPath,
                         Project_Id = projectId,
-                        Task_Id = taskId
+                        Task_Id = taskId,
+                        User_Id = file.UserId
                     };
 
                     _fileRepository.UploadFile(fdb);

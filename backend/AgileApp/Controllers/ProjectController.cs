@@ -198,7 +198,12 @@ namespace AgileApp.Controllers
         {
             var reverseTokenResult = _cookieHelper.ReverseJwtFromRequest(HttpContext);
 
-            if (projectId < 1 || userId < 0 || !reverseTokenResult.IsValid)
+            if (!reverseTokenResult.IsValid)
+            {
+                return new UnauthorizedObjectResult(Response<bool>.Failed("User must be logged in"));
+            }
+
+            if (projectId < 1 || userId < 1)
             {
                 return new BadRequestObjectResult(Response<bool>.Failed("Passed data must be valid"));
             }

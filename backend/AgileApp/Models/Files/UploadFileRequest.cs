@@ -7,5 +7,7 @@
         public int? TaskId { get; set; }
 
         public IFormFile FileData { get; set; }
+
+        public int UserId { get; set; }
     }
 }
