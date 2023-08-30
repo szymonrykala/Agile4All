@@ -7,5 +7,5 @@ RUN apt-get update && apt-get install -y gosu procps unzip
 RUN dotnet tool install dotnet-ef --tool-path /usr/local/dotnet/tools
 RUN curl -sSL https://aka.ms/getvsdbgsh | /bin/sh /dev/stdin -v latest -l /usr/local/dotnet/vsdbg
 
-WORKDIR /backend
-ENTRYPOINT /entrypoint dotnet watch run --project "./AgileApp"
+WORKDIR /backend/AgileApp
+ENTRYPOINT /entrypoint dotnet watch run "./AgileApp.csproj"
