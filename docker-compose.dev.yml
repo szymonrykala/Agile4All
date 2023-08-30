@@ -16,7 +16,7 @@ services:
       context: ./
       dockerfile: ./docker/caddy/Dockerfile.${ENV}
     ports:
-      - ${APP_PORT}:80
+      - 80:80
     depends_on:
       - frontend
     volumes:
