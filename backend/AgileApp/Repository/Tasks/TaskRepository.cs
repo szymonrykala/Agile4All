@@ -28,7 +28,8 @@ namespace AgileApp.Repository.Tasks
                 task.ProjectId = proj.Id;
                 _dbContext.Tasks.Add(task);
 
-                return _dbContext.SaveChanges();
+                _dbContext.SaveChanges();
+                return task.Id;
             }
 
             return -1;

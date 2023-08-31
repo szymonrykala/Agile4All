@@ -39,7 +39,7 @@ namespace AgileApp.Controllers
 
             return res != null && res.Count() > 0
                 ? new OkObjectResult(Models.Common.Response<List<GetFileResponse>>.Succeeded(res))
-                : new NotFoundObjectResult(new Response { IsSuccess = false, Error = "Files with given request not found" });
+                : new NotFoundObjectResult(Response<List<GetFileResponse>>.Succeeded(new List<GetFileResponse>()));
         }
 
         [HttpPost("")]

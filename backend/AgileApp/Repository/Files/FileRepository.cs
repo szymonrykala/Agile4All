@@ -23,7 +23,7 @@ namespace AgileApp.Repository.Files
             var fileDb = _dbContext.Files.FirstOrDefault(f => f.Id == id);
 
             if (fileDb == null)
-                return Response.Failed("File doesnt exist");
+                return Response.Failed("File doesn't exist");
 
             try
             {

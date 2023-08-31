@@ -1,7 +1,10 @@
-﻿using AgileApp.Enums;
+﻿using AgileApp.Controllers.Responses;
+using AgileApp.Enums;
+using AgileApp.Models.Common;
 using AgileApp.Models.Tasks;
 using AgileApp.Repository.Tasks;
 using AgileApp.Utils;
+using Microsoft.AspNetCore.Mvc;
 
 namespace AgileApp.Services.Tasks
 {
@@ -41,11 +44,11 @@ namespace AgileApp.Services.Tasks
             return response;
         }
 
-        public string AddNewTask(AddTaskRequest task)
+        public IActionResult AddNewTask(AddTaskRequest task)
         {
             try
             {
-                int affectedRows = _taskRepository.AddNewTask(new Repository.Models.TaskDb
+                int taskId = _taskRepository.AddNewTask(new Repository.Models.TaskDb
                 {
                     Name = task.Name,
                     UserId = task.UserId,
@@ -58,13 +61,14 @@ namespace AgileApp.Services.Tasks
                     StoryPoints = task.StoryPoints
                 });
 
-                return affectedRows == 1
-                    ? "true"
-                    : affectedRows == -1 ? "Couldn't find a project specified" : "false";
+                return taskId > 0
+                    ? new OkObjectResult(Response<string>.Succeeded("The new task of ID equal to: " + taskId + " has been created"))
+                    : taskId == -1 ? new NotFoundObjectResult(Response<bool>.Failed("Couldn't find a project specified")) 
+                    : new InternalServerErrorObjectResult(Response<bool>.Failed("Encountered an unknown error while trying to add a new task"));
             }
             catch (Exception ex)
             {
-                return ex.Message;
+                return new InternalServerErrorObjectResult(Response<bool>.Failed(ex.Message));
             }
         }
 

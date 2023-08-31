@@ -85,10 +85,8 @@ namespace AgileApp.Controllers
 
             if (creationResult == null)
                 return new InternalServerErrorObjectResult(Models.Common.Response.Failed("Adding task internal error"));
-            else if (creationResult != "true")
-                return new InternalServerErrorObjectResult(Models.Common.Response.Failed(creationResult));
-
-            return new OkObjectResult(new Response { IsSuccess = true });
+            else
+                return creationResult;
         }
 
         [HttpGet("")]

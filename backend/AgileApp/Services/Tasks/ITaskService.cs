@@ -1,4 +1,5 @@
 ﻿using AgileApp.Models.Tasks;
+using Microsoft.AspNetCore.Mvc;
 
 namespace AgileApp.Services.Tasks
 {
@@ -6,7 +7,7 @@ namespace AgileApp.Services.Tasks
     {
         public List<TaskResponse> GetAllTasks();
 
-        string AddNewTask(AddTaskRequest task);
+        IActionResult AddNewTask(AddTaskRequest task);
 
         TaskResponse GetTaskById(int id);
 
