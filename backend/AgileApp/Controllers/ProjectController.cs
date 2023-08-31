@@ -136,6 +136,9 @@ namespace AgileApp.Controllers
             if (!reverseTokenResult.IsValid || !JwtMiddleware.IsAdmin(reverseTokenResult))
                 return new UnauthorizedObjectResult(new Response { IsSuccess = false, Error = "User performing adding action must be an Admin" });
 
+            if (GetProjectById(projectId) is not OkObjectResult)
+                return new NotAcceptableObjectResult(Response<bool>.Failed("Project with given ID does not exist"));
+
             var projectUpdate = new UpdateProjectRequest();
             try
             {
