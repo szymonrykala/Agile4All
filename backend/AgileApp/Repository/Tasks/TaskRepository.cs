@@ -1,5 +1,6 @@
 ﻿using AgileApp.Repository.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace AgileApp.Repository.Tasks
 {
@@ -37,10 +38,14 @@ namespace AgileApp.Repository.Tasks
 
         public int DeleteTask(int id)
         {
-            var projectOld = _dbContext.Tasks.FirstOrDefault(p => p.Id == id);
-            if (projectOld != null)
+            var taskOld = _dbContext.Tasks.FirstOrDefault(p => p.Id == id);
+            if (taskOld != null)
             {
-                _dbContext.Tasks.Remove(projectOld);
+                var filesToRm = _dbContext.Files?.Where(t => t.Task_Id == id).ToList();
+                if (filesToRm != null && filesToRm.Count() > 0)
+                    filesToRm.ForEach(f => { _dbContext.Remove(f); _dbContext.SaveChanges(); });
+
+                _dbContext.Tasks.Remove(taskOld);
                 return _dbContext.SaveChanges();
             }
 
