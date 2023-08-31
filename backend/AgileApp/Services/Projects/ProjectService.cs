@@ -44,7 +44,7 @@ namespace AgileApp.Services.Projects
             try
             {
                 var response = new List<ProjectResponse>();
-                var projectsDb = _projectRepository.GetAllProjects(p => !string.IsNullOrWhiteSpace(p.Name)).ToList();
+                var projectsDb = _projectRepository.GetAllProjects(p => !string.IsNullOrWhiteSpace(p.Name));
 
                 foreach (var project in projectsDb)
                     response.Add(new ProjectResponse { Id = project.Id, Name = project.Name, Description = project.Description, Users = _userRepository.GetAllUsersOnProject(project.Id).ToList() });
