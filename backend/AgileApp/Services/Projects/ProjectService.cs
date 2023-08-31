@@ -31,13 +31,6 @@ namespace AgileApp.Services.Projects
         {
             try
             {
-                var tasks = _taskService.GetAllTasks().Where(t => t.ProjectId == id);
-                if (tasks.Count() > 0)
-                    foreach (var task in tasks)
-                    {
-                        _taskService.DeleteTask(task.Id);
-                    }
-
                 return _projectRepository.DeleteProject(id) >= 1;
             }
             catch (Exception)
@@ -91,13 +84,13 @@ namespace AgileApp.Services.Projects
                 var response = new ProjectResponse();
                 var projectDb = _projectRepository.GetProjectById(id);
 
-                if (projectDb != null)
-                {
-                    response.Id = projectDb.Id;
-                    response.Name = projectDb.Name;
-                    response.Description = projectDb.Description;
-                    response.Users = _userRepository.GetAllUsersOnProject(id).ToList();
-                }
+                if (projectDb == null || projectDb.Id < 1)
+                    return response;
+
+                response.Id = projectDb.Id;
+                response.Name = projectDb.Name;
+                response.Description = projectDb.Description;
+                response.Users = _userRepository.GetAllUsersOnProject(id).ToList();
 
                 return response;
             }
@@ -129,20 +122,25 @@ namespace AgileApp.Services.Projects
             }
         }
 
-        public bool UpdateProject(UpdateProjectRequest project)
+        public Response<string> UpdateProject(UpdateProjectRequest project)
         {
             try
             {
                 var dbProject = _projectRepository.GetProjectById(project.Id);
 
-                dbProject.Name = dbProject.Name.PropertyStringCompare(project.Name);
-                dbProject.Description = dbProject.Description.PropertyStringCompare(project.Description);
+                if (project.Name == dbProject.Name && project.Description == dbProject.Description)
+                    return Response<string>.Failed("You cannot perform this action because the project has exactly the same data");
 
-                return _projectRepository.UpdateProject(dbProject) == 1;
+                dbProject.Name = dbProject.Name.PropertyStringCompare(project.Name);
+                dbProject.Description = dbProject.Description?.PropertyStringCompare(project.Description);
+
+                return _projectRepository.UpdateProject(dbProject) == 1
+                    ? Response<string>.Succeeded("The project has been altered")
+                    : Response<string>.Failed("Couldn't perform the action");
             }
             catch (Exception)
             {
-                return false;
+                return Response<string>.Failed("An internal error occured during altering the project");
             }
         }
 
@@ -150,13 +148,17 @@ namespace AgileApp.Services.Projects
         {
             try
             {
-                if (_projectRepository.GetProjUserTable(p => p.Project_Id == request.ProjectId && p.User_Id == request.UserId).ToList().Count == 0)
-                    return _projectRepository.AddUserToProject(request) ? new Response { IsSuccess = true } : new Response { IsSuccess = false, Error = "Altered records different than 1" };
-                else return new Response { IsSuccess = false, Error = "User already exists in the project" };
+                if (_projectRepository.GetProjUserTable(p => 
+                    p.Project_Id == request.ProjectId && p.User_Id == request.UserId).ToList().Count == 0)
+                    return _projectRepository.AddUserToProject(request) 
+                        ? new Response { IsSuccess = true } 
+                        : new Response { IsSuccess = false, Error = "Altered records different than 1" };
+                else 
+                    return new Response { IsSuccess = false, Error = "User already exists in the project" };
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return new Response { IsSuccess = false, Error = "Check the number of users in the db" };
+                return new Response { IsSuccess = false, Error = ex.Message };
             }
         }
 

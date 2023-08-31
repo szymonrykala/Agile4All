@@ -78,6 +78,9 @@ namespace AgileApp.Repository.Users
             var users = GetProjUserTable(u => u.Project_Id == id);
             var response = new List<UserResponse>();
 
+            if (users == null)
+                return response;
+
             foreach (var user in users)
             {
                 var temp = GetUserById(user.User_Id);

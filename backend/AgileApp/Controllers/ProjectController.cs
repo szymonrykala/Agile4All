@@ -35,12 +35,12 @@ namespace AgileApp.Controllers
         {
             var reverseTokenResult = _cookieHelper.ReverseJwtFromRequest(HttpContext);
 
-            if (request == null || !reverseTokenResult.IsValid)
+            if (request == null)
             {
                 return new BadRequestObjectResult(new Response { IsSuccess = false, Error = "Request must be valid" });
             }
 
-            if (!JwtMiddleware.IsAdmin(reverseTokenResult))
+            if (!reverseTokenResult.IsValid || !JwtMiddleware.IsAdmin(reverseTokenResult))
                 return new UnauthorizedObjectResult(new Response { IsSuccess = false, Error = "User performing adding action must be an Admin" });
 
             if (string.IsNullOrWhiteSpace(request.Name))
@@ -55,7 +55,12 @@ namespace AgileApp.Controllers
                 return new InternalServerErrorObjectResult(Models.Common.Response.Failed("Adding project internal error"));
             }
 
-            return AddUserToProject(creationResult.Data, JwtMiddleware.GetCurrentUserId(reverseTokenResult));
+            var result = AddUserToProject(creationResult.Data, JwtMiddleware.GetCurrentUserId(reverseTokenResult));
+
+            if (result == null || result is not OkObjectResult)
+                return new InternalServerErrorObjectResult(Response<bool>.Failed("A new project of ID=" 
+                    + creationResult.Data + " has been added, but there the server encountered a problem when trying to assign you to the project"));
+            return new OkObjectResult(Response<string>.Succeeded("The project has been created. The given ID is equal to: " + creationResult.Data));
         }
 
         [HttpPost("{projectId}/tasks")]
@@ -101,7 +106,7 @@ namespace AgileApp.Controllers
             }
 
             var projects = _projectService.GetAllProjects();
-            if (projects == null)
+            if (projects == null || projects.Count() < 1)
             {
                 return new NotFoundObjectResult(Response<List<ProjectResponse>>.Succeeded(new List<ProjectResponse>()));
             }
@@ -147,9 +152,9 @@ namespace AgileApp.Controllers
                 projectUpdate.Description = request.Description ?? string.Empty;
 
                 var result = _projectService.UpdateProject(projectUpdate);
-                return result
-                    ? new OkObjectResult(new Response { IsSuccess = result })
-                    : new InternalServerErrorObjectResult(new Response { IsSuccess = result, Error = "Could not perform the alter action, check the given data" });
+                return result.IsSuccess
+                    ? new OkObjectResult(result)
+                    : new InternalServerErrorObjectResult(result);
             }
             catch (Exception)
             {
@@ -173,8 +178,8 @@ namespace AgileApp.Controllers
 
             var result = _projectService.DeleteProject(projectId);
             return result
-                ? new OkObjectResult(new Response { IsSuccess = result })
-                : new InternalServerErrorObjectResult(new Response { IsSuccess = false, Error = "An internal error occured during deletion process" });
+                ? new OkObjectResult(Response<bool>.Succeeded(result))
+                : new InternalServerErrorObjectResult(Response<bool>.Failed("An internal error occured during deletion process"));
         }
 
         [HttpPut("{projectId}/users/{userId}")]
@@ -189,6 +194,12 @@ namespace AgileApp.Controllers
 
             if (!reverseTokenResult.IsValid || !JwtMiddleware.IsAdmin(reverseTokenResult))
                 return new UnauthorizedObjectResult(Response<bool>.Failed("User performing adding action must be an Admin"));
+
+            if (_projectService.GetProjectById(projectId).Id < 1)
+                return new NotAcceptableObjectResult(Response<bool>.Failed("Given ProjectID is not valid"));
+
+            if (_userService.GetUserById(userId).Id < 1)
+                return new NotAcceptableObjectResult(Response<bool>.Failed("Given UserID is not valid"));
 
             var result = _projectService.AddUserToProject(new ProjectUserRequest { ProjectId = projectId, UserId = userId });
             return result.IsSuccess
@@ -213,6 +224,12 @@ namespace AgileApp.Controllers
 
             if (!JwtMiddleware.IsAdmin(reverseTokenResult))
                 return new UnauthorizedObjectResult(Response<bool>.Failed("User performing deletion process must be an Admin"));
+
+            if (_projectService.GetProjectById(projectId).Id < 1)
+                return new NotAcceptableObjectResult(Response<bool>.Failed("Given ProjectID is not valid"));
+
+            if (_userService.GetUserById(userId).Id < 1)
+                return new NotAcceptableObjectResult(Response<bool>.Failed("Given UserID is not valid"));
 
             var response = _projectService.RemoveUserFromProject(new ProjectUserRequest { ProjectId = projectId, UserId = userId });
             return response.IsSuccess

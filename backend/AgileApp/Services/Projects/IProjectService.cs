@@ -17,7 +17,7 @@ namespace AgileApp.Services.Projects
 
         public ProjectResponse GetProjectByName(string name);
 
-        public bool UpdateProject(UpdateProjectRequest project);
+        public Response<string> UpdateProject(UpdateProjectRequest project);
 
         public bool DeleteProject(int id);
     }

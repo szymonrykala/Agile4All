@@ -33,17 +33,37 @@ namespace AgileApp.Repository.Projects
 
         public int DeleteProject(int id)
         {
-            var projectOld = _dbContext.Projects.FirstOrDefault(p => p.Id == id);
+            var projectOld = _dbContext.Projects?.FirstOrDefault(p => p.Id == id);
             if (projectOld != null)
             {
-                var toRm = _dbContext.Proj_Users.Where(p => p.Project_Id == projectOld.Id).FirstOrDefault();
+                var projUsrToRm = _dbContext.Proj_Users?.Where(p => p.Project_Id == projectOld.Id).ToList();
+                var tasksToRm = _dbContext.Tasks?.Where(t => t.ProjectId == projectOld.Id).ToList();
 
-                if (projectOld != null && toRm != null)
+                if (projectOld == null)
+                    return 0;
+
+                if (tasksToRm != null && tasksToRm.Count() > 0)
                 {
-                    _dbContext.Proj_Users.Remove(toRm);
-                    _dbContext.Projects.Remove(projectOld);
-                    return _dbContext.SaveChanges();
+                    foreach (var task in tasksToRm)
+                    {
+                        var filesToRm = _dbContext.Files?.Where(t => t.Task_Id == task.Id).ToList();
+                        if (filesToRm != null &&  filesToRm.Count() > 0)
+                            filesToRm.ForEach(f => { _dbContext.Remove(f); _dbContext.SaveChanges(); });
+                        _dbContext.Tasks?.Remove(task);
+                    }
+                        
+                    _dbContext.SaveChanges();
                 }
+
+                if (projUsrToRm != null && projUsrToRm.Count() > 0)
+                {
+                    foreach (var projUsr in projUsrToRm)
+                        _dbContext.Proj_Users?.Remove(projUsr);
+                    _dbContext.SaveChanges();
+                }
+
+                _dbContext.Projects.Remove(projectOld);
+                return _dbContext.SaveChanges();
             }
 
             return 0;
