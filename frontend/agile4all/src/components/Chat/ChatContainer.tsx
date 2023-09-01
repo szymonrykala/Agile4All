@@ -49,7 +49,7 @@ export default function ChatContainer({ children }: IChatContainer) {
                 alignItems: 'center',
                 bgcolor: 'inherit'
             }}>
-                <Typography level='h5' component='h2'>
+                <Typography level='title-md' component='h2'>
                     Agile Chat
                 </Typography>
                 <span>

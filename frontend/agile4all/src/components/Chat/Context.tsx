@@ -71,7 +71,33 @@ export function ChatContextProvider({ children }: IChatContextProvider) {
         } catch (e) {
             console.debug(`Error while ws ping ${e}`)
         }
-    }, [socket,reconnectWS])
+    }, [socket, reconnectWS])
+
+
+    const socketMessageHandler = useCallback((event: MessageEvent) => {
+        let data = null;
+        try {
+            data = JSON.parse(event.data) as LoadWSMessage | WSMessage
+        } catch {
+            console.warn(`Could not parse WS event ${event}`)
+            return;
+        }
+
+        switch (data.type) {
+            case WSMessageType.LOAD:
+                recieveLoadMessage(data)
+                break;
+            case WSMessageType.MESSAGE:
+                recieveMessage(data)
+                break;
+            default:
+                console.debug(`Unsupported event type: ${event}`)
+        }
+    }, []);
+
+    const socketErrorHandler = useCallback((event: Event) => console.warn('Error from server ' + event), [])
+    const socketOpenHandler = useCallback((event: Event) => console.debug('WS connected'), [socket]);
+    const socketCloseHandler = useCallback((event: Event) => console.debug('WS disconnected'), [socket])
 
 
     useEffect(() => reconnectWS(), [reconnectWS])
@@ -90,38 +116,17 @@ export function ChatContextProvider({ children }: IChatContextProvider) {
             socket.CLOSED
         ].includes(socket.readyState as any)) return;
 
-        socket.addEventListener('open', (event) => {
-            console.debug('WS connected')
+        socket.addEventListener('close', socketCloseHandler)
+        socket.addEventListener('open', socketOpenHandler);
+        socket.addEventListener('message', socketMessageHandler);
+        socket.addEventListener('error', socketErrorHandler);
 
-            socket.addEventListener('close', (event) => {
-                console.debug('WS disconnected')
-            });
-        });
-
-        socket.addEventListener('message', (event: MessageEvent) => {
-            let data = null;
-            try {
-                data = JSON.parse(event.data) as LoadWSMessage | WSMessage
-            } catch {
-                console.warn(`Could not parse WS event ${event}`)
-                return;
-            }
-
-            switch (data.type) {
-                case WSMessageType.LOAD:
-                    recieveLoadMessage(data)
-                    break;
-                case WSMessageType.MESSAGE:
-                    recieveMessage(data)
-                    break;
-                default:
-                    console.debug(`Unsupported event type: ${event}`)
-            }
-        });
-
-        socket.addEventListener('error', (event) => {
-            console.debug('Error from server ', event);
-        });
+        return () => {
+            socket.removeEventListener("message", socketMessageHandler);
+            socket.removeEventListener('error', socketErrorHandler);
+            socket.removeEventListener('close', socketCloseHandler)
+            socket.removeEventListener('open', socketOpenHandler);
+        }
 
     }, [socket.readyState, socket, recieveLoadMessage, recieveMessage])
 

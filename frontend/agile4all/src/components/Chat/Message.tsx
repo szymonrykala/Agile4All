@@ -22,7 +22,7 @@ export default function Message({ text, mine, sender = '', userId = -1, date }: 
         }}
     >
         {!mine && <Typography
-            level='body2'
+            level='body-md'
             color='neutral'
             component={Link}
             to={`/app/users/${userId}`}
@@ -33,7 +33,7 @@ export default function Message({ text, mine, sender = '', userId = -1, date }: 
         <Typography
             fontSize={10}
             color='neutral'
-            level='body2'
+            level='body-md'
             sx={{
                 textAlign: mine ? 'right' : 'left',
                 marginTop: '3px'

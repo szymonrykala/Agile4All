@@ -13,7 +13,7 @@ function Chat() {
     return (
         <ChatContainer>
             {messages.length === 0 ?
-                <Typography textAlign='center' level='body2'>
+                <Typography textAlign='center' level='body-md'>
                     No messages ...
                 </Typography> :
                 <>
