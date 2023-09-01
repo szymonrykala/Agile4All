@@ -1,10 +1,18 @@
 using AgileApp.Controllers;
 using AgileApp.Models.Common;
 using AgileApp.Models.Files;
+using AgileApp.Enums;
 using AgileApp.Services.Files;
+using AgileApp.Models.Tasks;
+using AgileApp.Services.Tasks;
+using AgileApp.Models.Projects;
+using AgileApp.Services.Projects;
+using AgileApp.Utils.Cookies;
+using AgileApp.Models.Jwt;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System.Collections.Generic;
+using System.Security.Claims;
 using Xunit;
 
 namespace AgileControllerTests
@@ -15,11 +23,30 @@ namespace AgileControllerTests
         public void GetFiles_WithValidParameters_ReturnsOkResult()
         {
             // Arrange
+            var cookieHelperMock = new Mock<ICookieHelper>();
+            cookieHelperMock.Setup(x => x.ReverseJwtFromRequest(It.IsAny<Microsoft.AspNetCore.Http.HttpContext>()))
+                            .Returns(new JwtReverseResult
+                            {
+                                IsValid = true,
+                                Claims = new List<Claim>
+                                {
+                                    new Claim(ClaimTypes.Role, ((int)UserRoleEnum.ADMIN).ToString())
+                                }
+                            });
+
+            var projectServiceMock = new Mock<IProjectService>();
+            projectServiceMock.Setup(x => x.GetProjectById(It.IsAny<int>()))
+                              .Returns(new ProjectResponse());
+
+            var taskServiceMock = new Mock<ITaskService>();
+            taskServiceMock.Setup(x => x.GetTaskById(It.IsAny<int>()))
+                           .Returns(new TaskResponse());
+            
             var fileServiceMock = new Mock<IFileService>();
             fileServiceMock.Setup(x => x.GetFiles(It.IsAny<int>(), It.IsAny<int>()))
                            .Returns(new List<GetFileResponse>());
 
-            var controller = new FileController(fileServiceMock.Object);
+            var controller = new FileController(fileServiceMock.Object, cookieHelperMock.Object, taskServiceMock.Object, projectServiceMock.Object);
 
             // Act
             var result = controller.GetFiles(taskId: 1, projectId: 2);
@@ -32,11 +59,30 @@ namespace AgileControllerTests
         public void UploadFile_WithValidRequest_ReturnsOkResult()
         {
             // Arrange
+            var cookieHelperMock = new Mock<ICookieHelper>();
+            cookieHelperMock.Setup(x => x.ReverseJwtFromRequest(It.IsAny<Microsoft.AspNetCore.Http.HttpContext>()))
+                            .Returns(new JwtReverseResult
+                            {
+                                IsValid = true,
+                                Claims = new List<Claim>
+                                {
+                                    new Claim(ClaimTypes.Role, ((int)UserRoleEnum.ADMIN).ToString())
+                                }
+                            });
+
+            var projectServiceMock = new Mock<IProjectService>();
+            projectServiceMock.Setup(x => x.GetProjectById(It.IsAny<int>()))
+                              .Returns(new ProjectResponse());
+
+            var taskServiceMock = new Mock<ITaskService>();
+            taskServiceMock.Setup(x => x.GetTaskById(It.IsAny<int>()))
+                           .Returns(new TaskResponse());
+
             var fileServiceMock = new Mock<IFileService>();
             fileServiceMock.Setup(x => x.UploadFile(It.IsAny<UploadFileRequest>()))
                            .Returns(new Response<bool> { IsSuccess = true });
 
-            var controller = new FileController(fileServiceMock.Object);
+            var controller = new FileController(fileServiceMock.Object, cookieHelperMock.Object, taskServiceMock.Object, projectServiceMock.Object);
 
             // Act
             var result = controller.UploadFile(new UploadFileRequest());
@@ -49,11 +95,30 @@ namespace AgileControllerTests
         public void DeleteFile_WithValidFileId_ReturnsOkResult()
         {
             // Arrange
+            var cookieHelperMock = new Mock<ICookieHelper>();
+            cookieHelperMock.Setup(x => x.ReverseJwtFromRequest(It.IsAny<Microsoft.AspNetCore.Http.HttpContext>()))
+                            .Returns(new JwtReverseResult
+                            {
+                                IsValid = true,
+                                Claims = new List<Claim>
+                                {
+                                    new Claim(ClaimTypes.Role, ((int)UserRoleEnum.ADMIN).ToString())
+                                }
+                            });
+
+            var projectServiceMock = new Mock<IProjectService>();
+            projectServiceMock.Setup(x => x.GetProjectById(It.IsAny<int>()))
+                              .Returns(new ProjectResponse());
+
+            var taskServiceMock = new Mock<ITaskService>();
+            taskServiceMock.Setup(x => x.GetTaskById(It.IsAny<int>()))
+                           .Returns(new TaskResponse());
+
             var fileServiceMock = new Mock<IFileService>();
             fileServiceMock.Setup(x => x.DeleteFile(It.IsAny<int>()))
                            .Returns(new Response { IsSuccess = true });
 
-            var controller = new FileController(fileServiceMock.Object);
+            var controller = new FileController(fileServiceMock.Object, cookieHelperMock.Object, taskServiceMock.Object, projectServiceMock.Object);
 
             // Act
             var result = controller.DeleteFile(1);

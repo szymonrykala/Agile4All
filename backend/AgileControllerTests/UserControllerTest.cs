@@ -65,15 +65,14 @@ namespace AgileControllerTests
             userServiceMock.Setup(x => x.IsEmailTaken(It.IsAny<string>()))
                            .Returns(false);
 
-            userServiceMock.Setup(x => x.AddUser(It.IsAny<AuthorizationDataRequest>()))
+            userServiceMock.Setup(x => x.AddUser(It.IsAny<RegistrationDataRequest>()))
                            .Returns(It.IsAny<string>);
 
             var cookieHelperMock = new Mock<ICookieHelper>();
 
             var controller = new UserController(userServiceMock.Object, cookieHelperMock.Object);
 
-            // Create a valid AuthorizationDataRequest
-            var request = new AuthorizationDataRequest()
+            var request = new RegistrationDataRequest()
             {
                 // Set necessary properties here. e.g.,
                 Email = "test@test.com",
@@ -153,8 +152,8 @@ namespace AgileControllerTests
             userServiceMock.Setup(x => x.GetUserById(It.IsAny<int>()))
                            .Returns(new GetAllUsersResponse { Role = ((int)UserRoleEnum.ADMIN).ToString() });
 
-            userServiceMock.Setup(x => x.UpdateUser(It.IsAny<UpdateUserRequest>()))
-                           .Returns(true);
+            userServiceMock.Setup(x => x.UpdateUser(It.IsAny<UpdateUserDTO>()))
+                            .Returns(true);
 
             var cookieHelperMock = new Mock<ICookieHelper>();
             cookieHelperMock.Setup(x => x.ReverseJwtFromRequest(It.IsAny<Microsoft.AspNetCore.Http.HttpContext>()))
