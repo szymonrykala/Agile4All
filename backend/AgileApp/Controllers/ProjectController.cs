@@ -106,7 +106,7 @@ namespace AgileApp.Controllers
             var projects = _projectService.GetAllProjects();
             if (projects == null || projects.Count() < 1)
             {
-                return new NotFoundObjectResult(Response<List<ProjectResponse>>.Succeeded(new List<ProjectResponse>()));
+                return new OkObjectResult(Response<List<ProjectResponse>>.Succeeded(new List<ProjectResponse>()));
             }
 
             return new OkObjectResult(Response<List<ProjectResponse>>.Succeeded(projects));

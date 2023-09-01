@@ -115,7 +115,7 @@ namespace AgileApp.Controllers
             var result = _userService.GetAllUsers();
             return result?.Count() > 0
                 ? new OkObjectResult(Response<List<Models.Users.GetAllUsersResponse>>.Succeeded(result))
-                : new NotFoundObjectResult(new Response { IsSuccess = false, Error = "The user list is empty (for some reason)" });
+                : new OkObjectResult(Response<List<Models.Users.GetAllUsersResponse>>.Succeeded(new List<GetAllUsersResponse>()));
         }
 
         [HttpGet("{userId}")]

@@ -42,7 +42,7 @@ namespace AgileApp.Controllers
             var result = _taskService.GetAllTasks();
             return result != null && result.Count() > 0
                 ? new OkObjectResult(Response<List<TaskResponse>>.Succeeded(result))
-                : new NotFoundObjectResult(Response<List<TaskResponse>>.Succeeded(new List<TaskResponse>()));
+                : new OkObjectResult(Response<List<TaskResponse>>.Succeeded(new List<TaskResponse>()));
         }
 
         [HttpGet("{taskId}")]
