@@ -37,9 +37,7 @@ namespace AgileApp.Controllers
 
             var res = _fileService.GetFiles(taskId, projectId);
 
-            return res != null && res.Count() > 0
-                ? new OkObjectResult(Models.Common.Response<List<GetFileResponse>>.Succeeded(res))
-                : new NotFoundObjectResult(Response<List<GetFileResponse>>.Succeeded(new List<GetFileResponse>()));
+            return new OkObjectResult(Models.Common.Response<List<GetFileResponse>>.Succeeded(res));
         }
 
         [HttpPost("")]
