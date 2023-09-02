@@ -6,6 +6,7 @@ using AgileApp.Services.Projects;
 using AgileApp.Services.Tasks;
 using AgileApp.Utils.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using System.Reflection.Metadata;
 
 namespace AgileApp.Controllers
 {
@@ -72,7 +73,7 @@ namespace AgileApp.Controllers
 
             return string.IsNullOrWhiteSpace(filepath) || !System.IO.File.Exists(filepath)
                 ? new NotFoundObjectResult(new Response { IsSuccess = false, Error = "File with given ID does not exist" })
-                : File(System.IO.File.ReadAllBytes(filepath), "*/*", System.IO.Path.GetFileName(filepath));
+                : new FileStreamResult(new MemoryStream(System.IO.File.ReadAllBytes(filepath)), "*/*");
         }
 
         [HttpDelete("{fileId}")]
