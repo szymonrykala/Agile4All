@@ -87,11 +87,7 @@ namespace AgileApp.Services.Files
             var repositoryRes = new List<FileDb>();
             var response = new List<GetFileResponse>();
 
-            if (projectId != -1 && taskId != -1)
-            {
-                return response;
-            }
-            else if (taskId != -1)
+            if (taskId != -1)
             {
                 repositoryRes = _fileRepository.GetAllFiles(f => f.Task_Id == taskId).ToList();
             }
