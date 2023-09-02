@@ -173,6 +173,8 @@ namespace AgileApp.Controllers
                 return new BadRequestObjectResult(new Response { IsSuccess = false, Error = "Request must be valid" });
             if (!reverseTokenResult.IsValid || !JwtMiddleware.IsAdmin(reverseTokenResult)) 
                 return new UnauthorizedObjectResult(new Response { IsSuccess = false, Error = "User performing adding action must be an Admin" });
+            if (userId == JwtMiddleware.GetCurrentUserId(reverseTokenResult))
+                return new BadRequestObjectResult(Response<bool>.Failed("Cannot remove the account that you are currently logged on"));
 
             var result = _userService.DeleteUser(userId);
 
