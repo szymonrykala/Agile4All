@@ -1,5 +1,0 @@
-FROM nginx:alpine
-
-EXPOSE 80
-
-VOLUME [ "/etc/nginx/nginx.conf" ]

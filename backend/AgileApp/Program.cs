@@ -137,7 +137,6 @@ using (var scope = app.Services.CreateScope())
 app.UseCors();
 app.UseStaticFiles();
 
-app.UsePathBase(new PathString("/api"));
 app.UseRouting();
 
 app.UseAuthentication();
