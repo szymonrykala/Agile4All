@@ -1,5 +1,4 @@
 import MenuIcon from '@mui/icons-material/Menu';
-import GroupRoundedIcon from '@mui/icons-material/GroupRounded';
 import LogoutIcon from '@mui/icons-material/Logout';
 import Box from '@mui/joy/Box';
 import Typography from '@mui/joy/Typography';
@@ -40,13 +39,6 @@ export default function Header(props: IHeader) {
                     onClick={() => props.setDrawerOpen && props.setDrawerOpen(true)}
                 >
                     <MenuIcon />
-                </IconButton>
-                <IconButton
-                    size="sm"
-                    variant="solid"
-                    sx={{ display: { xs: 'none', sm: 'inline-flex' } }}
-                >
-                    <GroupRoundedIcon />
                 </IconButton>
                 <Typography component="h1" fontWeight="xl">
                     Agile4All

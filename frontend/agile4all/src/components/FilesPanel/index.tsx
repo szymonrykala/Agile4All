@@ -7,6 +7,7 @@ import { FilesApi } from "../../client";
 import { UUID } from "../../models/common";
 import { useParams } from "react-router";
 import { mockedFiles } from "../../client/mocks/files";
+import useNotification from "../Notification";
 
 
 interface IFilesPanel {
@@ -17,7 +18,7 @@ export default function FilesPanel(props: IFilesPanel) {
     const queryParams = useParams();
     const [files, setFiles] = useState<FileModel[]>(props.files || [])
     const fileInputRef: React.MutableRefObject<HTMLInputElement | null> = useRef(null)
-
+    const { info, error } = useNotification();
 
     const fetchFiles = useCallback(async () => {
         let resp: FileModel[];
@@ -43,19 +44,20 @@ export default function FilesPanel(props: IFilesPanel) {
 
         const file = fileInputRef.current.files?.item(0)
         if (!file) {
-            alert('problem z załadowaniem pliku');
+            error('Problem z załadowaniem pliku');
             return;
         }
 
         try {
-            await FilesApi.uploadFile(file, queryParams)
-            fetchFiles()
+            await FilesApi.uploadFile(file, queryParams);
+            fetchFiles();
+            info("Plik dodano.");
         } catch (err) {
-            alert(err)
+            error(err);
         }
         fileInputRef.current.value = ''
 
-    }, [queryParams, fetchFiles]);
+    }, [queryParams, fetchFiles, info, error]);
 
 
 
@@ -81,11 +83,15 @@ export default function FilesPanel(props: IFilesPanel) {
 
 
     const deleteFile = useCallback(async (fileId: UUID) => {
+        try{
+            await FilesApi.delete(fileId)
+            setFiles(files.filter(({ id }) => id !== fileId));
+            info("Plik usunięto.");
+        }catch(err){
+            error(err);
+        }
 
-        await FilesApi.delete(fileId)
-        setFiles(files.filter(({ id }) => id !== fileId));
-
-    }, [files, setFiles]);
+    }, [files, setFiles, info, error]);
 
 
 

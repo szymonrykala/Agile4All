@@ -42,7 +42,7 @@ export default function ProjectListItem({ data }: IProjectItem) {
             </Box>
             <br />
             <Box>
-                <Typography level="body2" sx={{ maxHeight: '200px', overflowY: 'clip' }}>
+                <Typography level="body-sm" sx={{ maxHeight: '200px', overflowY: 'clip' }}>
                     {data.description}
                 </Typography>
             </Box>

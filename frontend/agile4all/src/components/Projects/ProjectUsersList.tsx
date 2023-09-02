@@ -1,5 +1,5 @@
 import { List, ListItem, ListItemContent, IconButton, Typography, Stack, Avatar, ListItemDecorator } from "@mui/joy";
-import { ReactNode, useCallback, useMemo, useState } from "react";
+import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { ProjectsApi } from "../../client";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { UUID } from "../../models/common";
@@ -23,9 +23,9 @@ interface IUserItem {
 
 function UserItem({ children, onRemove, onAdd }: IUserItem) {
     return (
-        <ListItem sx={{ 
-            bgcolor: "background.appBody", 
-            borderRadius: 10 
+        <ListItem sx={{
+            bgcolor: "background.appBody",
+            borderRadius: 10
         }}>
             <ListItemDecorator sx={{ alignSelf: 'flex-start' }}>
                 <Avatar src="/static/images/avatar/1.jpg" />
@@ -69,7 +69,7 @@ const style = {
 
 
 export default function ProjectUsersList({ projectId, users }: IProjectUsersList) {
-    const [localUsers, setLocalUsers] = useState<User[]>(users)
+    const [localUsers, setLocalUsers] = useState<User[]>([])
 
     const projectUsersIds = useMemo(() => localUsers.map(({ id }) => id), [localUsers]);
 
@@ -113,9 +113,13 @@ export default function ProjectUsersList({ projectId, users }: IProjectUsersList
         dispatch
     ])
 
+    useEffect(() => {
+        setLocalUsers(users)
+    }, [users])
+
     return (
         <>
-            <Typography level='body3'>
+            <Typography level='body-sm'>
                 Assigned users:
             </Typography>
             <List size="sm" sx={style.assignedUsersList}>

@@ -29,9 +29,6 @@ function SessionController(props: ISessionController) {
             }
 
         } catch (e) {
-            // if (e instanceof NoValidUserSessionError) {
-            //     navigate('/login')
-            // } else throw e
             navigate('/login');
             console.info('No active user session')
         }

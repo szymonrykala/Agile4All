@@ -34,7 +34,7 @@ export default function TaskCard({ task }: ITaskCard) {
                 </Box>
 
                 <Typography
-                    level='body2'
+                    level='body-sm'
                     sx={{
                         overflow: 'hidden',
                         wordBreak: 'break-word',
@@ -46,7 +46,7 @@ export default function TaskCard({ task }: ITaskCard) {
 
                 <span>
                     <Typography
-                        level='body2'
+                        level='body-sm'
                         textOverflow='ellipsis'
                         overflow='hidden'
                         maxHeight='40px'

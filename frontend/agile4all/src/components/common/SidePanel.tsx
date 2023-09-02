@@ -35,8 +35,8 @@ export default function SidePanel(props: BoxProps) {
     const navigate = useNavigate()
 
     const escHandler = useCallback((ev: KeyboardEvent) => {
-        ev.preventDefault()
         if (ev.key === 'Escape') {
+            ev.preventDefault()
             navigate("../")
         }
     }, [navigate])

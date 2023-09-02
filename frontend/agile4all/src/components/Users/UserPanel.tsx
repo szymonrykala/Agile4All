@@ -11,6 +11,7 @@ import { remove, update } from "../../store/usersSlice";
 import EditableTextField from "../common/EditableTextField";
 import NamedAvatar from "../Tasks/NamedAvatar";
 import SidePanel from "../common/SidePanel";
+import useNotification from "../Notification";
 
 
 
@@ -35,17 +36,11 @@ export default function UserPanel() {
     const reduxUser = useAppSelector(({ users }) => users.find(({ id }) => id === Number(userId))) || demoUser
     const projects = useAppSelector(({ projects }) => selectProjectsOfUser(projects, reduxUser.id))
     const isAdmin = useCheckAdmin()
-
+    const sessionUserId = useAppSelector(({ session }) => session?.user.id)
 
     const [user, setUser] = useState(reduxUser);
     const [editMode, setEditMode] = useState<boolean>(false);
-
-
-    useEffect(() => {
-        if (user.id === -1) {
-            throw Error(`User with id="${user.id}" Not Found`)
-        }
-    }, [reduxUser, user.id]);
+    const { info, error } = useNotification();
 
 
     const updateUserField = useCallback((
@@ -62,21 +57,40 @@ export default function UserPanel() {
 
 
     const saveUser = useCallback(async () => {
-        await UsersApi.update(user.id, {
-            firstName: user.firstName,
-            lastName: user.lastName,
-            role: user.role
-        })
-        dispatch(update(user))
-    }, [user, dispatch]);
+        try {
+            await UsersApi.update(user.id, {
+                firstName: user.firstName,
+                lastName: user.lastName,
+                role: user.role
+            })
+            dispatch(update(user));
+            info("User has been updated");
+        } catch (err) {
+            setUser(reduxUser)
+            error(err)
+        }
+    }, [user, dispatch, error, info, reduxUser]);
 
 
     const deleteUser = useCallback(async () => {
-        await UsersApi.delete(user.id);
-        dispatch(remove(user));
-        navigate('../')
-    }, [user, dispatch, navigate]);
+        if(!window.confirm('Do You want to delete this user?')) return;
 
+        try {
+            await UsersApi.delete(user.id);
+            dispatch(remove(user));
+            navigate('../');
+            info("User has been deleted");
+        } catch (err) {
+            error(err)
+        }
+    }, [user, dispatch, navigate, info, error]);
+
+
+    useEffect(()=>{
+        reduxUser && setUser(reduxUser);
+    // displayed task should be replaced only if `taskId` was changed
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[userId])
 
     return (
         <SidePanel>
@@ -114,7 +128,7 @@ export default function UserPanel() {
                     >
                         Tasks
                     </Button>
-                    {isAdmin && <>
+                    {(isAdmin || (reduxUser.id === sessionUserId)) && <>
                         <IconButton
                             onClick={() => setEditMode(!editMode)}
                         >
@@ -147,7 +161,7 @@ export default function UserPanel() {
                 />
             </Stack>
 
-            <Typography level="body2">
+            <Typography level="body-sm">
                 Projects:
             </Typography>
             <List>

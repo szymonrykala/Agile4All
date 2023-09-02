@@ -17,6 +17,7 @@ import { QueryParams } from "../../client/interface";
 import Project from "../../models/project";
 import { mockedTasks } from "../../client/mocks/tasks";
 import CanbanTable from "../CanbanTable";
+import useNotification from "../Notification";
 
 
 interface IProjectTasksListItem {
@@ -27,7 +28,7 @@ interface IProjectTasksListItem {
 }
 
 function tasksReduxSelector(tasks: Task[], queryParams: QueryParams, currentPath: string) {
-    let filtered = tasks;
+    let filtered = tasks || [];
 
     if (currentPath.includes("/tasks/users")) {
         filtered = filtered.filter(({ userId }) => userId === Number(queryParams.userId))
@@ -49,10 +50,11 @@ function ProjectTasksListItem({ project }: IProjectTasksListItem) {
     const { filter } = useParameterBarContext<Task>();
 
     const sessionUser = useAppSelector(({ session }) => session?.user);
+    const { info, error } = useNotification();
 
 
     const tasks = useAppSelector(({ tasks }) => tasksReduxSelector(
-        tasks.filter(({ projectId }) => projectId === project.id),
+        tasks?.filter(({ projectId }) => projectId === project.id),
         queryParams,
         location.pathname
     ));
@@ -71,16 +73,17 @@ function ProjectTasksListItem({ project }: IProjectTasksListItem) {
             dispatch(load(taskItems));
 
         } catch (err) {
+            error("Nie udało się pobrać danych taska")
             console.debug(err);
         }
-    }, [queryParams, dispatch]);
+    }, [queryParams, dispatch, error]);
 
 
     const filteredTasks = useMemo(() => {
         if (filter?.value) {
             try {
                 const regexp = new RegExp(filter?.value || "", 'ig')
-                return tasks.filter(task => String(task[filter.key]).match(regexp))
+                return tasks?.filter(task => String(task[filter.key]).match(regexp))
             } catch { }
         }
         return tasks
@@ -90,6 +93,7 @@ function ProjectTasksListItem({ project }: IProjectTasksListItem) {
     useEffect(() => {
         getTasks();
     }, [getTasks, trigger.tasks])
+
 
     const createTask = useCallback(async (projectId: UUID) => {
         const title = prompt('type a task title');
@@ -103,10 +107,15 @@ function ProjectTasksListItem({ project }: IProjectTasksListItem) {
                 userId: taskUserId,
                 projectId: projectId
             }
-            await TasksApi.create(task);
-            trigger.reload('tasks');
+            try {
+                await TasksApi.create(task);
+                trigger.reload('tasks');
+                info("Task utworzono");
+            } catch (err) {
+                error(err);
+            }
         }
-    }, [queryParams.userId, sessionUser?.id, trigger]);
+    }, [queryParams.userId, sessionUser?.id, trigger, error, info]);
 
 
     return (
@@ -167,7 +176,7 @@ export default function Tasks() {
 
     return (
         <ParameterBarContextProvider<Task>>
-            <Stack spacing={2} >
+            <Stack spacing={1} p={1} >
                 <ParameterBar<Task> sorts={sorts} filters={filters} init={{ filter: 0, sort: 0 }} />
                 <Outlet />
 

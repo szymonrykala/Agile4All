@@ -36,7 +36,7 @@ export default function Users() {
 
     return (
         <ParameterBarContextProvider<User>>
-            <Stack spacing={2} >
+            <Stack spacing={1} p={1} >
                 <ParameterBar<User> sorts={sorts} filters={filters} init={{ sort: 1, filter: filters.indexOf('email') }} />
                 <Outlet />
                 <UsersList />

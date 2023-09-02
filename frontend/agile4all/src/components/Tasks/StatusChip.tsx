@@ -15,7 +15,7 @@ export function getStatusColor(status: TaskStatus) {
         case TaskStatus.TODO:
             return 'primary';
         case TaskStatus.IN_PROGRESS:
-            return 'info';
+            return 'danger';
         case TaskStatus.ARCHIVED:
             return 'neutral';
         default:
@@ -30,7 +30,10 @@ export default function StatusChip(props: IStatusChip) {
             component='span'
             size="sm"
             variant={props.variant || "solid"}
-            sx={props?.sx}
+            sx={{
+                maxHeight: 10,
+                ...props?.sx
+            }}
             color={getStatusColor(props.status)}
         >
             {props.status}

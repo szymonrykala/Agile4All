@@ -45,7 +45,7 @@ function ProjectsTasksListsItem() {
         {session?.projects ?
           [
             session.projects.map(project =>
-              <ListItem key={project.id}>
+              <ListItem key={`side-li-${project.id}`}>
                 <ListItemButton
                   {...path.pathname.includes(`/app/tasks/users/${session.user.id}/projects/${project.id}`) ? clicked : Object()}
                   component={Link} to={`/app/tasks/users/${session.user.id}/projects/${project.id}`}
@@ -57,7 +57,7 @@ function ProjectsTasksListsItem() {
                 </ListItemButton>
               </ListItem>
             ),
-            <ListItem>
+            <ListItem key="-1">
               <ListItemButton
                 {...path.pathname === `/app/tasks/users/${session.user.id}` ? clicked : Object()}
                 component={Link} to={`/app/tasks/users/${session.user.id}`}

@@ -56,7 +56,7 @@ export default function ParameterBar<T>({ sorts, filters, init }: IParameterBar<
         >
             {sorts &&
                 <Stack direction='row' sx={{ alignItems: 'center' }} spacing={1}>
-                    <Typography level='body2'>
+                    <Typography level='body-md'>
                         Sort by:
                     </Typography>
                     {sorts?.map((_sort, index) =>
@@ -71,7 +71,7 @@ export default function ParameterBar<T>({ sorts, filters, init }: IParameterBar<
             }
             {filters &&
                 <Stack direction='row' sx={{ alignItems: 'center' }} spacing={1}>
-                    <Typography level='body2'>
+                    <Typography level='body-md'>
                         Filter
                     </Typography>
                     <Select
@@ -86,7 +86,7 @@ export default function ParameterBar<T>({ sorts, filters, init }: IParameterBar<
                             )
                         }
                     </Select>
-                    <Typography level='body2'>
+                    <Typography level='body-md'>
                         by
                     </Typography>
                     <Input

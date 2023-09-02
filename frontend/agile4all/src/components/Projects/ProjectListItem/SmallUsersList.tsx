@@ -11,7 +11,7 @@ interface ISmallUsersList {
 export default function SmallUsersList({ users }: ISmallUsersList) {
     return (
         <>
-            <Typography level='body3'>Members:</Typography>
+            <Typography level='body-sm'>Members:</Typography>
             <List sx={{ flexDirection: 'row' }}>
                 {
                     Boolean(users) && users.map((user, index) =>

@@ -36,7 +36,7 @@ export default function TaskListDemo(props: ITaskListDemo) {
                         <ListItem key={index} sx={{ alignItems: 'flex-start' }}>
                             <ListItemButton component={Link} to={`${props.projectId}/task-lookup/${id}`}>
                                 <ListItemContent>
-                                    <Typography level="body2" sx={{
+                                    <Typography level="body-md" sx={{
                                         textOverflow: "ellipsis",
                                         overflow: 'hidden',
                                         whiteSpace: 'nowrap'

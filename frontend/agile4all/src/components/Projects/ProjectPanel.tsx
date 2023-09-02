@@ -41,12 +41,17 @@ export default function ProjectPanel() {
 
 
     const saveProject = useCallback(async () => {
-        await ProjectsApi.update(project.id, {
-            name: project.name,
-            description: project.description
-        })
-        dispatch(update(project))
-    }, [project, dispatch])
+        if ((!editMode) || (JSON.stringify(project) === JSON.stringify(reduxProject))) return;
+        try {
+            await ProjectsApi.update(project.id, {
+                name: project.name,
+                description: project.description
+            })
+            dispatch(update(project));
+        } catch {
+            setProject(reduxProject);
+        }
+    }, [project, dispatch, editMode, reduxProject])
 
 
     const deleteProject = useCallback(async () => {
@@ -57,11 +62,10 @@ export default function ProjectPanel() {
 
 
     useEffect(() => {
-        if (reduxProject.id === -1) {
-            throw Error(`Project with id="${projectId}" not Found`)
-        }
         setProject({ ...reduxProject })
-    }, [reduxProject, projectId]);
+    // displayed project should be replaced only if `projectId` was changed
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [projectId]);
 
 
     return (

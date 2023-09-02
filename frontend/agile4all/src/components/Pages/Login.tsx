@@ -5,13 +5,14 @@ import FormWrapper from '../common/FormWrapper';
 import { Link, useNavigate } from "react-router-dom";
 import { ILoginData } from '../../client/users';
 import { UsersApi } from '../../client';
-import { BadCredentialsError } from '../../client/exceptions';
+import useNotification from '../Notification';
 
 
 function Login() {
     const navigate = useNavigate();
+    const { error } = useNotification();
 
-    const [error, setError] = useState<string | undefined>();
+    const [errorMsg, setError] = useState<string | undefined>();
     const [data, setData] = useState<ILoginData>({
         email: '',
         password: ''
@@ -24,12 +25,11 @@ function Login() {
             if(await UsersApi.login(data)){
                 navigate(`/app`)
             }
-        } catch (error) {
-            if (error instanceof BadCredentialsError) {
-                setError(error.message)
-            }
+        } catch (err) {
+           setError(String(err));
+           error(err)
         }
-    }, [navigate, setError, data])
+    }, [navigate, setError, data, error])
 
 
     return <NoSessionPage sx={{
@@ -42,7 +42,7 @@ function Login() {
             submitHandler={submitLogin}
             title='Login'
             sx={{ transform: 'translateY(-10vh)' }}
-            error={error}
+            error={errorMsg}
             footer={
                 <Typography component={Link} to='/register' color='primary'>
                     Create an account

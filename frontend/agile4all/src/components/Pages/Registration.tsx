@@ -5,14 +5,15 @@ import FormWrapper from '../common/FormWrapper';
 import { Link, useNavigate } from "react-router-dom";
 import { ICreateUserData } from '../../client/users';
 import { UsersApi } from '../../client';
-import { UserRegistrationError } from '../../client/exceptions';
+import useNotification from '../Notification';
 
 
 
 function Registration() {
     const navigate = useNavigate();
+    const { error } = useNotification();
 
-    const [error, setError] = useState<string | undefined>();
+    const [errorMsg, setError] = useState<string>();
     const [data, setData] = useState<ICreateUserData>({
         firstname: '',
         lastname: '',
@@ -21,16 +22,15 @@ function Registration() {
     });
 
 
-    const submitRegistration: React.FormEventHandler<HTMLFormElement> = useCallback((event) => {
+    const submitRegistration: React.FormEventHandler<HTMLFormElement> = useCallback(async (event) => {
         try {
-            UsersApi.register(data)
-            navigate('/login')
-        } catch (error) {
-            if (error instanceof UserRegistrationError) {
-                setError(error.message)
-            }
+            await UsersApi.register(data);
+            navigate('/login');
+        } catch (err) {
+            setError(String(err));
+            error(err)
         }
-    }, [navigate, setError, data])
+    }, [navigate, setError, data, error])
 
 
     return <NoSessionPage sx={{
@@ -43,7 +43,7 @@ function Registration() {
             submitHandler={submitRegistration}
             title='Create an account'
             sx={{ transform: 'translateY(-10vh)' }}
-            error={error}
+            error={errorMsg}
             footer={
                 <Typography component={Link} to='/login' color='primary'>
                     I have an account

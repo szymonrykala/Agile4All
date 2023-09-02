@@ -8,46 +8,57 @@ import { load as loadProjectsSlice } from "../../store/projectSlice";
 import { useReloadTrigger } from "./ReloadTrigger";
 import { mockedProjects } from "../../client/mocks/project";
 import { mockedUsers } from "../../client/mocks/user";
+import useNotification from "../Notification";
 
 
 
 
 export default function ResourceLoader() {
+    const { error } = useNotification();
     const dispatch = useAppDispatch();
     const trigger = useReloadTrigger();
 
     const loadUsers = useCallback(async () => {
-        let users:User[]
+        let users: User[]
 
-        if(process.env.NODE_ENV === "development" && process.env.REACT_APP_MOCK_API === "true"){
-            users = mockedUsers
-        }else{
-            users = await UsersApi.getAll() as unknown as User[];
+        try {
+            if (process.env.NODE_ENV === "development" && process.env.REACT_APP_MOCK_API === "true") {
+                users = mockedUsers
+            } else {
+                users = await UsersApi.getAll() as unknown as User[];
+            }
+            dispatch(loadUsersSlice(users));
+        } catch {
+            error("Nie udało się pobrać listy użytkowników");
         }
-        dispatch(loadUsersSlice(users));
-    }, [dispatch])
-
-    useEffect(() => {
-        loadUsers();
-    }, [loadUsers, trigger.users])
-
+    }, [dispatch, error])
 
     const loadProjects = useCallback(async () => {
-        let projects:Project[];
+        let projects: Project[];
 
-        if(process.env.NODE_ENV === "development" && process.env.REACT_APP_MOCK_API === "true"){
-            projects = mockedProjects
-        }else{
-            projects = await ProjectsApi.getAll() as Project[]
+        try{
+            if (process.env.NODE_ENV === "development" && process.env.REACT_APP_MOCK_API === "true") {
+                projects = mockedProjects
+            } else {
+                projects = await ProjectsApi.getAll() as Project[]
+            }
+            
+            dispatch(loadProjectsSlice(projects))
+        }catch{
+            error("Nie udało się pobrać listy projektów");
         }
+    }, [dispatch, error])
 
-        dispatch(loadProjectsSlice(projects))
-    }, [dispatch])
 
     useEffect(() => {
         loadProjects()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [loadProjects, trigger.projects])
 
+    useEffect(() => {
+        loadUsers();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [loadUsers, trigger.users])
 
     return <></>
 }

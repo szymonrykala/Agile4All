@@ -15,7 +15,7 @@ function CanbanColumn(props: ICanbanColumn) {
     return (
         <Box padding={1}>
             <Box>
-                <Typography level="body1">
+                <Typography level="body-sm">
                     {props.name}
                 </Typography>
             </Box>

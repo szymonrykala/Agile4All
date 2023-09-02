@@ -91,6 +91,7 @@ const AppRouter = createHashRouter([
           {
             path: 'projects',
             element: <Projects />,
+            errorElement: <ErrorBaner />,
             children: [
               {
                 path: ':projectId',

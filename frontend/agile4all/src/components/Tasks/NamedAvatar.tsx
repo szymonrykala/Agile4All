@@ -19,12 +19,12 @@ export default function NamedAvatar({ user }: INamedAvatar) {
                 src="https://cdn-icons-png.flaticon.com/512/2202/2202112.png"
             />
             <Sheet sx={{ bgcolor: 'inherit' }}>
-                <Typography level='body2'>
+                <Typography level='body-md'>
                     <Link to={`/app/users/${user?.id}`}>
                         {user?.firstName} {user?.lastName}
                     </Link>
                 </Typography>
-                <Typography level='body3'>
+                <Typography level='body-sm'>
                     <MUILink href={`email:${user?.email}`}>
                         {user?.email}
                     </MUILink>

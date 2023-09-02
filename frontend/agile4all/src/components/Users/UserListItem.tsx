@@ -18,7 +18,7 @@ export default function UserListItem({ user }: IUserListItem) {
                 </ListItemDecorator>
                 <ListItemContent>
                     <Typography>{user.firstName} {user.lastName}</Typography>
-                    <Typography level="body2" noWrap>
+                    <Typography level="body-md" noWrap>
                         {user.role}&nbsp;|&nbsp;{user.email}
                     </Typography>
                 </ListItemContent>

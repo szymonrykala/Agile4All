@@ -12,13 +12,12 @@ interface IEditableTextField {
 
 
 export default function EditableTextField(props: IEditableTextField) {
-
     const changeHandler: ChangeEventHandler<HTMLInputElement> = useCallback(({ target }) => {
         props.onChange(target.value)
     }, [props])
 
     return (
-        <Typography component='label' level='body3'>
+        <Typography component='label' level='body-sm'>
             {props.title}
             <Input
                 id={props.title}

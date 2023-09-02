@@ -66,7 +66,6 @@ function SideNav(props: ISideNav) {
     <>
       <Box
         component="nav"
-        {...props}
         sx={{
           position: 'fixed',
           top: 50,

@@ -12,6 +12,7 @@ import {
 } from "react-router-dom";
 import AppRouter from './AppRouter';
 import { ReloadTriggerContextProvider } from './components/common/ReloadTrigger';
+import NotificationContextProvider from './components/Notification/Context';
 
 
 
@@ -35,7 +36,9 @@ root.render(
         />
         <Provider store={store}>
           <ReloadTriggerContextProvider>
-            <RouterProvider router={AppRouter} />
+            <NotificationContextProvider>
+              <RouterProvider router={AppRouter} />
+            </NotificationContextProvider>
           </ReloadTriggerContextProvider>
         </Provider>
       </CssVarsProvider >

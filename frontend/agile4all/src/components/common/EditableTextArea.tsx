@@ -17,7 +17,7 @@ export default function EditableTextArea(props: IEditableTextArea) {
     }, [props])
 
     return (
-        <Typography component='label' level='body3'>
+        <Typography component='label' level='body-sm'>
             {props.title}
             <Textarea
                 size='sm'

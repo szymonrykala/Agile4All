@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router";
 import { UUID } from "../models/common";
 import { QueryParams } from "./interface";
 
@@ -38,11 +37,6 @@ abstract class BaseClient {
     private TOKEN_NAME: string = 'auth_token'; // local storage token variable name
     protected BASE_URL: string = process.env.REACT_APP_API_URL as string
 
-    private HandleRedirect = (path: string) => {
-        const navigate = useNavigate();
-        navigate(path);
-    };
-
     protected get authToken(): string {
         return window.localStorage.getItem(this.TOKEN_NAME) || '';
     }
@@ -63,6 +57,7 @@ abstract class BaseClient {
 
         if (!fetchObject?.formData) headers['Content-Type'] = "application/json";
 
+        
         const response = await fetch(
             this.BASE_URL + fetchObject.endpoint,
             {
@@ -73,6 +68,7 @@ abstract class BaseClient {
                 body: fetchObject?.formData ?? JSON.stringify(fetchObject.body)
             }
         );
+
         let data: ResponseData = {}
         let resp: APIResponse = {
             isSuccess: true,
@@ -86,32 +82,19 @@ abstract class BaseClient {
         } catch (error) {
             console.error(error)
         }
-        // temp logic
-        if (Object.hasOwn(resp, 'isSuccess')) {
-            if (resp.isSuccess && resp.data) {
-                data = resp.data as ResponseData
 
-            } else if (resp.isSuccess === false && resp.error) {
-                console.warn(resp.error)
-                throw new Error(resp.error)
-            }
-        } else {
-            data = resp as ResponseData
+        if ([401, 403].includes(response.status) && !fetchObject.endpoint.match('/login|register')) {
+            this.clearAuthToken();
+            alert("Brak dostępu - zaloguj się ponownie.")
+            window.location.replace("#/login");
         }
 
+        if (resp.isSuccess && resp.data) {
+            data = resp.data as ResponseData
 
-        if (process.env.NODE_ENV !== 'production') console.debug(data);
-
-        // if user is not authenticated -
-        // redirect to let sessionContext to resolve redirections
-        if (response.status === 401 && !fetchObject.endpoint.match('/login|register')) {
-            this.HandleRedirect('/login');
-        }
-
-        if (!response.ok) {
-            if (process.env.NODE_ENV !== 'production')
-                console.error(response);
-            throw new Error(JSON.stringify(response));
+        } else if (resp.isSuccess === false && resp.error) {
+            console.warn(resp.error)
+            throw new Error(resp.error)
         }
 
         return data as ResponseData;

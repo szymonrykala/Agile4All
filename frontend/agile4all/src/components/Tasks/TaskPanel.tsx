@@ -8,13 +8,13 @@ import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditableTextArea from "../common/EditableTextArea";
-import confirm from "../common/Confirm";
 import { UUID } from "../../models/common";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { TasksApi } from "../../client";
 import { remove, update } from "../../store/taskSlice";
 import { useParams } from "react-router";
 import SidePanel from "../common/SidePanel";
+import useNotification from "../Notification";
 
 
 
@@ -33,56 +33,69 @@ export default function TaskPanel() {
     const dispatch = useAppDispatch();
     const { taskId } = useParams()
 
-    const taskFormRedux = useAppSelector(({ tasks }) => tasks.find(({ id }) => id === Number(taskId)))
-    const project = useAppSelector(({ projects }) => projects.find(({ id }) => id === taskFormRedux?.projectId));
+    const taskFromRedux = useAppSelector(({ tasks }) => tasks.find(({ id }) => id === Number(taskId)))
+    const project = useAppSelector(({ projects }) => projects.find(({ id }) => id === taskFromRedux?.projectId));
 
-    const [task, setTask] = useState<Task>(taskFormRedux || demoTaskData);
+    const [task, setTask] = useState<Task>(demoTaskData);
+    const { info, error } = useNotification();
 
     const user = useMemo(() => {
-        return project?.users.find(({ id }) => id === taskFormRedux?.userId)
+        return project?.users.find(({ id }) => id === taskFromRedux?.userId)
     }, [
-        taskFormRedux?.userId,
+        taskFromRedux?.userId,
         project?.users
     ])
 
-    const deleteTask = useCallback(async () => {
-        const proceed = await confirm('Do You want to delete this task?')
-        if (!proceed) return;
 
-        await TasksApi.delete(task.id)
-        dispatch(remove(task))
-    }, [task, dispatch])
+    const deleteTask = useCallback(async () => {
+        if(!window.confirm('Do You want to delete this task?')) return;
+        try{
+            await TasksApi.delete(task.id);
+            dispatch(remove(task));
+            info("Task usunięty");
+        }catch(err){
+            error(err);
+        }
+
+    }, [task, dispatch, info, error])
 
 
     const updateTask = useCallback(async () => {
-        if (task !== taskFormRedux) {
-            dispatch(update(task))
-            try {
+        if (task !== taskFromRedux) {
+            try{
                 await TasksApi.update(task.id, {
                     description: task.description,
                     name: task.name,
                     status: task.status,
                     userId: Number(task.userId)
-                })
-            } catch (err) { alert(err) }
+                });
+                dispatch(update(task))
+                info("Task zaktualizowany")
+            }catch(err){
+                error(err);
+            }
         }
-    }, [task, dispatch, taskFormRedux])
+    }, [task, dispatch, taskFromRedux, info, error])
 
-
-    useEffect(()=>{
-        taskFormRedux && setTask(taskFormRedux)
-    },[taskFormRedux])
-
-
+    
     const updateAssignedUser = useCallback((event: any, user: UUID | null) => {
         if (!user) return;
 
         setTask({ ...task, userId: user })
-    }, [task])
+    }, [task, setTask])
+    
 
     const statusUpdate = useCallback((event: any, newStatus: TaskStatus | null) => {
         if (newStatus) setTask({ ...task, status: newStatus })
-    }, [task]);
+    }, [task, setTask]);
+
+    
+    useEffect(()=>{
+        taskFromRedux && setTask(taskFromRedux);
+
+    // displayed task should be replaced only if `taskId` was changed
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[taskId])
 
 
     return (
@@ -127,7 +140,7 @@ export default function TaskPanel() {
 
             </Box>
 
-            <Typography component='label' level='body3'>
+            <Typography component='label' level='body-sm'>
                 Assigned user
                 <Select
                     disabled={!editMode}
