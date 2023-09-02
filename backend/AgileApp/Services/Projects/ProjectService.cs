@@ -129,7 +129,7 @@ namespace AgileApp.Services.Projects
                 var dbProject = _projectRepository.GetProjectById(project.Id);
 
                 if (project.Name == dbProject.Name && project.Description == dbProject.Description)
-                    return Response<string>.Failed("You cannot perform this action because the project has exactly the same data");
+                    return Response<string>.Succeeded("The project has been altered");
 
                 dbProject.Name = dbProject.Name.PropertyStringCompare(project.Name);
                 dbProject.Description = dbProject.Description?.PropertyStringCompare(project.Description);

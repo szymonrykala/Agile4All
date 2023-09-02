@@ -79,8 +79,10 @@ namespace AgileApp.Controllers
                 taskUpdate.Description = request.Description ?? string.Empty;
                 taskUpdate.Status = request.Status;
                 taskUpdate.UserId = request.UserId;
+                taskUpdate.StoryPoints = request.StoryPoints;
                 taskUpdate.ProjectId = request.ProjectId;
                 taskUpdate.LastChangedBy = JwtMiddleware.GetCurrentUserId(reverseTokenResult);
+                taskUpdate.DueDate = request.DueDate;
 
                 var validation = ValidateTaskForUpdate(taskUpdate);
                 if (validation is not OkObjectResult)

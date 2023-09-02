@@ -128,11 +128,22 @@ namespace AgileApp.Services.Tasks
                 // dbTask.CreationDate -> do not
                 dbTask.LastChangedBy = task.LastChangedBy;
 
-                dbTask.DueDate = task.DueDate != null && task.DueDate > DateTime.UtcNow ? task.DueDate : dbTask.DueDate;
+                dbTask.DueDate = task.DueDate != null && task.DueDate > DateTime.UtcNow ? DateTimeOffset.Parse(task.DueDate.ToString()).UtcDateTime : dbTask.DueDate;
                 dbTask.StoryPoints = task.StoryPoints > 0 && task.StoryPoints != dbTask.StoryPoints ? task.StoryPoints : dbTask.StoryPoints;
                 dbTask.UserId = task.UserId != null && task.UserId > 0 ? (int)task.UserId : dbTask.UserId;
                 dbTask.ProjectId = task.ProjectId != null && task.ProjectId > 0 ? (int)task.ProjectId : dbTask.ProjectId;
                 dbTask.Status = task.Status != null && task.Status != dbTask.Status ? (UserTaskStatus)task.Status : dbTask.Status;
+
+                var dbtt = _taskRepository.GetTaskById(task.Id);
+                if (dbTask.Name == dbtt.Name
+                    && dbTask.Description == dbtt.Description
+                    && dbTask.LastChangedBy == dbtt.LastChangedBy
+                    && dbTask.DueDate == dbtt.DueDate
+                    && dbTask.StoryPoints == dbtt.StoryPoints
+                    && dbTask.UserId == dbtt.UserId
+                    && dbTask.ProjectId == dbtt.ProjectId
+                    && dbTask.Status == dbtt.Status)
+                    return true;
 
                 return _taskRepository.UpdateTask(dbTask) == 1;
             }

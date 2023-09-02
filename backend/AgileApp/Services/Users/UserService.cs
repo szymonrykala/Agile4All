@@ -130,6 +130,12 @@ namespace AgileApp.Services.Users
             try
             {
                 var dbUser = _userRepository.GetUserById(user.Id);
+                if (dbUser.Email == user.Email
+                    && dbUser.LastName == user.LastName
+                    && dbUser.FirstName == user.FirstName
+                    && dbUser.Password == user.Password
+                    && dbUser.Role == user.Role)
+                    return true;
 
                 dbUser.Email = dbUser.Email.PropertyStringCompare(user.Email);
                 dbUser.LastName = dbUser.LastName.PropertyStringCompare(user.LastName);
