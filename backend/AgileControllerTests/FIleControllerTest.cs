@@ -35,12 +35,12 @@ namespace AgileControllerTests
                             });
 
             var projectServiceMock = new Mock<IProjectService>();
-            projectServiceMock.Setup(x => x.GetProjectById(It.IsAny<int>()))
-                              .Returns(new ProjectResponse());
+            projectServiceMock.Setup(x => x.GetAllProjects())
+                              .Returns(new List<ProjectResponse>());
 
             var taskServiceMock = new Mock<ITaskService>();
-            taskServiceMock.Setup(x => x.GetTaskById(It.IsAny<int>()))
-                           .Returns(new TaskResponse());
+            taskServiceMock.Setup(x => x.GetAllTasks())
+                           .Returns(new List<TaskResponse>());
             
             var fileServiceMock = new Mock<IFileService>();
             fileServiceMock.Setup(x => x.GetFiles(It.IsAny<int>(), It.IsAny<int>()))
@@ -71,12 +71,12 @@ namespace AgileControllerTests
                             });
 
             var projectServiceMock = new Mock<IProjectService>();
-            projectServiceMock.Setup(x => x.GetProjectById(It.IsAny<int>()))
-                              .Returns(new ProjectResponse());
+            projectServiceMock.Setup(x => x.GetAllProjects())
+                              .Returns(new List<ProjectResponse>());
 
             var taskServiceMock = new Mock<ITaskService>();
-            taskServiceMock.Setup(x => x.GetTaskById(It.IsAny<int>()))
-                           .Returns(new TaskResponse());
+            taskServiceMock.Setup(x => x.GetAllTasks())
+                           .Returns(new List<TaskResponse>());
 
             var fileServiceMock = new Mock<IFileService>();
             fileServiceMock.Setup(x => x.UploadFile(It.IsAny<UploadFileRequest>()))
@@ -107,12 +107,12 @@ namespace AgileControllerTests
                             });
 
             var projectServiceMock = new Mock<IProjectService>();
-            projectServiceMock.Setup(x => x.GetProjectById(It.IsAny<int>()))
-                              .Returns(new ProjectResponse());
+            projectServiceMock.Setup(x => x.GetAllProjects())
+                              .Returns(new List<ProjectResponse>());
 
             var taskServiceMock = new Mock<ITaskService>();
-            taskServiceMock.Setup(x => x.GetTaskById(It.IsAny<int>()))
-                           .Returns(new TaskResponse());
+            taskServiceMock.Setup(x => x.GetAllTasks())
+                           .Returns(new List<TaskResponse>());
 
             var fileServiceMock = new Mock<IFileService>();
             fileServiceMock.Setup(x => x.DeleteFile(It.IsAny<int>()))

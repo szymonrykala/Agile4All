@@ -65,13 +65,20 @@ namespace AgileControllerTests
                            .Returns(new GetAllUsersResponse());
             
             var cookieHelperMock = new Mock<ICookieHelper>();
-            cookieHelperMock.Setup(x => x.ReverseJwtFromRequest(It.IsAny<HttpContext>()))
-                            .Returns(new JwtReverseResult { IsValid = true });
+            cookieHelperMock.Setup(x => x.ReverseJwtFromRequest(It.IsAny<Microsoft.AspNetCore.Http.HttpContext>()))
+                            .Returns(new JwtReverseResult
+                            {
+                                IsValid = true,
+                                Claims = new List<Claim>
+                                {
+                                    new Claim(ClaimTypes.Role, ((int)UserRoleEnum.ADMIN).ToString())
+                                }
+                            });
 
             var controller = new TaskController(taskServiceMock.Object,projectServiceMock.Object, userServiceMock.Object, cookieHelperMock.Object);
 
             // Act
-            var result = controller.GetTaskById(1);
+            var result = controller.GetTaskById(taskId: It.IsAny<int>());
 
             // Assert
             Assert.IsType<OkObjectResult>(result);

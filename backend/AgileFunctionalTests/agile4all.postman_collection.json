@@ -1,0 +1,3025 @@
+{
+	"info": {
+		"_postman_id": "daca244e-d6f6-4466-ab2d-8d5eb467f7f7",
+		"name": "agile4all",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24656429"
+	},
+	"item": [
+		{
+			"name": "add user",
+			"item": [
+				{
+					"name": "add user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response code\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(200);\r",
+									"});\r",
+									"pm.test(\"response exist\", function () {\r",
+									"    pm.expect(pm.response.json().isSuccess).to.exist;\r",
+									"});\r",
+									"pm.test(\"response type\", function () {\r",
+									"    pm.expect(pm.response.json().isSuccess).to.be.a(\"boolean\").to.be.true;\r",
+									"    pm.expect(pm.response.json().error).to.be.a(\"null\").to.be.null;\r",
+									"\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n            \"email\":\"{{testuserlogin}}\",\r\n            \"password\":\"{{testuserpassword}}\",\r\n            \"firstname\":\"test\",\r\n            \"lastname\":\"postman\"\r\n        }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/users/",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								""
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "add existing user",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n            \"email\":\"test@postman.com\",\r\n            \"password\":\"test\",\r\n            \"firstname\":\"test\",\r\n            \"lastname\":\"postman\"\r\n        }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/api/users/",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"users",
+										""
+									]
+								}
+							},
+							"status": "Conflict",
+							"code": 409,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "41"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 30 Aug 2023 19:06:13 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Caddy"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"isSuccess\": false,\n    \"error\": \"Email taken\"\n}"
+						},
+						{
+							"name": "add new user",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n            \"email\":\"test@postman2.com\",\r\n            \"password\":\"test\",\r\n            \"firstname\":\"test\",\r\n            \"lastname\":\"postman\"\r\n        }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/api/users/",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"users",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "31"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 31 Aug 2023 10:34:31 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Caddy"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"isSuccess\": true,\n    \"error\": null\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "login",
+			"item": [
+				{
+					"name": "login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const logintoken = pm.response.json().data.token;\r",
+									"const userid = pm.response.json().data.userId;\r",
+									"pm.collectionVariables.set(\"logintoken\", logintoken);\r",
+									"pm.collectionVariables.set(\"testuserid\", userid);\r",
+									"\r",
+									"pm.test(\"response code\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"response exist\", function () {\r",
+									"    pm.expect(pm.response.json().isSuccess).to.exist;\r",
+									"    pm.expect(pm.response.json().data).to.have.property(\"token\").that.exist;\r",
+									"    pm.expect(pm.response.json().data).to.have.property(\"userId\").that.exist;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"response type and value\", function () {\r",
+									"    pm.expect(pm.response.json().isSuccess).to.be.a(\"boolean\");\r",
+									"    pm.expect(pm.response.json().error).to.be.a(\"null\").to.be.null\r",
+									"    pm.expect(pm.response.json().data).to.be.an(\"object\");\r",
+									"    pm.expect(pm.response.json().data.token).to.be.a(\"string\").that.equals = \"{{logintoken}}\";\r",
+									"    pm.expect(pm.response.json().data.userId).to.be.a(\"number\").that.equals = \"{{newuserid}}\";\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n            \"email\":\"{{testuserlogin}}\",\r\n            \"password\":\"{{testuserpassword}}\"\r\n        }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/users/login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "login",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n            \"email\":\"test@postman.com\",\r\n            \"password\":\"test\"\r\n        }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/api/users/login",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"users",
+										"login"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "414"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 30 Aug 2023 19:06:33 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Caddy"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"isSuccess\": true,\n    \"error\": null,\n    \"data\": {\n        \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAcG9zdG1hbi5jb20iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9oYXNoIjoiNSIsInJvbGUiOiIxIiwibmJmIjoxNjkzNDIyMzkzLCJleHAiOjE2OTM1OTUxOTMsImlhdCI6MTY5MzQyMjM5MywiaXNzIjoiQWdpbGVBcHBQcm9qZWN0IiwiYXVkIjoiQWdpbGVBcHBQcm9qZWN0In0.60apySAKbiYxAWaGC8GQQONYj5eFPnb7kq7WF4hQYpk\",\n        \"userId\": 5\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "login (admin)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const logintoken = pm.response.json().data.token;\r",
+									"pm.collectionVariables.set(\"logintoken\", logintoken);\r",
+									"\r",
+									"pm.test(\"response code\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"response exist\", function () {\r",
+									"    pm.expect(pm.response.json().isSuccess).to.exist;\r",
+									"    pm.expect(pm.response.json().data).to.have.property(\"token\").that.exist;\r",
+									"    pm.expect(pm.response.json().data).to.have.property(\"userId\").that.exist;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"response type and value\", function () {\r",
+									"    pm.expect(pm.response.json().isSuccess).to.be.a(\"boolean\");\r",
+									"    pm.expect(pm.response.json().error).to.be.a(\"null\").to.be.null\r",
+									"    pm.expect(pm.response.json().data).to.be.an(\"object\");\r",
+									"    pm.expect(pm.response.json().data.token).to.be.a(\"string\").that.equals = \"{{logintoken}}\";\r",
+									"    pm.expect(pm.response.json().data.userId).to.be.a(\"number\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n            \"email\":\"{{adminlogin}}\",\r\n            \"password\":\"{{adminpassword}}\"\r\n        }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/users/login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login (wrong data)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response code\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(401);\r",
+									"});\r",
+									"pm.test(\"response exist\", function () {\r",
+									"    pm.expect(pm.response.json().isSuccess).to.exist;\r",
+									"    pm.expect(pm.response.json().error).to.exist;\r",
+									"});\r",
+									"pm.test(\"response type and vaue\", function () {\r",
+									"    pm.expect(pm.response.json().isSuccess).that.is.a(\"boolean\").to.be.false;\r",
+									"    pm.expect(pm.response.json().error).that.is.a(\"string\").that.equals = \"Bad credentials\";\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n            \"email\":\"testwrogemail\",\r\n            \"password\":\"test\"\r\n        }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/users/login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "example (wrong password)",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n            \"email\":\"test@postman.com\",\r\n            \"password\":\"wrongpasswd\"\r\n        }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:4200/api/users/login",
+									"host": [
+										"localhost"
+									],
+									"port": "4200",
+									"path": [
+										"api",
+										"users",
+										"login"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "45"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 30 Aug 2023 18:56:32 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Caddy"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"isSuccess\": false,\n    \"error\": \"Bad credentials\"\n}"
+						},
+						{
+							"name": "example (wrong email and password)",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n            \"email\":\"wrongemail\",\r\n            \"password\":\"wrongpasswd\"\r\n        }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:4200/api/users/login",
+									"host": [
+										"localhost"
+									],
+									"port": "4200",
+									"path": [
+										"api",
+										"users",
+										"login"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "45"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 30 Aug 2023 18:58:04 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Caddy"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"isSuccess\": false,\n    \"error\": \"Bad credentials\"\n}"
+						},
+						{
+							"name": "example (wrong email)",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n            \"email\":\"testwrogemail\",\r\n            \"password\":\"test\"\r\n        }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:4200/api/users/login",
+									"host": [
+										"localhost"
+									],
+									"port": "4200",
+									"path": [
+										"api",
+										"users",
+										"login"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "45"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 30 Aug 2023 18:54:55 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Caddy"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"isSuccess\": false,\n    \"error\": \"Bad credentials\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "user",
+			"item": [
+				{
+					"name": "get all users",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response code\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(200);\r",
+									"});\r",
+									"pm.test(\"response exist\", function () {\r",
+									"    pm.expect(pm.response.json().isSuccess).to.exist;\r",
+									"    pm.expect(pm.response.json().data).to.exist;\r",
+									"});\r",
+									"pm.test(\"response type and value\", function () {\r",
+									"    pm.expect(pm.response.json().isSuccess).to.be.a(\"boolean\").to.be.true;\r",
+									"    pm.expect(pm.response.json().error).to.be.a(\"null\");\r",
+									"    pm.expect(pm.response.json().data).to.exist;\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/api/users/",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get user by id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response code\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(200);\r",
+									"});\r",
+									"pm.test(\"response exist\", function () {\r",
+									"    pm.expect(pm.response.json().isSuccess).to.exist;\r",
+									"    pm.expect(pm.response.json().data).to.exist;\r",
+									"});\r",
+									"pm.test(\"response type and value\", function () {\r",
+									"    pm.expect(pm.response.json().isSuccess).to.be.a(\"boolean\").to.be.true;\r",
+									"    pm.expect(pm.response.json().error).to.be.a(\"null\");\r",
+									"    pm.expect(pm.response.json().data).to.exist;\r",
+									"    const data = pm.response.json().data;\r",
+									"    pm.expect(data).to.have.property(\"id\").to.be.a(\"number\").that.equals = \"{{newuserid}}\";\r",
+									"    pm.expect(data).to.have.property(\"email\").that.is.a(\"string\");\r",
+									"    pm.expect(data).to.have.property(\"firstName\").that.is.a(\"string\");\r",
+									"    pm.expect(data).to.have.property(\"lastName\").that.is.a(\"string\");\r",
+									"    pm.expect(data).to.have.property(\"role\").that.is.a(\"string\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/api/users/{{testuserid}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"{{testuserid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response code\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(200);\r",
+									"});\r",
+									"pm.test(\"response exist\", function () {\r",
+									"    pm.expect(pm.response.json().isSuccess).to.exist;\r",
+									"    pm.expect(pm.response.json().data).to.exist;\r",
+									"});\r",
+									"pm.test(\"response type and value\", function () {\r",
+									"    pm.expect(pm.response.json().isSuccess).to.be.a(\"boolean\").to.be.true;\r",
+									"    pm.expect(pm.response.json().error).to.be.a(\"null\").to.be.null;\r",
+									"    pm.expect(pm.response.json().data).to.be.true;\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"{{testuserlogin}}\",\r\n    \"password\":\"test\",\r\n    \"firstname\":\"test\",\r\n    \"lastname\":\"postman\",\r\n    \"role\":\"STUDENT\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/users/{{testuserid}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"{{testuserid}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "update user (non admin)",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\":\"test@postman.com\",\r\n    \"password\":\"test\",\r\n    \"firstname\":\"test\",\r\n    \"lastname\":\"postman\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:4200/api/users/{{newuserid}}",
+									"host": [
+										"localhost"
+									],
+									"port": "4200",
+									"path": [
+										"api",
+										"users",
+										"{{newuserid}}"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "76"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 30 Aug 2023 19:25:41 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Caddy"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"isSuccess\": false,\n    \"error\": \"User performing adding action must be an Admin\"\n}"
+						},
+						{
+							"name": "update user (user non exist)",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\":\"test@postman.com\",\r\n    \"password\":\"test\",\r\n    \"firstname\":\"test\",\r\n    \"lastname\":\"postman\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:4200/api/users/100",
+									"host": [
+										"localhost"
+									],
+									"port": "4200",
+									"path": [
+										"api",
+										"users",
+										"100"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "76"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 30 Aug 2023 19:25:41 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Caddy"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"isSuccess\": false,\n    \"error\": \"User performing adding action must be an Admin\"\n}"
+						}
+					]
+				},
+				{
+					"name": "delete user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response code\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(200);\r",
+									"});\r",
+									"pm.test(\"response exist\", function () {\r",
+									"    pm.expect(pm.response.json().isSuccess).to.exist;\r",
+									"    pm.expect(pm.response.json().data).to.exist;\r",
+									"});\r",
+									"pm.test(\"response type and value\", function () {\r",
+									"    pm.expect(pm.response.json().isSuccess).to.be.a(\"boolean\").to.be.true;\r",
+									"    pm.expect(pm.response.json().error).to.be.a(\"null\").to.be.null;\r",
+									"    pm.expect(pm.response.json().data).to.be.true;\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/api/users/{{testuserid}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"{{testuserid}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "delete user (non admin)",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/api/users/{{testuserid}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"users",
+										"{{testuserid}}"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "76"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 30 Aug 2023 19:25:48 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Caddy"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"isSuccess\": false,\n    \"error\": \"User performing adding action must be an Admin\"\n}"
+						}
+					]
+				},
+				{
+					"name": "logout",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Logout Endpoint Test\", function () {\r",
+									"\r",
+									"    pm.expect(pm.response.code).to.equal(200);\r",
+									"    pm.expect(pm.response.json().isSuccess).to.be.true;\r",
+									"    });"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/users/logout/",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"logout",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "user show, modify and delete"
+		},
+		{
+			"name": "projects",
+			"item": [
+				{
+					"name": "get all projects",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response code\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(200);\r",
+									"});\r",
+									"pm.test(\"response exist\", function () {\r",
+									"    pm.expect(pm.response.json().isSuccess).to.exist;\r",
+									"    pm.expect(pm.response.json().data).to.exist;\r",
+									"});\r",
+									"pm.test(\"response type and value\", function () {\r",
+									"    pm.expect(pm.response.json().isSuccess).to.be.a(\"boolean\").to.be.true;\r",
+									"    pm.expect(pm.response.json().error).to.be.a(\"null\").to.be.null;\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/projects/",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"projects",
+								""
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "get all projects (no projects)",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/api/projects/",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"projects",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "41"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 31 Aug 2023 18:02:46 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Caddy"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"isSuccess\": true,\n    \"error\": null,\n    \"data\": []\n}"
+						}
+					]
+				},
+				{
+					"name": "add project",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const regex = /The given ID is equal to: (\\d+)/;\r",
+									"const match = pm.response.json().data.match(regex);\r",
+									"if (match && match.length === 2) {\r",
+									"    const projid = match[1];\r",
+									"    pm.collectionVariables.set(\"testprojectid\", projid);\r",
+									"}\r",
+									"\r",
+									"pm.test(\"response code\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(200);\r",
+									"});\r",
+									"pm.test(\"response exist\", function () {\r",
+									"    pm.expect(pm.response.json().isSuccess).to.exist;\r",
+									"    pm.expect(pm.response.json().data).to.exist;\r",
+									"});\r",
+									"pm.test(\"response type and value\", function () {\r",
+									"    pm.expect(pm.response.json().isSuccess).to.be.a(\"boolean\").to.be.true;\r",
+									"    pm.expect(pm.response.json().error).to.be.a(\"null\").to.be.null;\r",
+									"    pm.expect(pm.response.json().data).to.be.a(\"string\").that.equals = \"The project has been created. The given ID is equal to: {{testprojectid}}\";\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Name\": \"qqohehffwqwefewf\",\r\n    \"description\": \"oeffevvsv\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/projects/",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"projects",
+								""
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "add project (name missing)",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \" \"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/api/projects/",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"projects",
+										""
+									]
+								}
+							},
+							"status": "Not Acceptable",
+							"code": 406,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "53"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 31 Aug 2023 18:12:45 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Caddy"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"isSuccess\": false,\n    \"error\": \"Mandatory field missing\"\n}"
+						},
+						{
+							"name": "add project",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Name\": \"qqohehffwqwefewf\",\r\n    \"description\": \"oeffevvsv\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/api/projects/",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"projects",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "99"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 31 Aug 2023 20:45:07 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Caddy"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"isSuccess\": true,\n    \"error\": null,\n    \"data\": \"The project has been created. The given ID is equal to: 35\"\n}"
+						}
+					]
+				},
+				{
+					"name": "get project by id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response code\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(200);\r",
+									"});\r",
+									"pm.test(\"response exist\", function () {\r",
+									"    pm.expect(pm.response.json().id).to.exist;\r",
+									"    pm.expect(pm.response.json().name).to.exist;\r",
+									"    pm.expect(pm.response.json().description).to.exist;\r",
+									"    pm.expect(pm.response.json().users).to.exist;\r",
+									"});\r",
+									"pm.test(\"response type and value\", function () {\r",
+									"    pm.expect(pm.response.json().id).to.be.a(\"number\").that.equals = \"{{testprojectid}}\";\r",
+									"    pm.expect(pm.response.json().name).to.be.a(\"string\");\r",
+									"    pm.expect(pm.response.json().description).to.be.a(\"string\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/projects/{{testprojectid}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"projects",
+								"{{testprojectid}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "get project by id (project not exist))",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/api/projects/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"projects",
+										"1"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "59"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 31 Aug 2023 18:03:00 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Caddy"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"isSuccess\": false,\n    \"error\": \"Project not found\",\n    \"data\": null\n}"
+						},
+						{
+							"name": "get project by id",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/api/projects/{{testprojectid}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"projects",
+										"{{testprojectid}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "243"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 31 Aug 2023 20:49:42 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Caddy"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 35,\n    \"name\": \"qqohehffwqwefewf\",\n    \"description\": \"oeffevvsv\",\n    \"users\": [\n        {\n            \"id\": 23,\n            \"firstName\": \"Admin\",\n            \"lastName\": \"Adminowy\",\n            \"email\": \"admin@admin.pl\",\n            \"role\": 2\n        },\n        {\n            \"id\": 24,\n            \"firstName\": \"test\",\n            \"lastName\": \"postman\",\n            \"email\": \"test@postman.com\",\n            \"role\": 1\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "add task to project",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const regex = /The new task of ID equal to: (\\d+)/;\r",
+									"const match = pm.response.json().data.match(regex);\r",
+									"if (match && match.length === 2) {\r",
+									"    const taskid = match[1];\r",
+									"    pm.collectionVariables.set(\"testtaskid\", taskid);\r",
+									"}\r",
+									"\r",
+									"pm.test(\"response code\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(200);\r",
+									"});\r",
+									"pm.test(\"response exist\", function () {\r",
+									"    pm.expect(pm.response.json().isSuccess).to.exist;\r",
+									"    pm.expect(pm.response.json().data).to.exist;\r",
+									"});\r",
+									"pm.test(\"response type and value\", function () {\r",
+									"    pm.expect(pm.response.json().isSuccess).to.be.a(\"boolean\").to.be.true;\r",
+									"    pm.expect(pm.response.json().error).to.be.a(\"null\").to.be.null;\r",
+									"    pm.expect(pm.response.json().data).to.be.a(\"string\").that.equals = \"The new task of ID equal to: {{testtaskid}} has been created\";\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Test Postman Task in project\",\r\n    \"description\": \"test task\",\r\n    \"status\": \"TODO\",\r\n    \"projectid\": \"{{testprojectid}}\",\r\n    \"userId\": \"{{testuserid}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/projects/{{testprojectid}}/tasks",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"projects",
+								"{{testprojectid}}",
+								"tasks"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "add task to project",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Test Postman Task in project\",\r\n    \"description\": \"test task\",\r\n    \"status\": \"TODO\",\r\n    \"projectid\": \"{{testprojectid}}\",\r\n    \"userId\": \"{{testuserid}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/api/projects/{{testprojectid}}/tasks",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"projects",
+										"{{testprojectid}}",
+										"tasks"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "89"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 31 Aug 2023 22:11:36 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Caddy"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"isSuccess\": true,\n    \"error\": null,\n    \"data\": \"The new task of ID equal to: 13 has been created\"\n}"
+						}
+					]
+				},
+				{
+					"name": "update project",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response code\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(200);\r",
+									"});\r",
+									"pm.test(\"response exist\", function () {\r",
+									"    pm.expect(pm.response.json().isSuccess).to.exist;\r",
+									"    pm.expect(pm.response.json().data).to.exist;\r",
+									"});\r",
+									"pm.test(\"response type and value\", function () {\r",
+									"    pm.expect(pm.response.json().isSuccess).to.be.a(\"boolean\").to.be.true;\r",
+									"    pm.expect(pm.response.json().error).to.be.a(\"null\").to.be.null;\r",
+									"    pm.expect(pm.response.json().data).to.be.an(\"string\").that.equals = \"The project has been altered\";\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Updated Postman Project\",\r\n    \"description\": \"Updated project description\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/projects/{{testprojectid}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"projects",
+								"{{testprojectid}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "update project",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Updated Postman Project\",\r\n    \"description\": \"Updated project description\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/api/projects/{{testprojectid}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"projects",
+										"{{testprojectid}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "69"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 31 Aug 2023 20:54:37 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Caddy"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"isSuccess\": true,\n    \"error\": null,\n    \"data\": \"The project has been altered\"\n}"
+						}
+					]
+				},
+				{
+					"name": "add user to project",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response code\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(200);\r",
+									"});\r",
+									"pm.test(\"response exist\", function () {\r",
+									"    pm.expect(pm.response.json().isSuccess).to.exist;\r",
+									"});\r",
+									"pm.test(\"response type and value\", function () {\r",
+									"    pm.expect(pm.response.json().isSuccess).to.be.a(\"boolean\").to.be.true;\r",
+									"    pm.expect(pm.response.json().error).to.be.a(\"null\").to.be.null;\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/projects/{{testprojectid}}/users/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"projects",
+								"{{testprojectid}}",
+								"users",
+								"1"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "add user to project",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/api/projects/{{testprojectid}}/users/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"projects",
+										"{{testprojectid}}",
+										"users",
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "31"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 31 Aug 2023 20:48:27 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Caddy"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"isSuccess\": true,\n    \"error\": null\n}"
+						}
+					]
+				},
+				{
+					"name": "delete user from project",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response code\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(200);\r",
+									"});\r",
+									"pm.test(\"response exist\", function () {\r",
+									"    pm.expect(pm.response.json().isSuccess).to.exist;\r",
+									"});\r",
+									"pm.test(\"response type and value\", function () {\r",
+									"    pm.expect(pm.response.json().isSuccess).to.be.a(\"boolean\").to.be.true;\r",
+									"    pm.expect(pm.response.json().error).to.be.a(\"null\").to.be.null;\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/projects/{{testprojectid}}/users/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"projects",
+								"{{testprojectid}}",
+								"users",
+								"1"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "delete user from project",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/api/projects/{{testprojectid}}/users/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"projects",
+										"{{testprojectid}}",
+										"users",
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "31"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 31 Aug 2023 20:49:18 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Caddy"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"isSuccess\": true,\n    \"error\": null\n}"
+						}
+					]
+				},
+				{
+					"name": "delete project",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response code\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(200);\r",
+									"});\r",
+									"pm.test(\"response exist\", function () {\r",
+									"    pm.expect(pm.response.json().isSuccess).to.exist;\r",
+									"    pm.expect(pm.response.json().data).to.exist;\r",
+									"});\r",
+									"pm.test(\"response type and value\", function () {\r",
+									"    pm.expect(pm.response.json().isSuccess).to.be.a(\"boolean\").to.be.true;\r",
+									"    pm.expect(pm.response.json().error).to.be.a(\"null\").to.be.null;\r",
+									"    pm.expect(pm.response.json().data).to.be.an(\"boolean\").to.be.true;\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/projects/{{testprojectid}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"projects",
+								"{{testprojectid}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "delete project",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/api/projects/{{testprojectid}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"projects",
+										"{{testprojectid}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "43"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 31 Aug 2023 20:50:13 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Caddy"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"isSuccess\": true,\n    \"error\": null,\n    \"data\": true\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "tasks",
+			"item": [
+				{
+					"name": "get all tasks",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response code\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(200);\r",
+									"});\r",
+									"pm.test(\"response exist\", function () {\r",
+									"    pm.expect(pm.response.json().isSuccess).to.exist;\r",
+									"    pm.expect(pm.response.json().data).to.exist;\r",
+									"});\r",
+									"pm.test(\"response type and value\", function () {\r",
+									"    pm.expect(pm.response.json().isSuccess).to.be.a(\"boolean\").to.be.true;\r",
+									"    pm.expect(pm.response.json().error).to.be.a(\"null\").to.be.null;\r",
+									"    pm.expect(pm.response.json().data).to.be.an(\"object\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/tasks",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"tasks"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "get all tasks",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}/api/tasks",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"tasks"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "280"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 31 Aug 2023 21:48:00 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Caddy"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"isSuccess\": true,\n    \"error\": null,\n    \"data\": [\n        {\n            \"id\": 11,\n            \"name\": \"Test Postman Task in project\",\n            \"description\": \"test task\",\n            \"status\": \"TODO\",\n            \"storyPoints\": null,\n            \"dueDate\": \"2024-08-31T21:47:52.127281Z\",\n            \"creationDate\": \"2023-08-31T21:47:52.127213Z\",\n            \"lastChangedBy\": 24,\n            \"userId\": 24,\n            \"projectId\": 70\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "get task by id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response code\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(200);\r",
+									"});\r",
+									"pm.test(\"response exist\", function () {\r",
+									"    pm.expect(pm.response.json().isSuccess).to.exist;\r",
+									"    pm.expect(pm.response.json().data).to.exist;\r",
+									"    pm.expect(pm.response.json().data.id).to.exist;\r",
+									"    pm.expect(pm.response.json().data.name).to.exist;\r",
+									"    pm.expect(pm.response.json().data.description).to.exist;\r",
+									"    pm.expect(pm.response.json().data.status).to.exist;\r",
+									"    pm.expect(pm.response.json().data.storypoints).to.exist;\r",
+									"    pm.expect(pm.response.json().data.dueDate).to.exist;\r",
+									"    pm.expect(pm.response.json().data.creationDate).to.exist;\r",
+									"    pm.expect(pm.response.json().data.lastchangedby).to.exist;\r",
+									"    pm.expect(pm.response.json().data.userid).to.exist;\r",
+									"    pm.expect(pm.response.json().data.projectid).to.exist;\r",
+									"});\r",
+									"pm.test(\"response type and value\", function () {\r",
+									"    pm.expect(pm.response.json().isSuccess).to.be.a(\"boolean\").to.be.true;\r",
+									"    pm.expect(pm.response.json().error).to.be.a(\"null\").to.be.null;\r",
+									"    pm.expect(pm.response.json().data).to.exist;\r",
+									"    const data = pm.response.json().data;\r",
+									"    pm.expect(data).to.have.property(\"id\").to.be.a(\"number\").that.equals = \"{{testtaskid}}\";\r",
+									"    pm.expect(data).to.have.property(\"name\").that.is.a(\"string\");\r",
+									"    pm.expect(data).to.have.property(\"description\").that.is.a(\"string\");\r",
+									"    pm.expect(data).to.have.property(\"status\").that.is.a(\"string\");\r",
+									"    pm.expect(data).to.have.property(\"storypoints\").that.is.a(\"string\");\r",
+									"    pm.expect(data).to.have.property(\"lastchagedby\").that.is.a(\"number\").that.equals = \"{{testuserid}}\";\r",
+									"    pm.expect(data).to.have.property(\"lastchagedby\").that.is.a(\"number\").that.equals = \"{{testuserid}}\";\r",
+									"    pm.expect(data).to.have.property(\"projectId\").that.is.a(\"number\").that.equals = \"{{testprojectid}}\";\r",
+									"\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/tasks/{{testtaskid}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"tasks",
+								"{{testtaskid}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "get task by id",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}/api/tasks/11",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"tasks",
+										"11"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "278"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 31 Aug 2023 21:48:17 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Caddy"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"isSuccess\": true,\n    \"error\": null,\n    \"data\": {\n        \"id\": 11,\n        \"name\": \"Test Postman Task in project\",\n        \"description\": \"test task\",\n        \"status\": \"TODO\",\n        \"storyPoints\": null,\n        \"dueDate\": \"2024-08-31T21:47:52.127281Z\",\n        \"creationDate\": \"2023-08-31T21:47:52.127213Z\",\n        \"lastChangedBy\": 24,\n        \"userId\": 24,\n        \"projectId\": 70\n    }\n}"
+						},
+						{
+							"name": "get task by id (after update)",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}/api/tasks/11",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"tasks",
+										"11"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "277"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 31 Aug 2023 21:51:48 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Caddy"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"isSuccess\": true,\n    \"error\": null,\n    \"data\": {\n        \"id\": 11,\n        \"name\": \"Updated Task\",\n        \"description\": \"Updated task description\",\n        \"status\": \"TODO\",\n        \"storyPoints\": null,\n        \"dueDate\": \"2024-08-31T21:47:52.127281Z\",\n        \"creationDate\": \"2023-08-31T21:47:52.127213Z\",\n        \"lastChangedBy\": 24,\n        \"userId\": 24,\n        \"projectId\": 70\n    }\n}"
+						},
+						{
+							"name": "get task by id (after delete)",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}/api/tasks/11",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"tasks",
+										"11"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "70"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 31 Aug 2023 21:53:00 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Caddy"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"isSuccess\": false,\n    \"error\": \"Task with given ID not found\",\n    \"data\": null\n}"
+						}
+					]
+				},
+				{
+					"name": "update task",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response code\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(200);\r",
+									"});\r",
+									"pm.test(\"response exist\", function () {\r",
+									"    pm.expect(pm.response.json().isSuccess).to.exist;\r",
+									"    pm.expect(pm.response.json().data).to.exist;\r",
+									"});\r",
+									"pm.test(\"response type and value\", function () {\r",
+									"    pm.expect(pm.response.json().isSuccess).to.be.a(\"boolean\").to.be.true;\r",
+									"    pm.expect(pm.response.json().error).to.be.a(\"null\").to.be.null;\r",
+									"    pm.expect(pm.response.json().data).to.be.a(\"boolean\").to.be.true;\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Updated Task\",\r\n    \"description\": \"Updated task description\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/tasks/{{testtaskid}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"tasks",
+								"{{testtaskid}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "update task",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Updated Task\",\r\n    \"description\": \"Updated task description\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/api/tasks/11",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"tasks",
+										"11"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "43"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 31 Aug 2023 21:51:29 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Caddy"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"isSuccess\": true,\n    \"error\": null,\n    \"data\": true\n}"
+						}
+					]
+				},
+				{
+					"name": "delete task",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response code\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(200);\r",
+									"});\r",
+									"pm.test(\"response exist\", function () {\r",
+									"    pm.expect(pm.response.json().isSuccess).to.exist;\r",
+									"    pm.expect(pm.response.json().data).to.exist;\r",
+									"});\r",
+									"pm.test(\"response type and value\", function () {\r",
+									"    pm.expect(pm.response.json().isSuccess).to.be.a(\"boolean\").to.be.true;\r",
+									"    pm.expect(pm.response.json().error).to.be.a(\"null\").to.be.null;\r",
+									"    pm.expect(pm.response.json().data).to.be.a(\"boolean\").to.be.true;\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Updated Task\",\r\n    \"description\": \"Updated task description\",\r\n    \"status\": \"InProgress\",\r\n    \"userId\": 1,\r\n    \"projectId\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/tasks/{{testtaskid}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"tasks",
+								"{{testtaskid}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "delete task",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Updated Task\",\r\n    \"description\": \"Updated task description\",\r\n    \"status\": \"InProgress\",\r\n    \"userId\": 1,\r\n    \"projectId\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/api/tasks/{{testtaskid}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"tasks",
+										"{{testtaskid}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "43"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 31 Aug 2023 22:19:05 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Caddy"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"isSuccess\": true,\n    \"error\": null,\n    \"data\": true\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "files",
+			"item": [
+				{
+					"name": "upload file",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const fileid = pm.response.json().data.fileId;\r",
+									"pm.collectionVariables.set(\"testfileid\", fileid);\r",
+									"\r",
+									"pm.test(\"response code\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(200);\r",
+									"});\r",
+									"pm.test(\"response exist\", function () {\r",
+									"    pm.expect(pm.response.json().isSuccess).to.exist;\r",
+									"    pm.expect(pm.response.json().data).to.exist;\r",
+									"});\r",
+									"pm.test(\"response type and value\", function () {\r",
+									"    pm.expect(pm.response.json().isSuccess).to.be.a(\"boolean\").to.be.true;\r",
+									"    pm.expect(pm.response.json().error).to.be.a(\"null\").to.be.null;\r",
+									"    pm.expect(pm.response.json().data).to.be.an(\"array\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "userid",
+									"value": "{{testuserid}}",
+									"type": "text"
+								},
+								{
+									"key": "filedata",
+									"type": "file",
+									"src": "/C:/Users/ASUS/Desktop/tst.txt"
+								},
+								{
+									"key": "projectid",
+									"value": "{{testprojectid}}",
+									"type": "text"
+								},
+								{
+									"key": "taskid",
+									"value": "{{testtaskid}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/api/files/",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"files",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get files from task",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response code\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(200);\r",
+									"});\r",
+									"pm.test(\"response exist\", function () {\r",
+									"    pm.expect(pm.response.json().isSuccess).to.exist;\r",
+									"    pm.expect(pm.response.json().data).to.exist;\r",
+									"    pm.expect(pm.response.json().data.id).to.exist;\r",
+									"    pm.expect(pm.response.json().data.name).to.exist;\r",
+									"    pm.expect(pm.response.json().data.link).to.exist;\r",
+									"    pm.expect(pm.response.json().data.userId).to.exist;\r",
+									"});\r",
+									"pm.test(\"response type and value\", function () {\r",
+									"    pm.expect(pm.response.json().isSuccess).to.be.a(\"boolean\").to.be.true;\r",
+									"    pm.expect(pm.response.json().error).to.be.a(\"null\").to.be.null;\r",
+									"    pm.expect(pm.response.json().data).to.be.an(\"object\");\r",
+									"    pm.expect(pm.response.json().data.id).to.be.a(\"number\");\r",
+									"    pm.expect(pm.response.json().data.name).to.be.a(\"string\");\r",
+									"    pm.expect(pm.response.json().data.link).to.be.a(\"string\");\r",
+									"    pm.expect(pm.response.json().data.userId).to.be.a(\"number\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/files/?taskId={{testtaskid}}&projectId={{testprojectid}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"files",
+								""
+							],
+							"query": [
+								{
+									"key": "taskId",
+									"value": "{{testtaskid}}"
+								},
+								{
+									"key": "projectId",
+									"value": "{{testprojectid}}"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "get files from task (no files)",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}/api/files/?taskId={{testtaskid}}&projectId={{testprojectid}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"files",
+										""
+									],
+									"query": [
+										{
+											"key": "taskId",
+											"value": "{{testtaskid}}"
+										},
+										{
+											"key": "projectId",
+											"value": "{{testprojectid}}"
+										}
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "64"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 31 Aug 2023 21:56:34 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Caddy"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"isSuccess\": false,\n    \"error\": \"Files with given request not found\"\n}"
+						},
+						{
+							"name": "get files from task",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}/api/files/?taskId={{testtaskid}}&projectId={{testprojectid}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"files",
+										""
+									],
+									"query": [
+										{
+											"key": "taskId",
+											"value": "{{testtaskid}}"
+										},
+										{
+											"key": "projectId",
+											"value": "{{testprojectid}}"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "157"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 31 Aug 2023 21:58:06 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Caddy"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"isSuccess\": true,\n    \"error\": null,\n    \"data\": [\n        {\n            \"id\": 3,\n            \"name\": \"tst.txt\",\n            \"link\": \"Upload/70/12/tst.txt\",\n            \"userId\": 23,\n            \"modificationDate\": \"2023-08-31T21:57:59.854556Z\"\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "get file by id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response code\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(200);\r",
+									"});\r",
+									"pm.test(\"response exist\", function () {\r",
+									"    pm.expect(pm.response.json()).to.exist;\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/files/{{testfileid}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"files",
+								"{{testfileid}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "get file by id",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}/api/files/3",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"files",
+										"3"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "raw",
+							"header": [
+								{
+									"key": "Content-Disposition",
+									"value": "attachment; filename=tst.txt; filename*=UTF-8''tst.txt"
+								},
+								{
+									"key": "Content-Length",
+									"value": "4"
+								},
+								{
+									"key": "Content-Type",
+									"value": "*/*"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 31 Aug 2023 21:58:27 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Caddy"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								}
+							],
+							"cookie": [],
+							"body": "test"
+						},
+						{
+							"name": "get file by id (file not exist)",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}/api/files/3",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"files",
+										"3"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "63"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 31 Aug 2023 21:59:44 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Caddy"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"isSuccess\": false,\n    \"error\": \"File with given ID does not exist\"\n}"
+						}
+					]
+				},
+				{
+					"name": "delete file",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response code\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(200);\r",
+									"});\r",
+									"pm.test(\"response exist\", function () {\r",
+									"    pm.expect(pm.response.json().isSuccess).to.exist;\r",
+									"});\r",
+									"pm.test(\"response type and value\", function () {\r",
+									"    pm.expect(pm.response.json().isSuccess).to.be.a(\"boolean\").to.be.true;\r",
+									"    pm.expect(pm.response.json().error).to.be.a(\"null\").to.be.null;\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/files/{{testfileid}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"files",
+								"{{testfileid}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "delete file (file not exist)",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{url}}/api/files/3",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"files",
+										"3"
+									]
+								}
+							},
+							"status": "Internal Server Error",
+							"code": 500,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "47"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 31 Aug 2023 22:00:33 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Caddy"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"isSuccess\": false,\n    \"error\": \"File doesnt exist\"\n}"
+						},
+						{
+							"name": "delete file",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{url}}/api/files/4",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"files",
+										"4"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "31"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 31 Aug 2023 22:00:48 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Caddy"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"isSuccess\": true,\n    \"error\": null\n}"
+						}
+					]
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{logintoken}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "logintoken",
+			"value": "token from login request",
+			"type": "string"
+		},
+		{
+			"key": "testuserid",
+			"value": "id form login request",
+			"type": "string"
+		},
+		{
+			"key": "testuserlogin",
+			"value": "test user email",
+			"type": "string"
+		},
+		{
+			"key": "testuserpassword",
+			"value": "test user password",
+			"type": "string"
+		},
+		{
+			"key": "adminlogin",
+			"value": "email for admin",
+			"type": "string"
+		},
+		{
+			"key": "adminpassword",
+			"value": "password for admin",
+			"type": "string"
+		},
+		{
+			"key": "testprojectid",
+			"value": "id from add project",
+			"type": "string"
+		},
+		{
+			"key": "testtaskid",
+			"value": "id from add task to project",
+			"type": "string"
+		},
+		{
+			"key": "testfileid",
+			"value": "id form upload file",
+			"type": "string"
+		},
+		{
+			"key": "url",
+			"value": "localhost:4200",
+			"type": "string"
+		}
+	]
+}
