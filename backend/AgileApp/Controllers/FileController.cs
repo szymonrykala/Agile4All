@@ -6,7 +6,6 @@ using AgileApp.Services.Projects;
 using AgileApp.Services.Tasks;
 using AgileApp.Utils.Cookies;
 using Microsoft.AspNetCore.Mvc;
-using System.Reflection.Metadata;
 
 namespace AgileApp.Controllers
 {
@@ -70,10 +69,10 @@ namespace AgileApp.Controllers
         public IActionResult GetFileById(int fileId)
         {
             string filepath = _fileService.GetFileById(fileId);
-
+            Response.ContentType = "application/octet-stream";
             return string.IsNullOrWhiteSpace(filepath) || !System.IO.File.Exists(filepath)
                 ? new NotFoundObjectResult(new Response { IsSuccess = false, Error = "File with given ID does not exist" })
-                : new FileStreamResult(new MemoryStream(System.IO.File.ReadAllBytes(filepath)), "*/*");
+                : File(System.IO.File.ReadAllBytes(filepath), "*/*", System.IO.Path.GetFileName(filepath));
         }
 
         [HttpDelete("{fileId}")]
