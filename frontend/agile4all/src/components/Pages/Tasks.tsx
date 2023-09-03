@@ -48,11 +48,8 @@ function ProjectTasksListItem({ project }: IProjectTasksListItem) {
     const queryParams = useParams();
     const dispatch = useAppDispatch();
     const { filter } = useParameterBarContext<Task>();
-
     const sessionUser = useAppSelector(({ session }) => session?.user);
     const { info, error } = useNotification();
-
-
     const tasks = useAppSelector(({ tasks }) => tasksReduxSelector(
         tasks?.filter(({ projectId }) => projectId === project.id),
         queryParams,
@@ -73,11 +70,10 @@ function ProjectTasksListItem({ project }: IProjectTasksListItem) {
             dispatch(load(taskItems));
 
         } catch (err) {
-            error("Nie udało się pobrać danych taska")
+            error("Could not get task info")
             console.debug(err);
         }
     }, [queryParams, dispatch, error]);
-
 
     const filteredTasks = useMemo(() => {
         if (filter?.value) {
@@ -88,12 +84,6 @@ function ProjectTasksListItem({ project }: IProjectTasksListItem) {
         }
         return tasks
     }, [filter, tasks])
-
-
-    useEffect(() => {
-        getTasks();
-    }, [getTasks, trigger.tasks])
-
 
     const createTask = useCallback(async (projectId: UUID) => {
         const title = prompt('type a task title');
@@ -110,12 +100,17 @@ function ProjectTasksListItem({ project }: IProjectTasksListItem) {
             try {
                 await TasksApi.create(task);
                 trigger.reload('tasks');
-                info("Task utworzono");
+                info("Task has been created");
             } catch (err) {
                 error(err);
             }
         }
     }, [queryParams.userId, sessionUser?.id, trigger, error, info]);
+
+
+    useEffect(() => {
+        getTasks();
+    }, [getTasks, trigger.tasks]);
 
 
     return (
@@ -173,6 +168,7 @@ export default function Tasks() {
     const projects = useAppSelector(({ projects }) =>
         projectsReduxSelector(projects, queryParams, location.pathname)
     );
+
 
     return (
         <ParameterBarContextProvider<Task>>

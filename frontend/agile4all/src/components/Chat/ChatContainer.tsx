@@ -14,10 +14,11 @@ interface IChatContainer {
 const maxWidth = { md: '450px', sx: undefined }
 
 export default function ChatContainer({ children }: IChatContainer) {
-    const { chatOpen, toggleChat } = useChatContext()
     const [minimized, setMinimized] = useState<boolean>(false)
-
     const messagesContainer = useRef(null);
+
+    const { chatOpen, toggleChat } = useChatContext()
+
 
     return chatOpen ? (
         <Sheet

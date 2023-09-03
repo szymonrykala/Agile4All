@@ -3,9 +3,6 @@ import Box from '@mui/joy/Box';
 import Typography from '@mui/joy/Typography';
 import ListDivider from '@mui/joy/ListDivider';
 import Sheet from '@mui/joy/Sheet';
-
-
-// Icons import
 import Project from '../../../models/project';
 import { Link } from 'react-router-dom';
 import SmallUsersList from './SmallUsersList';
@@ -19,7 +16,6 @@ interface IProjectItem {
 
 
 export default function ProjectListItem({ data }: IProjectItem) {
-
 
     return (
         <Sheet

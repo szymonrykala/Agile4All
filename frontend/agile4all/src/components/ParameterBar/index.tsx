@@ -20,6 +20,15 @@ interface IParameterBar<T> {
 export default function ParameterBar<T>({ sorts, filters, init }: IParameterBar<T>) {
     const { setSort, setFilter, filter, sort } = useParameterBarContext<T>();
 
+
+    const delayedUpdateFilterValue = useCallback((evt: React.ChangeEvent<HTMLInputElement>) => {
+        setFilter({ ...filter, value: String(evt.target.value) } as any);
+    }, [
+        filter,
+        setFilter
+    ]);
+
+
     useLayoutEffect(() => {
         filters && typeof init.filter === 'number' && setFilter({ key: filters[init.filter], value: '' });
         sorts && typeof init.sort === 'number' && setSort(sorts[init.sort]);
@@ -31,15 +40,7 @@ export default function ParameterBar<T>({ sorts, filters, init }: IParameterBar<
         init.filter,
         setSort,
         setFilter
-    ])
-
-
-    const delayedUpdateFilterValue = useCallback((evt: React.ChangeEvent<HTMLInputElement>) => {
-        setFilter({ ...filter, value: String(evt.target.value) } as any);
-    }, [
-        filter,
-        setFilter
-    ])
+    ]);
 
 
     return (

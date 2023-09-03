@@ -30,35 +30,33 @@ const demoTaskData = {
 
 export default function TaskPanel() {
     const [editMode, setEditMode] = useState<boolean>(false);
-    const dispatch = useAppDispatch();
-    const { taskId } = useParams()
-
-    const taskFromRedux = useAppSelector(({ tasks }) => tasks.find(({ id }) => id === Number(taskId)))
-    const project = useAppSelector(({ projects }) => projects.find(({ id }) => id === taskFromRedux?.projectId));
-
     const [task, setTask] = useState<Task>(demoTaskData);
+
+    const { taskId } = useParams();
+    const taskFromRedux = useAppSelector(({ tasks }) => tasks.find(({ id }) => id === Number(taskId)));
+    const project = useAppSelector(({ projects }) => projects.find(({ id }) => id === taskFromRedux?.projectId));
     const { info, error } = useNotification();
+    const dispatch = useAppDispatch();
+
 
     const user = useMemo(() => {
         return project?.users.find(({ id }) => id === taskFromRedux?.userId)
     }, [
         taskFromRedux?.userId,
         project?.users
-    ])
-
+    ]);
 
     const deleteTask = useCallback(async () => {
         if(!window.confirm('Do You want to delete this task?')) return;
         try{
             await TasksApi.delete(task.id);
             dispatch(remove(task));
-            info("Task usunięty");
+            info("Task has been deleted");
         }catch(err){
             error(err);
         }
 
-    }, [task, dispatch, info, error])
-
+    }, [task, dispatch, info, error]);
 
     const updateTask = useCallback(async () => {
         if (task !== taskFromRedux) {
@@ -70,21 +68,19 @@ export default function TaskPanel() {
                     userId: Number(task.userId)
                 });
                 dispatch(update(task))
-                info("Task zaktualizowany")
+                info("Task has been updated")
             }catch(err){
                 error(err);
             }
         }
-    }, [task, dispatch, taskFromRedux, info, error])
-
+    }, [task, dispatch, taskFromRedux, info, error]);
     
     const updateAssignedUser = useCallback((event: any, user: UUID | null) => {
         if (!user) return;
 
         setTask({ ...task, userId: user })
-    }, [task, setTask])
+    }, [task, setTask]);
     
-
     const statusUpdate = useCallback((event: any, newStatus: TaskStatus | null) => {
         if (newStatus) setTask({ ...task, status: newStatus })
     }, [task, setTask]);
@@ -95,7 +91,7 @@ export default function TaskPanel() {
 
     // displayed task should be replaced only if `taskId` was changed
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    },[taskId])
+    },[taskId]);
 
 
     return (
@@ -174,7 +170,7 @@ export default function TaskPanel() {
             />
 
             <Divider />
-            <FilesPanel files={[]} />
+            <FilesPanel files={[]} projectId={project?.id}/>
         </SidePanel>
     )
 }

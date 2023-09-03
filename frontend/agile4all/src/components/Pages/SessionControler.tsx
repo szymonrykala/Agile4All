@@ -1,8 +1,8 @@
-import React from "react";
 import { useNavigate } from "react-router";
 import { UsersApi } from "../../client";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { setSession } from "../../store/sessionSlice";
+import { useCallback, useEffect } from "react";
 
 
 interface ISessionController {
@@ -13,10 +13,10 @@ interface ISessionController {
 function SessionController(props: ISessionController) {
     const navigate = useNavigate()
     const dispatch = useAppDispatch()
-
     const isSessionSet = useAppSelector(({ session }) => Boolean(session))
 
-    const checkCurrentSession = React.useCallback(async () => {
+
+    const checkCurrentSession = useCallback(async () => {
         try {
             const userId = UsersApi.getSavedUserId();
             if (isSessionSet === false) {
@@ -34,11 +34,13 @@ function SessionController(props: ISessionController) {
         }
         // there is no need to check session on each route change
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [dispatch, isSessionSet])
+    }, [dispatch, isSessionSet]);
 
-    React.useEffect(() => {
+
+    useEffect(() => {
         checkCurrentSession();
     }, [checkCurrentSession])
+
 
     return props.element
 }

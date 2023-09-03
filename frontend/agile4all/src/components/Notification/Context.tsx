@@ -36,7 +36,7 @@ export default function NotificationContextProvider({ children }: INotificationC
     useEffect(() => {
         if (open === false) return;
 
-        const timeoutId = setTimeout(() => setOpen(false), 3000);
+        const timeoutId = setTimeout(() => setOpen(false), 4000);
 
         return () => {
             clearTimeout(timeoutId)

@@ -30,7 +30,7 @@ export default function ProjectsList(props: IProjectList) {
                     description: 'Share a detailed description'
                 })
                 reload('projects');
-                info("Projekt dodany");
+                info("Project has been added");
             }catch(err){
                 error(err)
             }

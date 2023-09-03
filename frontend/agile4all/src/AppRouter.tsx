@@ -11,7 +11,6 @@ import Registration from "./components/Pages/Registration";
 import SessionController from "./components/Pages/SessionControler";
 import Logout from "./components/Pages/Logout";
 import UserPanel from "./components/Users/UserPanel";
-import { ErrorBaner } from "./components/Errors";
 import ProjectPanel from "./components/Projects/ProjectPanel";
 
 
@@ -55,24 +54,20 @@ const AppRouter = createHashRouter([
         children: [
           {
             path: "tasks",
-            errorElement: <ErrorBaner />,
             children: [
               {
                 path: "users/:userId/projects/:projectId",
                 element: <Tasks />,
-                errorElement: <ErrorBaner />,
                 children: SIDE_PANEL_LOOKUPS
               },
               {
                 path: "users/:userId",
                 element: <Tasks />,
-                errorElement: <ErrorBaner />,
                 children: SIDE_PANEL_LOOKUPS
               },
               {
                 path: "projects/:projectId",
                 element: <Tasks />,
-                errorElement: <ErrorBaner />,
                 children: SIDE_PANEL_LOOKUPS
               },
             ]
@@ -80,7 +75,6 @@ const AppRouter = createHashRouter([
           {
             path: 'users',
             element: <Users />,
-            errorElement: <ErrorBaner />,
             children: [
               {
                 path: ':userId',
@@ -91,22 +85,18 @@ const AppRouter = createHashRouter([
           {
             path: 'projects',
             element: <Projects />,
-            errorElement: <ErrorBaner />,
             children: [
               {
                 path: ':projectId',
                 element: <ProjectPanel />,
-                errorElement: <ErrorBaner />,
               },
               {
                 path: ":projectId/task-lookup/:taskId",
                 element: <TaskPanel/>,
-                errorElement: <ErrorBaner />,
               },
               {
                 path: "user-lookup/:userId",
                 element: <UserPanel/>,
-                errorElement: <ErrorBaner />,
               }
             ]
           }

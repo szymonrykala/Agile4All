@@ -30,7 +30,7 @@ function ProjectsTasksListsItem() {
     <ListItem nested>
       <ListItemButton onClick={() => setFolded(!folded)}>
         <ListItemDecorator>
-          <TaskIcon />
+          <TaskIcon color="primary" />
 
         </ListItemDecorator>
         <ListItemContent>
@@ -121,7 +121,7 @@ export default function SideNav() {
               component={Link} to={link}
             >
               <ListItemDecorator sx={{ color: 'inherit' }}>
-                <Icon fontSize="small" />
+                <Icon fontSize="small" color="primary" />
               </ListItemDecorator>
               <ListItemContent>{name}</ListItemContent>
             </ListItemButton>

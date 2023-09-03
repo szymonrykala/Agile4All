@@ -51,6 +51,7 @@ export default function Header(props: IHeader) {
                 {props.session && <>
                     <IconButton
                         variant={chatOpen ? 'soft' : 'outlined'}
+                        color="primary"
                         onClick={toggleChat}
                     >
                         <MessageIcon />

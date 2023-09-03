@@ -69,30 +69,29 @@ const style = {
 
 
 export default function ProjectUsersList({ projectId, users }: IProjectUsersList) {
-    const [localUsers, setLocalUsers] = useState<User[]>([])
-
+    const [localUsers, setLocalUsers] = useState<User[]>([]);
+    const [search, setSearch] = useState<string>('');
+    
+    const dispatch = useAppDispatch();
+    
     const projectUsersIds = useMemo(() => localUsers.map(({ id }) => id), [localUsers]);
 
     const allUsers = useAppSelector(({ users }) => users.filter(user =>
         !projectUsersIds.includes(user.id)
-    ))
-
-    const dispatch = useAppDispatch()
-    const [search, setSearch] = useState<string>('');
+    ));
 
     const filteredAllUsers = useMemo(() => {
         if (search !== '') {
             return allUsers.filter(({ email }) => email.match(search))
         }
         return allUsers
-    }, [search, allUsers])
-
+    }, [search, allUsers]);
 
     const addUserToProject = useCallback(async (user: User) => {
-        await ProjectsApi.addUser(projectId, user.id)
+        await ProjectsApi.addUser(projectId, user.id);
 
-        dispatch(assignUser({ projectId: projectId, user: user }))
-        setLocalUsers([...localUsers, user])
+        dispatch(assignUser({ projectId: projectId, user: user }));
+        setLocalUsers([...localUsers, user]);
     }, [
         localUsers,
         dispatch,
@@ -111,11 +110,13 @@ export default function ProjectUsersList({ projectId, users }: IProjectUsersList
         localUsers,
         setLocalUsers,
         dispatch
-    ])
+    ]);
+
 
     useEffect(() => {
         setLocalUsers(users)
-    }, [users])
+    }, [users]);
+
 
     return (
         <>

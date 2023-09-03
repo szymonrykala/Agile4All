@@ -12,46 +12,42 @@ import useNotification from "../Notification";
 
 interface IFilesPanel {
     files?: FileModel[],
+    projectId?: number
 }
 
 export default function FilesPanel(props: IFilesPanel) {
+    const [files, setFiles] = useState<FileModel[]>(props.files || []);
+    const fileInputRef: React.MutableRefObject<HTMLInputElement | null> = useRef(null);
+
     const queryParams = useParams();
-    const [files, setFiles] = useState<FileModel[]>(props.files || [])
-    const fileInputRef: React.MutableRefObject<HTMLInputElement | null> = useRef(null)
     const { info, error } = useNotification();
+
 
     const fetchFiles = useCallback(async () => {
         let resp: FileModel[];
 
         if (process.env.NODE_ENV === "development" && process.env.REACT_APP_MOCK_API === "true") {
-            resp = mockedFiles
+            resp = mockedFiles;
         } else {
-            resp = await FilesApi.getAll(queryParams) as unknown as FileModel[]
+            resp = await FilesApi.getAll({ projectId: props.projectId, ...queryParams }) as unknown as FileModel[];
         }
 
-        setFiles(resp)
-
-    }, [queryParams])
-
-    useEffect(() => {
-        fetchFiles()
-    }, [fetchFiles])
-
-
+        setFiles(resp);
+    }, [queryParams, props.projectId])
 
     const uploadFile = useCallback(async () => {
         if (!fileInputRef?.current) return;
 
         const file = fileInputRef.current.files?.item(0)
         if (!file) {
-            error('Problem z załadowaniem pliku');
+            error('There was a problem while uploading the file');
             return;
         }
 
         try {
-            await FilesApi.uploadFile(file, queryParams);
+            await FilesApi.uploadFile(file, { projectId: props.projectId, ...queryParams });
             fetchFiles();
-            info("Plik dodano.");
+            info("File has been added");
         } catch (err) {
             error(err);
         }
@@ -59,7 +55,27 @@ export default function FilesPanel(props: IFilesPanel) {
 
     }, [queryParams, fetchFiles, info, error]);
 
+    const loadFile = useCallback(() => {
+        if (fileInputRef?.current) {
+            fileInputRef.current.click()
+        }
+    }, []);
 
+    const deleteFile = useCallback(async (fileId: UUID) => {
+        try {
+            await FilesApi.delete(fileId)
+            setFiles(files.filter(({ id }) => id !== fileId));
+            info("File has been deleted");
+        } catch (err) {
+            error(err);
+        }
+
+    }, [files, setFiles, info, error]);
+
+
+    useEffect(() => {
+        fetchFiles()
+    }, [fetchFiles])
 
     useEffect(() => {
         if (!fileInputRef?.current) return;
@@ -73,33 +89,12 @@ export default function FilesPanel(props: IFilesPanel) {
     }, [uploadFile])
 
 
-
-    const loadFile = useCallback(() => {
-        if (fileInputRef?.current) {
-            fileInputRef.current.click()
-        }
-    }, []);
-
-
-
-    const deleteFile = useCallback(async (fileId: UUID) => {
-        try{
-            await FilesApi.delete(fileId)
-            setFiles(files.filter(({ id }) => id !== fileId));
-            info("Plik usunięto.");
-        }catch(err){
-            error(err);
-        }
-
-    }, [files, setFiles, info, error]);
-
-
-
     return (
         <Box sx={{
             display: 'flex',
+            flexWrap: "wrap",
             alignItems: 'flex-start',
-            gap: 2,
+            gap: 3,
             bgcolor: 'inherit',
             overflowX: 'auto',
         }}>

@@ -30,9 +30,10 @@ interface IChatContextProvider {
 
 
 export function ChatContextProvider({ children }: IChatContextProvider) {
-    const dispatch = useAppDispatch()
     const [socket, setSocket] = useState<WebSocket>(_socket);
-    const [chatOpen, setOpen] = useState<boolean>(false)
+    const [chatOpen, setOpen] = useState<boolean>(false);
+
+    const dispatch = useAppDispatch()
 
     const toggleChat = useCallback(() => setOpen(!chatOpen),
         [chatOpen]

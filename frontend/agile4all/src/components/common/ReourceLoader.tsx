@@ -29,7 +29,7 @@ export default function ResourceLoader() {
             }
             dispatch(loadUsersSlice(users));
         } catch {
-            error("Nie udało się pobrać listy użytkowników");
+            error("Could not get users list");
         }
     }, [dispatch, error])
 
@@ -45,7 +45,7 @@ export default function ResourceLoader() {
             
             dispatch(loadProjectsSlice(projects))
         }catch{
-            error("Nie udało się pobrać listy projektów");
+            error("Could not get projects list");
         }
     }, [dispatch, error])
 
@@ -59,6 +59,7 @@ export default function ResourceLoader() {
         loadUsers();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [loadUsers, trigger.users])
+
 
     return <></>
 }

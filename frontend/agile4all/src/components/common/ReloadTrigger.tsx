@@ -37,6 +37,11 @@ export function ReloadTriggerContextProvider({
         tasks: false
     })
 
+    const trigger = useCallback((type: keyof ITriggers) => {
+        setTrigger({ ...triggers, [type]: !triggers[type] })
+    }, [triggers])
+
+
     useEffect(() => {
         const int = setInterval(() => {
             setTrigger({
@@ -53,9 +58,6 @@ export function ReloadTriggerContextProvider({
     // eslint-disable-next-line
     }, [triggers])
 
-    const trigger = useCallback((type: keyof ITriggers) => {
-        setTrigger({ ...triggers, [type]: !triggers[type] })
-    }, [triggers])
 
     return <ResourceTriggerContext.Provider
         value={{

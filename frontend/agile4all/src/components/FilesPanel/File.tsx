@@ -16,7 +16,8 @@ const style = {
         bgcolor: 'inherit',
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center'
+        alignItems: 'center',
+        maxWidth: "70px"
     },
     deleteButton: {
         position: 'absolute',
@@ -38,7 +39,7 @@ export default function File({ data, onDelete }: IFile) {
                 size="md"
                 color="neutral"
                 component={Link}
-                href={data.link}
+                href={"/api" + data.link}
                 target='_blank'
             >
                 <DescriptionIcon color='primary' sx={{ fontSize: 40 }} />
@@ -57,11 +58,10 @@ export default function File({ data, onDelete }: IFile) {
                 </Tooltip>
             </IconButton>
             <Tooltip title={data.name}>
-                <Typography level='body-sm' sx={{ overflowY: 'clip', maxWidth: '60px', maxHeight: '20px' }}>
+                <Typography level='body-sm' sx={{ overflow: 'hidden', maxWidth: '70px', maxHeight: '20px' }}>
                     {data.name}
                 </Typography>
             </Tooltip>
-
         </Sheet>
     )
 }

@@ -1,4 +1,4 @@
-import { Box, Avatar, Typography, IconButton, Button } from "@mui/joy";
+import { Box, Avatar, Typography, IconButton, Button, Sheet } from "@mui/joy";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import FilesPanel from "../FilesPanel";
 import EditIcon from "@mui/icons-material/Edit";
@@ -26,12 +26,12 @@ const demoProject: Project = {
 
 
 export default function ProjectPanel() {
+    const [editMode, setEditMode] = useState<boolean>(false);
+
     const { projectId } = useParams();
     const dispatch = useAppDispatch();
-    const [editMode, setEditMode] = useState<boolean>(false);
     const navigate = useNavigate();
     const isAdmin = useCheckAdmin();
-
 
     const reduxProject: Project = useAppSelector(({ projects }) =>
         projects.find(({ id }) => id === Number(projectId)
@@ -63,8 +63,8 @@ export default function ProjectPanel() {
 
     useEffect(() => {
         setProject({ ...reduxProject })
-    // displayed project should be replaced only if `projectId` was changed
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // displayed project should be replaced only if `projectId` was changed
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [projectId]);
 
 
@@ -122,12 +122,14 @@ export default function ProjectPanel() {
                 onChange={(value) => setProject({ ...project, description: value })}
             />
 
-            {isAdmin ?
-                <ProjectUsersList projectId={Number(projectId)} users={project.users} />
-                : <SmallUsersList users={project.users} />
-            }
+            <Sheet>
+                {isAdmin ?
+                    <ProjectUsersList projectId={Number(projectId)} users={project.users} />
+                    : <SmallUsersList users={project.users} />
+                }
+            </Sheet>
 
-            <FilesPanel />
+            <FilesPanel projectId={project?.id} />
         </SidePanel>
     )
 }

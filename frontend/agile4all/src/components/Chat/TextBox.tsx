@@ -14,9 +14,10 @@ interface ITextBox {
 
 export default function TextBox({ messagesContainer }: ITextBox) {
     const dispatch = useAppDispatch();
-    const { socket } = useChatContext();
     const [text, setText] = useState<string>('');
-    const user = useAppSelector(({ session }) => session?.user)
+
+    const { socket } = useChatContext();
+    const user = useAppSelector(({ session }) => session?.user);
 
 
     const sendMessageToWS = useCallback((data: ChatMessage) => {
@@ -74,6 +75,7 @@ export default function TextBox({ messagesContainer }: ITextBox) {
             el?.removeEventListener('click', scrollChat);
         }
     }, [scrollChat]);
+
 
     return (
         <Sheet

@@ -9,14 +9,14 @@ import useNotification from '../Notification';
 
 
 function Login() {
-    const navigate = useNavigate();
-    const { error } = useNotification();
-
     const [errorMsg, setError] = useState<string | undefined>();
     const [data, setData] = useState<ILoginData>({
         email: '',
         password: ''
     });
+
+    const navigate = useNavigate();
+    const { error } = useNotification();
 
 
     const submitLogin: React.FormEventHandler<HTMLFormElement> = useCallback(async (event) => {

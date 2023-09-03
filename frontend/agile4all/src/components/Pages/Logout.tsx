@@ -12,11 +12,13 @@ function Logout() {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
 
+
     useEffect(() => {
         dispatch(removeSession())
         UsersApi.logout()
         navigate('/login')
     }, [navigate, dispatch])
+
 
     return <NoSessionPage>
         <Sheet sx={{

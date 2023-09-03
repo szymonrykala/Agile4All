@@ -33,6 +33,7 @@ export default function UserPanel() {
     const navigate = useNavigate();
     const { userId } = useParams();
     const dispatch = useAppDispatch();
+
     const reduxUser = useAppSelector(({ users }) => users.find(({ id }) => id === Number(userId))) || demoUser
     const projects = useAppSelector(({ projects }) => selectProjectsOfUser(projects, reduxUser.id))
     const isAdmin = useCheckAdmin()
@@ -48,8 +49,8 @@ export default function UserPanel() {
         value: string
     ) => {
         setUser({ ...user, [field]: value })
-
     }, [user, setUser])
+
 
     const roleUpdate = useCallback((event: any, newRole: UserRole | null) => {
         if (newRole) setUser({ ...user, role: newRole })
@@ -78,8 +79,13 @@ export default function UserPanel() {
         try {
             await UsersApi.delete(user.id);
             dispatch(remove(user));
-            navigate('../');
-            info("User has been deleted");
+
+            if(sessionUserId === userId){
+                navigate("/logout");
+            }else{
+                navigate('../');
+                info("User has been deleted");
+            }
         } catch (err) {
             error(err)
         }
@@ -91,6 +97,7 @@ export default function UserPanel() {
     // displayed task should be replaced only if `taskId` was changed
     // eslint-disable-next-line react-hooks/exhaustive-deps
     },[userId])
+
 
     return (
         <SidePanel>

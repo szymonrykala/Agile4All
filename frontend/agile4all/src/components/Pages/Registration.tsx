@@ -10,9 +10,6 @@ import useNotification from '../Notification';
 
 
 function Registration() {
-    const navigate = useNavigate();
-    const { error } = useNotification();
-
     const [errorMsg, setError] = useState<string>();
     const [data, setData] = useState<ICreateUserData>({
         firstname: '',
@@ -20,6 +17,9 @@ function Registration() {
         email: '',
         password: '',
     });
+
+    const navigate = useNavigate();
+    const { error } = useNotification();
 
 
     const submitRegistration: React.FormEventHandler<HTMLFormElement> = useCallback(async (event) => {
