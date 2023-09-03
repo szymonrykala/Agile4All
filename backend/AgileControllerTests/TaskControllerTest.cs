@@ -30,7 +30,7 @@ namespace AgileControllerTests
             var projectServiceMock = new Mock<IProjectService>();
             projectServiceMock.Setup(x => x.GetProjectById(It.IsAny<int>()))
                               .Returns(new ProjectResponse());
-            
+
             var userServiceMock = new Mock<IUserService>();
             userServiceMock.Setup(x => x.GetUserById(It.IsAny<int>()))
                            .Returns(new GetAllUsersResponse());
@@ -39,7 +39,7 @@ namespace AgileControllerTests
             cookieHelperMock.Setup(x => x.ReverseJwtFromRequest(It.IsAny<Microsoft.AspNetCore.Http.HttpContext>()))
                             .Returns(new JwtReverseResult { IsValid = true });
 
-            var controller = new TaskController(taskServiceMock.Object,projectServiceMock.Object, userServiceMock.Object, cookieHelperMock.Object);
+            var controller = new TaskController(taskServiceMock.Object, projectServiceMock.Object, userServiceMock.Object, cookieHelperMock.Object);
 
             // Act
             var result = controller.GetAllTasks();
@@ -49,7 +49,7 @@ namespace AgileControllerTests
         }
 
         [Fact]
-        public void GetTaskById_WithValidTaskIdAndAuthorizedUser_ReturnsOkResult()
+        public void GetTaskById_WithNotExistingTaskIdAndAuthorizedUser_ReturnsNotFoundResult()
         {
             // Arrange
             var taskServiceMock = new Mock<ITaskService>();
@@ -59,11 +59,11 @@ namespace AgileControllerTests
             var projectServiceMock = new Mock<IProjectService>();
             projectServiceMock.Setup(x => x.GetProjectById(It.IsAny<int>()))
                               .Returns(new ProjectResponse());
-            
+
             var userServiceMock = new Mock<IUserService>();
             userServiceMock.Setup(x => x.GetUserById(It.IsAny<int>()))
                            .Returns(new GetAllUsersResponse());
-            
+
             var cookieHelperMock = new Mock<ICookieHelper>();
             cookieHelperMock.Setup(x => x.ReverseJwtFromRequest(It.IsAny<Microsoft.AspNetCore.Http.HttpContext>()))
                             .Returns(new JwtReverseResult
@@ -75,10 +75,46 @@ namespace AgileControllerTests
                                 }
                             });
 
-            var controller = new TaskController(taskServiceMock.Object,projectServiceMock.Object, userServiceMock.Object, cookieHelperMock.Object);
+            var controller = new TaskController(taskServiceMock.Object, projectServiceMock.Object, userServiceMock.Object, cookieHelperMock.Object);
 
             // Act
-            var result = controller.GetTaskById(taskId: It.IsAny<int>());
+            var result = controller.GetTaskById(1);
+
+            // Assert
+            Assert.IsType<NotFoundObjectResult>(result);
+        }
+
+        [Fact]
+        public void GetTaskById_WithValidTaskIdAndAuthorizedUser_ReturnsOkResult()
+        {
+            // Arrange
+            var taskServiceMock = new Mock<ITaskService>();
+            taskServiceMock.Setup(x => x.GetTaskById(It.IsAny<int>()))
+                           .Returns(new TaskResponse { Id = 1 });
+
+            var projectServiceMock = new Mock<IProjectService>();
+            projectServiceMock.Setup(x => x.GetProjectById(It.IsAny<int>()))
+                              .Returns(new ProjectResponse());
+
+            var userServiceMock = new Mock<IUserService>();
+            userServiceMock.Setup(x => x.GetUserById(It.IsAny<int>()))
+                           .Returns(new GetAllUsersResponse());
+
+            var cookieHelperMock = new Mock<ICookieHelper>();
+            cookieHelperMock.Setup(x => x.ReverseJwtFromRequest(It.IsAny<Microsoft.AspNetCore.Http.HttpContext>()))
+                            .Returns(new JwtReverseResult
+                            {
+                                IsValid = true,
+                                Claims = new List<Claim>
+                                {
+                                    new Claim(ClaimTypes.Role, ((int)UserRoleEnum.ADMIN).ToString())
+                                }
+                            });
+
+            var controller = new TaskController(taskServiceMock.Object, projectServiceMock.Object, userServiceMock.Object, cookieHelperMock.Object);
+
+            // Act
+            var result = controller.GetTaskById(1);
 
             // Assert
             Assert.IsType<OkObjectResult>(result);
@@ -91,15 +127,17 @@ namespace AgileControllerTests
             var taskServiceMock = new Mock<ITaskService>();
             taskServiceMock.Setup(x => x.UpdateTask(It.IsAny<UpdateTaskRequest>()))
                            .Returns(true);
+            taskServiceMock.Setup(x => x.GetTaskById(It.IsAny<int>()))
+                           .Returns(new TaskResponse { Id = 1 });
 
             var projectServiceMock = new Mock<IProjectService>();
             projectServiceMock.Setup(x => x.GetProjectById(It.IsAny<int>()))
-                              .Returns(new ProjectResponse());
-            
+                              .Returns(new ProjectResponse { Id = 1 });
+
             var userServiceMock = new Mock<IUserService>();
             userServiceMock.Setup(x => x.GetUserById(It.IsAny<int>()))
                            .Returns(new GetAllUsersResponse());
-            
+
             var cookieHelperMock = new Mock<ICookieHelper>();
             cookieHelperMock.Setup(x => x.ReverseJwtFromRequest(It.IsAny<Microsoft.AspNetCore.Http.HttpContext>()))
                             .Returns(new JwtReverseResult
@@ -111,7 +149,7 @@ namespace AgileControllerTests
                                 }
                             });
 
-            var controller = new TaskController(taskServiceMock.Object,projectServiceMock.Object, userServiceMock.Object, cookieHelperMock.Object);
+            var controller = new TaskController(taskServiceMock.Object, projectServiceMock.Object, userServiceMock.Object, cookieHelperMock.Object);
 
             // Setup HttpContext
             controller.ControllerContext = new ControllerContext
@@ -120,7 +158,7 @@ namespace AgileControllerTests
             };
 
             // Act
-            var result = controller.UpdateTask(1, new UpdateTaskRequest());
+            var result = controller.UpdateTask(1, new UpdateTaskRequest { Name = "And his name is John Cena!" });
 
             // Assert
             Assert.IsType<OkObjectResult>(result);
@@ -133,11 +171,13 @@ namespace AgileControllerTests
             var taskServiceMock = new Mock<ITaskService>();
             taskServiceMock.Setup(x => x.DeleteTask(It.IsAny<int>()))
                            .Returns(true);
+            taskServiceMock.Setup(x => x.GetTaskById(It.IsAny<int>()))
+                           .Returns(new TaskResponse { Id = 1 });
 
             var projectServiceMock = new Mock<IProjectService>();
             projectServiceMock.Setup(x => x.GetProjectById(It.IsAny<int>()))
                               .Returns(new ProjectResponse());
-            
+
             var userServiceMock = new Mock<IUserService>();
             userServiceMock.Setup(x => x.GetUserById(It.IsAny<int>()))
                            .Returns(new GetAllUsersResponse());
@@ -153,7 +193,7 @@ namespace AgileControllerTests
                                 }
                             });
 
-            var controller = new TaskController(taskServiceMock.Object,projectServiceMock.Object, userServiceMock.Object, cookieHelperMock.Object);
+            var controller = new TaskController(taskServiceMock.Object, projectServiceMock.Object, userServiceMock.Object, cookieHelperMock.Object);
 
             // Setup HttpContext
             controller.ControllerContext = new ControllerContext

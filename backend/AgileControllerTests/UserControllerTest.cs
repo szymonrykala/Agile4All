@@ -50,8 +50,10 @@ namespace AgileControllerTests
 
             var controller = new UserController(userServiceMock.Object, cookieHelperMock.Object);
 
+            var request = new AuthorizationDataRequest { Email = "test", Password = "testPwd" };
+
             // Act
-            var result = await controller.Login(new AuthorizationDataRequest());
+            var result = await controller.Login(request);
 
             // Assert
             Assert.IsType<OkObjectResult>(result);
@@ -66,7 +68,7 @@ namespace AgileControllerTests
                            .Returns(false);
 
             userServiceMock.Setup(x => x.AddUser(It.IsAny<RegistrationDataRequest>()))
-                           .Returns(It.IsAny<string>);
+                           .Returns("Anything but null");
 
             var cookieHelperMock = new Mock<ICookieHelper>();
 
@@ -124,12 +126,40 @@ namespace AgileControllerTests
         }
 
         [Fact]
-        public void GetUserById_WithValidUserIdAndAuthorizedUser_ReturnsOkResult()
+        public void GetUserById_WithNotExistingUserIdAndAuthorizedUser_ReturnsNotFoundResult()
         {
             // Arrange
             var userServiceMock = new Mock<IUserService>();
             userServiceMock.Setup(x => x.GetUserById(It.IsAny<int>()))
                            .Returns(new GetAllUsersResponse());
+
+            var cookieHelperMock = new Mock<ICookieHelper>();
+            cookieHelperMock.Setup(x => x.ReverseJwtFromRequest(It.IsAny<Microsoft.AspNetCore.Http.HttpContext>()))
+                            .Returns(new JwtReverseResult
+                            {
+                                IsValid = true,
+                                Claims = new List<Claim>
+                                {
+                                    new Claim(ClaimTypes.Role, ((int)UserRoleEnum.ADMIN).ToString())
+                                }
+                            });
+
+            var controller = new UserController(userServiceMock.Object, cookieHelperMock.Object);
+
+            // Act
+            var result = controller.GetUserById(1);
+
+            // Assert
+            Assert.IsType<NotFoundObjectResult>(result);
+        }
+
+        [Fact]
+        public void GetUserById_WithExistingUserIdAndAuthorizedUser_ReturnsOkResult()
+        {
+            // Arrange
+            var userServiceMock = new Mock<IUserService>();
+            userServiceMock.Setup(x => x.GetUserById(It.IsAny<int>()))
+                           .Returns(new GetAllUsersResponse { Id = 1, Email = "test@mail.com", FirstName = "Johny", LastName = "Test", Role = "DefinitelyNotStudent" });
 
             var cookieHelperMock = new Mock<ICookieHelper>();
             cookieHelperMock.Setup(x => x.ReverseJwtFromRequest(It.IsAny<Microsoft.AspNetCore.Http.HttpContext>()))

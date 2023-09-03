@@ -41,7 +41,7 @@ namespace AgileControllerTests
             var taskServiceMock = new Mock<ITaskService>();
             taskServiceMock.Setup(x => x.GetAllTasks())
                            .Returns(new List<TaskResponse>());
-            
+
             var fileServiceMock = new Mock<IFileService>();
             fileServiceMock.Setup(x => x.GetFiles(It.IsAny<int>(), It.IsAny<int>()))
                            .Returns(new List<GetFileResponse>());
@@ -64,19 +64,24 @@ namespace AgileControllerTests
                             .Returns(new JwtReverseResult
                             {
                                 IsValid = true,
-                                Claims = new List<Claim>
+                                Claims = new[]
                                 {
-                                    new Claim(ClaimTypes.Role, ((int)UserRoleEnum.ADMIN).ToString())
+                                    new Claim(ClaimTypes.Role, ((int)UserRoleEnum.ADMIN).ToString()),
+                                    new Claim(ClaimTypes.Hash, "1")
                                 }
                             });
 
             var projectServiceMock = new Mock<IProjectService>();
             projectServiceMock.Setup(x => x.GetAllProjects())
                               .Returns(new List<ProjectResponse>());
+            projectServiceMock.Setup(x => x.GetProjectById(It.IsAny<int>()))
+                              .Returns(new ProjectResponse { Id = 1 });
 
             var taskServiceMock = new Mock<ITaskService>();
             taskServiceMock.Setup(x => x.GetAllTasks())
                            .Returns(new List<TaskResponse>());
+            taskServiceMock.Setup(x => x.GetTaskById(It.IsAny<int>()))
+                           .Returns(new TaskResponse { Id = 1 });
 
             var fileServiceMock = new Mock<IFileService>();
             fileServiceMock.Setup(x => x.UploadFile(It.IsAny<UploadFileRequest>()))
@@ -85,7 +90,7 @@ namespace AgileControllerTests
             var controller = new FileController(fileServiceMock.Object, cookieHelperMock.Object, taskServiceMock.Object, projectServiceMock.Object);
 
             // Act
-            var result = controller.UploadFile(new UploadFileRequest());
+            var result = controller.UploadFile(new UploadFileRequest { UserId = 1, TaskId = 1, ProjectId = 1 });
 
             // Assert
             Assert.IsType<OkObjectResult>(result);
