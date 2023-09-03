@@ -43,7 +43,7 @@ namespace AgileApp.Handlers
 
             if (result.MessageType == WebSocketMessageType.Text)
             {
-                string resultJson = Encoding.UTF8.GetString(buffer, 0, result.Count);
+                string resultJson = Encoding.Unicode.GetString(buffer, 0, result.Count);
                 var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.WebsocketMessage>(resultJson);
 
                 if (obj?.type == "MESSAGE")
