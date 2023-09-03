@@ -611,7 +611,65 @@
 							]
 						}
 					},
-					"response": []
+					"response": [
+						{
+							"name": "get all users",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/api/users/",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"users",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Encoding",
+									"value": "gzip"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 03 Sep 2023 19:51:12 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Caddy"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Content-Length",
+									"value": "204"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"isSuccess\": true,\n    \"error\": null,\n    \"data\": [\n        {\n            \"id\": 1,\n            \"email\": \"xd@cfd.com\",\n            \"firstName\": \"xd\",\n            \"lastName\": \"xd\",\n            \"role\": \"STUDENT\"\n        },\n        {\n            \"id\": 20,\n            \"email\": \"test@postman2.com\",\n            \"firstName\": \"test\",\n            \"lastName\": \"postman\",\n            \"role\": \"STUDENT\"\n        },\n        {\n            \"id\": 21,\n            \"email\": \"test@postman3.com\",\n            \"firstName\": \"test\",\n            \"lastName\": \"postman\",\n            \"role\": \"STUDENT\"\n        },\n        {\n            \"id\": 22,\n            \"email\": \"test@postmman.com\",\n            \"firstName\": \"test\",\n            \"lastName\": \"postman\",\n            \"role\": \"STUDENT\"\n        },\n        {\n            \"id\": 23,\n            \"email\": \"admin@admin.pl\",\n            \"firstName\": \"Admin\",\n            \"lastName\": \"Adminowy\",\n            \"role\": \"ADMIN\"\n        },\n        {\n            \"id\": 24,\n            \"email\": \"test@postman.com\",\n            \"firstName\": \"test\",\n            \"lastName\": \"postman\",\n            \"role\": \"STUDENT\"\n        }\n    ]\n}"
+						}
+					]
 				},
 				{
 					"name": "get user by id",
@@ -665,7 +723,57 @@
 							]
 						}
 					},
-					"response": []
+					"response": [
+						{
+							"name": "get user by id",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/api/users/{{testuserid}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"users",
+										"{{testuserid}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "132"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 03 Sep 2023 19:51:34 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Caddy"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"isSuccess\": true,\n    \"error\": null,\n    \"data\": {\n        \"id\": 24,\n        \"email\": \"test@postman.com\",\n        \"firstName\": \"test\",\n        \"lastName\": \"postman\",\n        \"role\": \"STUDENT\"\n    }\n}"
+						}
+					]
 				},
 				{
 					"name": "update user",
@@ -922,50 +1030,6 @@
 							"body": "{\n    \"isSuccess\": false,\n    \"error\": \"User performing adding action must be an Admin\"\n}"
 						}
 					]
-				},
-				{
-					"name": "logout",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Logout Endpoint Test\", function () {\r",
-									"\r",
-									"    pm.expect(pm.response.code).to.equal(200);\r",
-									"    pm.expect(pm.response.json().isSuccess).to.be.true;\r",
-									"    });"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{url}}/api/users/logout/",
-							"host": [
-								"{{url}}"
-							],
-							"path": [
-								"api",
-								"users",
-								"logout",
-								""
-							]
-						}
-					},
-					"response": []
 				}
 			],
 			"description": "user show, modify and delete"
@@ -1958,7 +2022,7 @@
 									"pm.test(\"response type and value\", function () {\r",
 									"    pm.expect(pm.response.json().isSuccess).to.be.a(\"boolean\").to.be.true;\r",
 									"    pm.expect(pm.response.json().error).to.be.a(\"null\").to.be.null;\r",
-									"    pm.expect(pm.response.json().data).to.be.an(\"object\");\r",
+									"    pm.expect(pm.response.json().data).to.be.an(\"array\");\r",
 									"});"
 								],
 								"type": "text/javascript"
@@ -2458,7 +2522,7 @@
 									"pm.test(\"response type and value\", function () {\r",
 									"    pm.expect(pm.response.json().isSuccess).to.be.a(\"boolean\").to.be.true;\r",
 									"    pm.expect(pm.response.json().error).to.be.a(\"null\").to.be.null;\r",
-									"    pm.expect(pm.response.json().data).to.be.an(\"array\");\r",
+									"    pm.expect(pm.response.json().data).to.be.an(\"boolean\").to.be.true;\r",
 									"});"
 								],
 								"type": "text/javascript"
@@ -2505,7 +2569,78 @@
 							]
 						}
 					},
-					"response": []
+					"response": [
+						{
+							"name": "upload file",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "userid",
+											"value": "{{testuserid}}",
+											"type": "text"
+										},
+										{
+											"key": "filedata",
+											"type": "file",
+											"src": "/C:/Users/ASUS/Desktop/tst.txt"
+										},
+										{
+											"key": "projectid",
+											"value": "{{testprojectid}}",
+											"type": "text"
+										},
+										{
+											"key": "taskid",
+											"value": "{{testtaskid}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/api/files/",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"files",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Length",
+									"value": "43"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 03 Sep 2023 19:50:03 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Caddy"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"isSuccess\": true,\n    \"error\": null,\n    \"data\": true\n}"
+						}
+					]
 				},
 				{
 					"name": "get files from task",
