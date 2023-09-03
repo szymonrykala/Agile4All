@@ -100,9 +100,10 @@ namespace AgileApp.Services.Files
                 return response;
             }
 
+            string pathToDownload = "/files/";
             foreach (var item in repositoryRes)
             {
-                response.Add(new GetFileResponse { Id = item.Id, Link = item.Path, ModificationDate = item.Modification_Date, Name = item.Name, UserId = item.User_Id });
+                response.Add(new GetFileResponse { Id = item.Id, Link = pathToDownload + item.Id, ModificationDate = item.Modification_Date, Name = item.Name, UserId = item.User_Id });
             }
 
             return response;
