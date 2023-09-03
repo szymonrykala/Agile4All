@@ -18,7 +18,7 @@
         {
             var response = new List<string>();
 
-            var messages = _dbContext.Messages.Take(30);
+            var messages = _dbContext.Messages.Skip(Math.Max(0, _dbContext.Messages.Count() - 30)).Take(30);
             if (messages.Count() > 0)
                 foreach (var message in messages)
                 {
