@@ -8,10 +8,12 @@ namespace AgileApp.Services.Files
     public class FileService : IFileService
     {
         private readonly IFileRepository _fileRepository;
+        private readonly ILogger _logger;
 
-        public FileService(IFileRepository fileRepository)
+        public FileService(IFileRepository fileRepository, ILogger<IFileService> logger)
         {
             _fileRepository = fileRepository;
+            _logger = logger;
         }
 
         public Response<bool> UploadFile(Models.Files.UploadFileRequest file)
@@ -61,8 +63,9 @@ namespace AgileApp.Services.Files
                     return Response<bool>.Failed("Error: file disappeared");
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(exception: ex, message: "Internal error while uplading a file");
                 return Response<bool>.Failed("Internal error");
             }
         }

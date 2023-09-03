@@ -14,6 +14,7 @@ services:
     depends_on:
       - db
     volumes:
+      - ./docker/backend/data/files/:/app/Upload/
       - type: bind
         source: ./backend/AgileApp/ESD/
         target: /app/ESD/
