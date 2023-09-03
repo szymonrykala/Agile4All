@@ -3,12 +3,13 @@ using System.Text;
 using AgileApp.Services;
 using AgileApp.Services.Chat;
 using System.Text.Json;
+using AgileApp.Models;
 
 namespace AgileApp.Handlers
 {
     public class ChatMessageHandler : WebSocketHandler
     {
-    private readonly IServiceScopeFactory _serviceScopeFactory;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
 
         public ChatMessageHandler(WebSocketConnectionManager webSocketConnectionManager, IServiceScopeFactory serviceScopeFactory)
             : base(webSocketConnectionManager)
@@ -26,13 +27,14 @@ namespace AgileApp.Handlers
             var messages = chatService.Load();
             if (messages.Count > 0)
             {
+                var decodedMessages = messages.Select(m => JsonSerializer.Deserialize<Payload>(m));
                 var loadMessage = new Models.WebsocketMessageLoad
                 {
                     type = "LOAD",
-                    payload = messages
+                    payload = decodedMessages.ToList()
                 };
 
-                await SendMessage(socket, PrepareMessageFromList(loadMessage));
+                await SendMessage(socket, JsonSerializer.Serialize(loadMessage));
             }
         }
 
@@ -43,35 +45,23 @@ namespace AgileApp.Handlers
 
             if (result.MessageType == WebSocketMessageType.Text)
             {
-                string resultJson = Encoding.Unicode.GetString(buffer, 0, result.Count);
-                var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.WebsocketMessage>(resultJson);
+                string resultJson = Encoding.UTF8.GetString(buffer, 0, result.Count);
+                var obj = JsonSerializer.Deserialize<Models.WebsocketMessage>(resultJson);
 
                 if (obj?.type == "MESSAGE")
                 {
-                    var message = "";
-                    var payload = PrepareMessageFromObject(obj, out message);
+                    var options = new JsonSerializerOptions
+                    {
+                        Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+                    };
+                    var message = JsonSerializer.Serialize(obj.payload, options);
+                    var payload = JsonSerializer.Serialize(obj);
 
                     chatService.SendMessage(message);
 
                     await SendMessageToAllExceptAsync(socket, payload);
                 }
             }
-        }
-
-        private string PrepareMessageFromList(Models.WebsocketMessageLoad payload)
-        {
-            string json = JsonSerializer.Serialize(payload);
-            json = json.Replace(@"\u0022", "\"").Replace("\"{", "{").Replace("}\"", "}");
-            return json;
-        }
-
-        private string PrepareMessageFromObject(Models.WebsocketMessage payload, out string message)
-        {
-            string json = JsonSerializer.Serialize(payload);
-            message = JsonSerializer.Serialize(payload.payload);
-            json = json.Replace(@"\u0022", "\"");
-
-            return json;
         }
     }
 }

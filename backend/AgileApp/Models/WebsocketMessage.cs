@@ -9,7 +9,7 @@
 
     public class WebsocketMessageLoad
     {
-        public List<string> payload { get; set; }
+        public List<Payload> payload { get; set; }
 
         public string type { get; set; }
     }
