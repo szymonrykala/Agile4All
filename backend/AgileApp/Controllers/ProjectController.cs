@@ -90,7 +90,7 @@ namespace AgileApp.Controllers
         }
 
         [HttpGet("")]
-        public IActionResult GetAllProjects()
+        public IActionResult GetAllProjects(int userId = 0)
         {
             var reverseTokenResult = _cookieHelper.ReverseJwtFromRequest(HttpContext);
 
@@ -103,7 +103,7 @@ namespace AgileApp.Controllers
                 return new BadRequestObjectResult(new Response { IsSuccess = false, Error = "User performing adding action must be logged in" });
             }
 
-            var projects = _projectService.GetAllProjects();
+            var projects = userId < 1 ? _projectService.GetAllProjects() : _projectService.GetAllProjects().Where(p => p.Users.Any(u => u.Id == userId)).ToList();
             if (projects == null || projects.Count() < 1)
             {
                 return new OkObjectResult(Response<List<ProjectResponse>>.Succeeded(new List<ProjectResponse>()));
